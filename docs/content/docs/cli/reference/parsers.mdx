@@ -31,6 +31,7 @@ Legacy `.xls` files are not supported.
 | `name_col` | no | Description, merchant, or account name column/key. |
 | `ref_col` | no | Reference, transaction ID, or order ID column/key. |
 | `skip_raw` | no | Skip raw row map allocation for lower memory use. |
+| `duplicate_policy` | no | How rows sharing a `GroupKey` are handled. One of `flag` (default), `keep`, `merge`, or `latest`. See the [Duplicates](../mini-guides/duplicates) guide. |
 
 ## Date layouts
 

@@ -17,6 +17,25 @@ A non-zero `duplicate_count` means some rows were excluded from matching before 
 
 Empty references are never grouped as duplicates.
 
+## Controlling duplicate handling: `duplicate_policy`
+
+The behavior above is the default. The `duplicate_policy` parser field controls how rows that share a `GroupKey` are handled before matching. It accepts four values.
+
+- `flag` (default) — all rows participate in matching, and duplicates are surfaced via `WriteDuplicate` events for review. This is the behavior described in the previous sections.
+- `keep` — every duplicate is treated as a distinct row; all rows participate in matching, and `WriteDuplicate` is never emitted.
+- `merge` — duplicates are collapsed to the first-seen row per `GroupKey` before matching; `WriteDuplicate` is never emitted.
+- `latest` — duplicates are collapsed to the last-seen row per `GroupKey` (by file order) before matching; `WriteDuplicate` is never emitted.
+
+Use `flag` when you want duplicates called out for manual review, `keep` when each repeated row is a real, independent transaction, and `merge` or `latest` when the duplicates are copies and you only want one representative row to reach matching.
+
+```yaml
+parsers:
+  - type: csv
+    duplicate_policy: merge
+```
+
+An unset `duplicate_policy` resolves to `flag`, so existing configurations keep their current behavior.
+
 ## Investigation flow
 
 The steps below walk from detection to resolution.
