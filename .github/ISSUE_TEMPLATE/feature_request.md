@@ -1,20 +1,30 @@
 ---
 name: Feature request
-about: Suggest an idea for this project
+about: Suggest a Reconify CLI or engine feature
 title: ''
-labels: ''
+labels: 'enhancement'
 assignees: ''
 
 ---
 
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+**Problem**
+What problem are you trying to solve? A clear and concise description of what is hard or impossible today.
 
-**Describe the solution you'd like**
-A clear and concise description of what you want to happen.
+**Proposed solution**
+What you would like Reconify to do instead.
 
-**Describe alternatives you've considered**
-A clear and concise description of any alternative solutions or features you've considered.
+**Alternatives considered**
+Any alternative approaches or existing workarounds you have tried.
+
+**Surface**
+Which part of Reconify does this touch?
+
+- [ ] CLI flags
+- [ ] Config format
+- [ ] Output format
+- [ ] Engine behavior
 
 **Additional context**
-Add any other context or screenshots about the feature request here.
+Anything else relevant. If you are opening a PR with the change, confirm `make check` passes:
+
+- [ ] `make check` passes with my change

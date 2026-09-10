@@ -1,8 +1,8 @@
 ---
 name: Bug report
-about: Create a report to help us improve
+about: Report a Reconify CLI or engine bug
 title: ''
-labels: ''
+labels: 'bug'
 assignees: ''
 
 ---
@@ -10,29 +10,31 @@ assignees: ''
 **Describe the bug**
 A clear and concise description of what the bug is.
 
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+**Reconify version**
+Output of `reconify --version`.
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+**Environment**
+- Go version (`go version`):
+- OS and architecture (e.g. `macOS 14 arm64`, `Ubuntu 22.04 amd64`):
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+**To reproduce**
+The exact command that was run, plus the config snippet it used (with sensitive values removed):
 
-**Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
+```yaml
+# config snippet
+```
 
-**Smartphone (please complete the following information):**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - Browser [e.g. stock browser, safari]
- - Version [e.g. 22]
+```sh
+reconify <args>
+```
+
+**Actual output**
+The error message or output you got.
+
+**Expected output**
+What you expected to happen instead.
 
 **Additional context**
-Add any other context about the problem here.
+Anything else relevant. If you are opening a PR with a fix, confirm `make check` passes:
+
+- [ ] `make check` passes with my fix
