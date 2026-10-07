@@ -24,14 +24,6 @@ import (
 // words and <angle> words) are skipped, and everything after a shell pipe,
 // redirection, `&&`, or `;` belongs to another command.
 
-// pendingCommands lists top-level commands that skills already document but
-// that are not registered on this branch yet. Their invocations are skipped
-// while the command is missing and are fully checked as soon as it exists.
-// TODO: remove once the verify command lands.
-var pendingCommands = map[string]bool{
-	"verify": true,
-}
-
 var (
 	skillPlaceholderRe = regexp.MustCompile(`^[A-Z][A-Z0-9_]*$`)
 	skillAngleRe       = regexp.MustCompile(`<[A-Za-z0-9_.\-/]+>`)
@@ -117,23 +109,6 @@ func TestSkillsLintDetectsDrift(t *testing.T) {
 		if _, ok := want[line]; !ok {
 			t.Errorf("line %d: unexpected problem %q", line, problem)
 		}
-	}
-}
-
-func TestSkillsLintPendingCommands(t *testing.T) {
-	root := newRootCmd("test", "test")
-	registered := false
-	for _, c := range root.Commands() {
-		if c.Name() == "verify" {
-			registered = true
-		}
-	}
-	problems := checkSkillInvocation(root, []string{"verify", "--no-such-flag"})
-	if registered && len(problems) == 0 {
-		t.Error("verify is registered, so an unknown flag must be reported; remove it from pendingCommands")
-	}
-	if !registered && len(problems) != 0 {
-		t.Errorf("verify is pending and must be skipped, got %v", problems)
 	}
 }
 
@@ -286,10 +261,7 @@ func checkSkillInvocation(root *cobra.Command, words []string) []string {
 				prepareSkillLintCommand(cmd)
 				continue
 			}
-			if cmd == root && pendingCommands[w] {
-				return problems // documented ahead of the command landing
-			}
-			if cmd.HasSubCommands() && (cmd == root || !cmd.Runnable()) {
+			if cmd.HasSubCommands() {
 				problems = append(problems, fmt.Sprintf("unknown subcommand %q for `%s`", w, cmd.CommandPath()))
 				return problems
 			}
