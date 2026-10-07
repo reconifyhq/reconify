@@ -17,7 +17,7 @@ By the end of this guide, you know:
 
 Audit mode injects a `run_info` object into the output containing a run ID, timestamp, tool
 version, input file paths, SHA-256 file hashes, and a snapshot of the pair config. Deterministic
-mode (`--deterministic`) sorts JSON output sections so key order is stable across runs. Combined
+mode (`--deterministic`) sorts `--format json` output sections by source and row so order is stable across runs. Events are emitted in input row order in every format, so repeated runs over the same files are stable even without the flag; `--deterministic` additionally sorts the buffered JSON document and omits timestamps and run IDs unless `--audit` is set. Combined
 with `--audit-fixed-timestamp`, you can fix the run ID and timestamp to make the output
 content-addressable. See [Reconcile](/docs/cli/guides/reconcile) for the base command.
 

@@ -20,6 +20,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - **Usage errors now exit `2` with `USAGE_ERROR`** instead of exiting `1` as `INTERNAL_ERROR`. This covers unknown commands and flags, wrong argument counts, and invalid flag values (`--top abc`). The diagnostic has category `usage`, legacy code `config_error`, `details.usage`, `details.did_you_mean` when a close command or flag exists, and a suggestion naming `reconify <command> --help`. Scripts that matched exit code `1` for these cases must now match `2`. Bare group commands (`reconify config`) still print help; an unknown subcommand under them is now a usage error rather than silently printing help.
 - Commands that accept no positional arguments now reject them as usage errors instead of ignoring them.
 
+### Fixed
+
+- **Stable event order** — `duplicate` groups, `unmatched_right` rows, ambiguous groups, `source_summary` events, and rows replayed under `duplicate_policy: latest` were emitted in map-iteration order, so repeated runs over the same files produced different bytes. They now follow input row order (duplicate groups by first occurrence) in every format and execution path, including the disk and partitioned backends.
+- **`--deterministic` with `--format json`** — the flag was silently ignored because the result-mode wrapper hid the writer's setter. It now takes effect, and deterministic ordering sorts by source and numeric row (`left-2` before `left-10`). Formats that cannot honor the flag still warn on stderr.
+
 ## [0.7.0] - 2026-08-30
 
 ### Added

@@ -146,8 +146,12 @@ func MatchByReferenceOneToMany(
 
 	// Build groupBy → left-indices index in a single pass.
 	leftByRef := make(map[string][]int, len(left))
+	leftKeyOrder := make([]string, 0)
 	for i, tx := range left {
 		if k := keyOf(tx); k != "" {
+			if _, ok := leftByRef[k]; !ok {
+				leftKeyOrder = append(leftKeyOrder, k)
+			}
 			leftByRef[k] = append(leftByRef[k], i)
 		}
 	}
@@ -158,7 +162,10 @@ func MatchByReferenceOneToMany(
 
 	// Ambiguity pass: any reference claimed by >1 left row is undetermined.
 	// Emit one AmbiguousGroupPair per such reference and mark all involved rows consumed.
-	for ref, indices := range leftByRef {
+	// References are visited in first-occurrence order of the left input so the
+	// emitted group order is stable across runs.
+	for _, ref := range leftKeyOrder {
+		indices := leftByRef[ref]
 		if len(indices) <= 1 {
 			continue
 		}

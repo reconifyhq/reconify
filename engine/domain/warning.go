@@ -15,6 +15,7 @@ const (
 	WarningTokenBufferPressure         = "token_buffer_pressure"
 	WarningCarryBufferPressure         = "carry_buffer_pressure"
 	WarningEmptyCurrency               = "empty_currency"
+	WarningDeterministicUnsupported    = "deterministic_unsupported"
 )
 
 // WarningObserver is an optional, best-effort observer for library warnings.

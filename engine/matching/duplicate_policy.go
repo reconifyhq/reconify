@@ -21,6 +21,8 @@ import (
 // Using the original cfg (not rightCfgNoRaw) preserves the Raw field if the
 // caller has configured SkipRaw = false.
 //
+// Groups are returned in the order their first row appears in the file.
+//
 // Memory: O(n_dup_rows) — only rows whose group key is in dupKeys are retained.
 func CollectDuplicates(
 	ctx context.Context,
@@ -30,20 +32,27 @@ func CollectDuplicates(
 	dupKeys map[string]bool,
 ) ([]DuplicateGroup, error) {
 	byKey := make(map[string][]Transaction, len(dupKeys))
+	// order records each group key at its first occurrence in the file so groups
+	// are returned in input row order, matching AnnotateDuplicates. Ranging over
+	// byKey directly would emit groups in a different order on every run.
+	order := make([]string, 0, len(dupKeys))
 	if err := parser.ParseEach(ctx, sourceName, path, cfg, func(tx Transaction, _ int) error {
 		if dupKeys[tx.GroupKey] {
+			if _, seen := byKey[tx.GroupKey]; !seen {
+				order = append(order, tx.GroupKey)
+			}
 			byKey[tx.GroupKey] = append(byKey[tx.GroupKey], tx)
 		}
 		return nil
 	}); err != nil {
 		return nil, err
 	}
-	groups := make([]DuplicateGroup, 0, len(byKey))
-	for key, txns := range byKey {
+	groups := make([]DuplicateGroup, 0, len(order))
+	for _, key := range order {
 		groups = append(groups, DuplicateGroup{
 			Source:       sourceName,
 			Reference:    key,
-			Transactions: txns,
+			Transactions: byKey[key],
 		})
 	}
 	return groups, nil

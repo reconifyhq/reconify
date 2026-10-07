@@ -237,7 +237,8 @@ func (d *diskIndex) IterateUnused(fn func(tx Transaction) error) (err error) {
 	}
 	rows, err := d.db.Query(`
 		SELECT rowid, ref, id, date_unix, amount, currency, name, source
-		FROM tx;
+		FROM tx
+		ORDER BY rowid;
 	`)
 	if err != nil {
 		return fmt.Errorf("iterate unused: %w", err)

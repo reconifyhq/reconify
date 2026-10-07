@@ -243,9 +243,9 @@ func reconcileStreamingWithOptions(
 	// rightMergeSeen deduplicates for "merge" (first-seen wins).
 	rightMergeSeen := make(map[string]bool)
 	// rightLatestBuf accumulates last-seen rows per GroupKey for "latest".
-	var rightLatestBuf map[string]Transaction
+	var rightLatestBuf *latestBuffer
 	if rightPolicy == config.DuplicatePolicyLatest {
-		rightLatestBuf = make(map[string]Transaction)
+		rightLatestBuf = newLatestBuffer()
 	}
 	var totalRight int
 	reporter.Start("right_index", rightSource, rightSource, nil)
@@ -294,7 +294,7 @@ func reconcileStreamingWithOptions(
 			return idx.Add(tx)
 		case config.DuplicatePolicyLatest:
 			if tx.GroupKey != "" {
-				rightLatestBuf[tx.GroupKey] = tx // overwrite with latest row
+				rightLatestBuf.put(tx.GroupKey, tx) // overwrite with latest row
 				return nil
 			}
 			if err := emitFinancial(tx); err != nil {
@@ -311,13 +311,13 @@ func reconcileStreamingWithOptions(
 	}
 	// For "latest": bulk-add the last-seen row per GroupKey after the full scan.
 	if rightPolicy == config.DuplicatePolicyLatest {
-		for _, tx := range rightLatestBuf {
+		if err := rightLatestBuf.each(func(tx Transaction) error {
 			if err := emitFinancial(tx); err != nil {
 				return err
 			}
-			if err := idx.Add(tx); err != nil {
-				return err
-			}
+			return idx.Add(tx)
+		}); err != nil {
+			return err
 		}
 	}
 	reporter.Complete(totalRight)
@@ -352,9 +352,9 @@ func reconcileStreamingWithOptions(
 	// leftMergeSeen deduplicates for "merge" (first-seen wins).
 	leftMergeSeen := make(map[string]bool)
 	// leftLatestBuf accumulates last-seen rows per GroupKey for "latest".
-	var leftLatestBuf map[string]Transaction
+	var leftLatestBuf *latestBuffer
 	if leftPolicy == config.DuplicatePolicyLatest {
-		leftLatestBuf = make(map[string]Transaction)
+		leftLatestBuf = newLatestBuffer()
 	}
 	threshold := matching.ResolveNameMatchThreshold(pair.NameMatchThreshold)
 
@@ -481,7 +481,7 @@ func reconcileStreamingWithOptions(
 			return doMatchLeft(ltx)
 		case config.DuplicatePolicyLatest:
 			if ltx.GroupKey != "" {
-				leftLatestBuf[ltx.GroupKey] = ltx // overwrite with latest row
+				leftLatestBuf.put(ltx.GroupKey, ltx) // overwrite with latest row
 				return nil
 			}
 			if err := emitFinancial(ltx); err != nil {
@@ -498,16 +498,16 @@ func reconcileStreamingWithOptions(
 	}
 	// For "latest": process buffered left rows after the full scan completes.
 	if leftPolicy == config.DuplicatePolicyLatest {
-		for _, ltx := range leftLatestBuf {
+		if err := leftLatestBuf.each(func(ltx Transaction) error {
 			if ctx.Err() != nil {
 				return ctx.Err()
 			}
 			if err := emitFinancial(ltx); err != nil {
 				return err
 			}
-			if err := doMatchLeft(ltx); err != nil {
-				return err
-			}
+			return doMatchLeft(ltx)
+		}); err != nil {
+			return err
 		}
 	}
 	reporter.Complete(totalLeft)

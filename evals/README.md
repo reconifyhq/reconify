@@ -127,7 +127,9 @@ classification and exact-result correctness.
 
 Results are byte-stable. `reconcile --format json --deterministic` emits no `run_id` or
 timestamp (those appear only under `--audit`), so `exact_match` is a plain file
-comparison with no normalization.
+comparison with no normalization. Event order is part of that guarantee: the deterministic
+JSON sorts each section by source and numeric row (duplicate groups by reference), so a
+scenario may contain several duplicate groups and several unmatched rows per side.
 
 Agents are stochastic, so a single run is not a measurement. Run k trials per scenario
 and report both `pass^k` (every trial passed — reliability) and `pass@1` (any trial
@@ -203,9 +205,6 @@ Build scenarios only from what the Engine can do today. These limits shaped the 
 - A `file_pattern` that matches several files reads only the first match in sorted order,
   and `date_window: 0d` disables the date check rather than requiring an exact date; use
   `1d` for a strict window.
-- Duplicate groups and unmatched rows are not emitted in a stable order when there are
-  several of them, which breaks the byte-stable answer key. Keep at most one duplicate
-  group and one unmatched row per side in any scenario that has duplicates.
 
 ## Adding a scenario
 
