@@ -55,3 +55,6 @@ build/
 # Auditing
 
 .deepsec/
+
+# Local agent workspace and eval artifacts
+.context/
