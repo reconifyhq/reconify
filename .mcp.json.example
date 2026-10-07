@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "reconify-engine": {
+      "command": "reconify",
+      "args": ["mcp"]
+    }
+  }
+}

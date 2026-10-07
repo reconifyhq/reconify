@@ -83,6 +83,7 @@ func capabilityCommands() map[string]schemas.CommandCapability {
 		"config validate":        {Description: "Validate a reconify.yaml configuration.", Interactive: false},
 		"config init":            {Description: "Interactively create a reconify.yaml configuration from sample files.", Interactive: true},
 		"inspect":                {Description: "Deterministically profile an input file's format and column types before writing a config.", Interactive: false},
+		"mcp":                    {Description: "Serve the Reconify Engine MCP server over stdio for MCP clients.", Interactive: false},
 		"parse":                  {Description: "Parse an input file according to a configured source parser.", Interactive: false},
 		"reconcile":              {Description: "Run a configured or confidence-gated auto-inferred reconciliation and emit result events.", Interactive: false},
 		"schema capabilities":    {Description: "Print the published capabilities schema.", Interactive: false},
