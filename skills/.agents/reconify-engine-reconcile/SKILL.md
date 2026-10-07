@@ -20,8 +20,8 @@ order from the directory that will contain `reconify.yaml`.
 | The workflow must run unattended with an exit-code policy | `reconify-engine-ci` |
 
 This skill owns the end-to-end sequence. Delegate only for config detail at checkpoint 3, a large
-input at checkpoint 4, and diagnosis at checkpoint 5, then return here. Do not hand the whole task
-to another skill.
+input at checkpoint 4, and diagnosis at checkpoint 5 or 6, then return here. Do not hand the whole
+task to another skill.
 
 ## Artifact convention
 
@@ -122,6 +122,16 @@ reconify config check-source --config reconify.yaml --source SOURCE --file INPUT
 Run `check-source` for every configured source. This checkpoint is complete only when validation and
 all source checks pass against the real inputs.
 
+When both inputs have at least 100 rows, `config infer` is a fast path to a first draft:
+
+```bash
+reconify config infer LEFT RIGHT
+```
+
+Treat the proposal as evidence, never as a config: copy only mappings you have confirmed against the
+`inspect` profiles, then run `validate` and `check-source` as above. A single-pair config lets
+`reconcile` and `verify` omit `--pair`; keep it explicit in retained commands anyway.
+
 ## 4. Produce the retained result
 
 Use explicit artifact settings so the result includes clean matches:
@@ -153,12 +163,35 @@ policy decision, and rerun from config validation.
 This checkpoint is complete when the explanation names the same counters as the result and every
 surprising difference is either corrected or reported as unresolved.
 
+## 6. Verify the deliverables
+
+```bash
+reconify verify --config reconify.yaml --pair PAIR
+```
+
+`verify` checks the config, each source file, that `result.json` reproduces on a fresh deterministic
+run, and that `explanation.json` agrees with `result.json`. It exits `0` when every check passes or
+is skipped, `2` for an invalid config, and `5` when any other check fails. Read the failing entries
+in `checks[]`, correct the cause at the earliest checkpoint it points to, regenerate the artifacts,
+and rerun. A `skip` means that artifact does not exist yet; produce it rather than accepting the skip.
+
+This checkpoint is complete when `verify` exits `0` with no skipped artifact check.
+
 ## Recovery and completion
 
 On any command failure, read its diagnostic, correct the current checkpoint, and rerun that command.
-A missing guessed path is recoverable: discover the actual path and continue.
+A missing guessed path is recoverable: discover the actual path and continue. Diagnostics carry a
+stable `code`; recover by code:
 
-Finish with all three deliverables:
+| Diagnostic | Recovery |
+|---|---|
+| `USAGE_ERROR` | Read `details.usage` and `details.did_you_mean`, run `reconify COMMAND --help`, and correct the invocation. Never guess flags. |
+| `CONFIG_INVALID` | Fix each entry in `details.errors[]` at its `path`, then rerun `config validate`. With several pairs and no `--pair`, `details.pairs` lists the names. |
+| `INPUT_MISMATCH`, `INPUT_UNREADABLE` | The file does not fit the mapping, or cannot be read. Rerun `inspect` on the real file and `check-source`; fix the path, `file_pattern`, header, or date layout. |
+| `INFERENCE_AMBIGUOUS` | Read `details.reasons`, choose each uncertain mapping from the `inspect` profile, and write it explicitly. |
+| `VERIFICATION_FAILED` | Read the failing entries in `checks[]` and fix the artifact or mapping each names. |
+
+Finish with all three deliverables, and only after `reconify verify` exits `0`:
 
 - validated `reconify.yaml`;
 - retained `result.json`;
@@ -172,6 +205,7 @@ The final report states, in this order:
   differences, duplicates, and grouped matches;
 - every assumption, tagged with its tier from checkpoint 2;
 - unresolved warnings or diagnostics;
-- the exact commands used to verify the work.
+- the exact commands used to verify the work, ending with the passing `reconify verify`.
 
-Writing YAML or obtaining one successful command is an intermediate state, not completion.
+Writing YAML or obtaining one successful command is an intermediate state, not completion. The
+deliverables are done only when `reconify verify` passes.

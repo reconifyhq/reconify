@@ -9,7 +9,8 @@
     "scripts/install-skills.js",
     "skills/.agents/",
     "skills/.claude/",
-    "skills/.codex/"
+    "skills/.codex/",
+    "skills/.hooks/"
   ],
   "keywords": [
     "reconify",

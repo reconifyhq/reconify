@@ -23,6 +23,11 @@ assumption for a safe default, and ask the user whenever plausible readings woul
 matching outcomes. Use `inspect` evidence for column mappings and `config schema` for YAML shape;
 examples and memory are not config sources.
 
+For a first draft from two files with at least 100 rows each, `reconify config infer LEFT RIGHT` is a
+fast path; confirm its proposal against `inspect` evidence, then validate and run `check-source` as
+the end-to-end workflow requires. A single pair keeps later commands short because `--pair` can be
+omitted, though naming the pair keeps the workspace interface stable.
+
 Bootstrap is complete only when the end-to-end workflow has produced a validated `reconify.yaml`, a
-retained `result.json`, and a retained `explanation.json`, and the final report covers every item in
-that workflow's completion checklist.
+retained `result.json`, and a retained `explanation.json`, `reconify verify` passes, and the final
+report covers every item in that workflow's completion checklist.
