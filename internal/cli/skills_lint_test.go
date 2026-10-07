@@ -55,7 +55,7 @@ func TestSkillsLint(t *testing.T) {
 	root := newRootCmd("test", "test")
 	checked := 0
 	for _, file := range files {
-		data, err := os.ReadFile(file)
+		data, err := os.ReadFile(file) // #nosec G304 -- checked-in skill files found by glob.
 		if err != nil {
 			t.Fatalf("read %s: %v", file, err)
 		}
