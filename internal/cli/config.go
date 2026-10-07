@@ -2,8 +2,10 @@
 package cli
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
+	"sort"
 	"strings"
 
 	"github.com/reconifyhq/reconify/config"
@@ -44,11 +46,15 @@ This checks that all required fields are present and have valid values.`,
 			}
 
 			if errs := cfg.Validate(); len(errs) > 0 {
-				cmd.PrintErrf("❌ %s is invalid:\n", cfgPath)
-				for _, e := range errs {
-					cmd.PrintErrf("  - %v\n", e)
+				// Under --agent or --error-format json the diagnostic envelope
+				// (details.errors) is the only stderr output.
+				if errorFormat != "json" {
+					cmd.PrintErrf("❌ %s is invalid:\n", cfgPath)
+					for _, e := range errs {
+						cmd.PrintErrf("  - %v\n", e)
+					}
 				}
-				return configErr("validation failed")
+				return validationErr("validation failed", errs)
 			}
 
 			cmd.PrintErrf("✅ %s is valid\n", cfgPath)
@@ -93,96 +99,7 @@ This validates that required columns exist and that sample data can be parsed.`,
 				return configErrf("source %q not found in config", sourceName)
 			}
 
-			headers, err := engine.ReadInputHeaders(cmd.Context(), filePath, source.Parser)
-			if err != nil {
-				return inputErr(ErrCodeConfig, "config_error", fmt.Sprintf("failed to read file: %v", err), diagnosticCodeInputUnreadable)
-			}
-
-			headerSet := make(map[string]bool)
-			for _, header := range headers {
-				headerSet[strings.ToLower(strings.TrimSpace(header))] = true
-			}
-
-			valid := true
-
-			if !hasHeader(headerSet, source.Parser.DateCol) {
-				cmd.PrintErrf("[x] date_col %q not found in input fields\n", source.Parser.DateCol)
-				valid = false
-			} else {
-				cmd.PrintErrf("[ok] date_col %q found\n", source.Parser.DateCol)
-			}
-
-			if !hasHeader(headerSet, source.Parser.AmountCol) {
-				cmd.PrintErrf("[x] amount_col %q not found in input fields\n", source.Parser.AmountCol)
-				valid = false
-			} else {
-				cmd.PrintErrf("[ok] amount_col %q found\n", source.Parser.AmountCol)
-			}
-
-			if source.Parser.CurrencyCol != "" && !hasHeader(headerSet, source.Parser.CurrencyCol) {
-				cmd.PrintErrf("[x] currency_col %q not found in input fields\n", source.Parser.CurrencyCol)
-				valid = false
-			} else {
-				cmd.PrintErrf("[ok] currency_col %q found\n", source.Parser.CurrencyCol)
-			}
-
-			if source.Parser.NameCol != "" && !hasHeader(headerSet, source.Parser.NameCol) {
-				cmd.PrintErrf("[x] name_col %q not found in input fields\n", source.Parser.NameCol)
-				valid = false
-			} else {
-				cmd.PrintErrf("[ok] name_col %q found\n", source.Parser.NameCol)
-			}
-
-			if source.Parser.RefCol != "" && !hasHeader(headerSet, source.Parser.RefCol) {
-				cmd.PrintErrf("[x] ref_col %q not found in input fields\n", source.Parser.RefCol)
-				valid = false
-			} else {
-				cmd.PrintErrf("[ok] ref_col %q found\n", source.Parser.RefCol)
-			}
-			if source.Parser.Financials != nil {
-				financialColumns := make(map[string]string, len(source.Parser.Financials.Fields)+2)
-				for name, col := range source.Parser.Financials.Fields {
-					financialColumns[name] = col
-				}
-				if source.Parser.Financials.GrossCol != "" {
-					financialColumns["gross"] = source.Parser.Financials.GrossCol
-				}
-				if source.Parser.Financials.NetCol != "" {
-					financialColumns["net"] = source.Parser.Financials.NetCol
-				}
-				for name, col := range financialColumns {
-					if !hasHeader(headerSet, col) {
-						cmd.PrintErrf("[x] financial field %q column %q not found in input fields\n", name, col)
-						valid = false
-					} else {
-						cmd.PrintErrf("[ok] financial field %q column %q found\n", name, col)
-					}
-				}
-			}
-
-			if !valid {
-				cmd.PrintErrf("Available columns: %s\n", strings.Join(headers, ", "))
-				return inputErr(ErrCodeConfig, "config_error", fmt.Sprintf("source %q does not match file %q", sourceName, filePath), diagnosticCodeInputMismatch)
-			}
-
-			if rows > 0 {
-				result, err := sample.Validate(cmd.Context(), filePath, source.Parser, rows)
-				if err != nil {
-					return inputErr(ErrCodeConfig, "config_error", fmt.Sprintf("failed to parse sample rows: %v", err), diagnosticCodeInputMismatch)
-				}
-				for _, rowErr := range result.Errors {
-					cmd.PrintErrf("[x] row %d: %s\n", rowErr.Row, rowErr.Message)
-				}
-				if len(result.Errors) > 0 {
-					cmd.PrintErrf("[x] headers valid; %d of %d sampled rows failed to parse\n", len(result.Errors), result.RowsScanned)
-					return inputErr(ErrCodeConfig, "config_error", fmt.Sprintf("source %q has invalid sample rows", sourceName), diagnosticCodeInputMismatch)
-				}
-				cmd.PrintErrf("[ok] %d sampled rows parsed\n", result.SuccessfulRows)
-			}
-
-			cmd.PrintErrf("[OK] source %q matches file %q\n", sourceName, filePath)
-
-			return nil
+			return runSourceCheck(cmd.Context(), sourceName, source, filePath, rows, cmd.PrintErrf)
 		},
 	}
 
@@ -191,6 +108,101 @@ This validates that required columns exist and that sample data can be parsed.`,
 	cmd.Flags().IntVar(&rows, "rows", 10, "Number of data rows to parse after checking headers (0 checks headers only)")
 
 	return cmd
+}
+
+// runSourceCheck verifies that filePath carries the columns and sample rows the
+// source mapping expects. Findings are reported line by line through logf
+// ("[ok]" / "[x]" prefixes); the returned error is a typed diagnostic.
+func runSourceCheck(ctx context.Context, name string, source config.Source, filePath string, rows int, logf func(format string, args ...any)) error {
+	headers, err := engine.ReadInputHeaders(ctx, filePath, source.Parser)
+	if err != nil {
+		return inputErr(ErrCodeConfig, "config_error", fmt.Sprintf("failed to read file: %v", err), diagnosticCodeInputUnreadable)
+	}
+
+	headerSet := make(map[string]bool)
+	for _, header := range headers {
+		headerSet[strings.ToLower(strings.TrimSpace(header))] = true
+	}
+
+	valid := true
+
+	if !hasHeader(headerSet, source.Parser.DateCol) {
+		logf("[x] date_col %q not found in input fields\n", source.Parser.DateCol)
+		valid = false
+	} else {
+		logf("[ok] date_col %q found\n", source.Parser.DateCol)
+	}
+
+	if !hasHeader(headerSet, source.Parser.AmountCol) {
+		logf("[x] amount_col %q not found in input fields\n", source.Parser.AmountCol)
+		valid = false
+	} else {
+		logf("[ok] amount_col %q found\n", source.Parser.AmountCol)
+	}
+
+	if source.Parser.CurrencyCol != "" && !hasHeader(headerSet, source.Parser.CurrencyCol) {
+		logf("[x] currency_col %q not found in input fields\n", source.Parser.CurrencyCol)
+		valid = false
+	} else {
+		logf("[ok] currency_col %q found\n", source.Parser.CurrencyCol)
+	}
+
+	if source.Parser.NameCol != "" && !hasHeader(headerSet, source.Parser.NameCol) {
+		logf("[x] name_col %q not found in input fields\n", source.Parser.NameCol)
+		valid = false
+	} else {
+		logf("[ok] name_col %q found\n", source.Parser.NameCol)
+	}
+
+	if source.Parser.RefCol != "" && !hasHeader(headerSet, source.Parser.RefCol) {
+		logf("[x] ref_col %q not found in input fields\n", source.Parser.RefCol)
+		valid = false
+	} else {
+		logf("[ok] ref_col %q found\n", source.Parser.RefCol)
+	}
+	if source.Parser.Financials != nil {
+		financialColumns := make(map[string]string, len(source.Parser.Financials.Fields)+2)
+		for name, col := range source.Parser.Financials.Fields {
+			financialColumns[name] = col
+		}
+		if source.Parser.Financials.GrossCol != "" {
+			financialColumns["gross"] = source.Parser.Financials.GrossCol
+		}
+		if source.Parser.Financials.NetCol != "" {
+			financialColumns["net"] = source.Parser.Financials.NetCol
+		}
+		for name, col := range financialColumns {
+			if !hasHeader(headerSet, col) {
+				logf("[x] financial field %q column %q not found in input fields\n", name, col)
+				valid = false
+			} else {
+				logf("[ok] financial field %q column %q found\n", name, col)
+			}
+		}
+	}
+
+	if !valid {
+		logf("Available columns: %s\n", strings.Join(headers, ", "))
+		return inputErr(ErrCodeConfig, "config_error", fmt.Sprintf("source %q does not match file %q", name, filePath), diagnosticCodeInputMismatch)
+	}
+
+	if rows > 0 {
+		result, err := sample.Validate(ctx, filePath, source.Parser, rows)
+		if err != nil {
+			return inputErr(ErrCodeConfig, "config_error", fmt.Sprintf("failed to parse sample rows: %v", err), diagnosticCodeInputMismatch)
+		}
+		for _, rowErr := range result.Errors {
+			logf("[x] row %d: %s\n", rowErr.Row, rowErr.Message)
+		}
+		if len(result.Errors) > 0 {
+			logf("[x] headers valid; %d of %d sampled rows failed to parse\n", len(result.Errors), result.RowsScanned)
+			return inputErr(ErrCodeConfig, "config_error", fmt.Sprintf("source %q has invalid sample rows", name), diagnosticCodeInputMismatch)
+		}
+		logf("[ok] %d sampled rows parsed\n", result.SuccessfulRows)
+	}
+
+	logf("[OK] source %q matches file %q\n", name, filePath)
+	return nil
 }
 
 func hasHeader(headers map[string]bool, name string) bool {
@@ -327,4 +339,27 @@ Agents can call this once to self-bootstrap context without reading the source c
 			return enc.Encode(out)
 		},
 	}
+}
+
+// resolvePairName returns the pair to run. An explicit name is returned as is
+// (callers report unknown names themselves). When name is empty, a config with
+// exactly one pair defaults to it; otherwise the CONFIG_INVALID diagnostic lists
+// the available pair names in details.pairs.
+func resolvePairName(cfg *config.Config, name string) (string, error) {
+	if name != "" {
+		return name, nil
+	}
+	pairs := make([]string, 0, len(cfg.Pairs))
+	for pairName := range cfg.Pairs {
+		pairs = append(pairs, pairName)
+	}
+	sort.Strings(pairs)
+	if len(pairs) == 1 {
+		return pairs[0], nil
+	}
+	msg := "--pair is required: config defines no pairs"
+	if len(pairs) > 1 {
+		msg = fmt.Sprintf("--pair is required: config defines %d pairs (%s)", len(pairs), strings.Join(pairs, ", "))
+	}
+	return "", configErrDetails(msg, map[string]any{"pairs": pairs})
 }

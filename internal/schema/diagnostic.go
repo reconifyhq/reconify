@@ -10,6 +10,11 @@ import (
 
 const diagnosticSchemaID = "urn:reconify:engine:diagnostic:v1"
 
+// diagnosticCategories lists the published diagnostic.category values.
+func diagnosticCategories() []any {
+	return []any{"config", "input", "inference", "execution", "internal", "usage", "verification"}
+}
+
 // GenerateDiagnosticSchema constructs the published schema for structured
 // Engine command failures.
 func GenerateDiagnosticSchema() (*jsonschema.Schema, error) {
@@ -56,7 +61,7 @@ func GenerateDiagnosticSchema() (*jsonschema.Schema, error) {
 		}
 	}
 	if property := diagnosticPayload.Properties["category"]; property != nil {
-		property.Enum = []any{"config", "input", "inference", "execution", "internal"}
+		property.Enum = diagnosticCategories()
 	}
 	if property := diagnosticPayload.Properties["suggestions"]; property != nil {
 		property.Types = nil

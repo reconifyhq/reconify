@@ -2,9 +2,11 @@
 package config
 
 import (
+	"errors"
 	"fmt"
 	"math"
 	"os"
+	"regexp"
 	"sort"
 	"strings"
 	"time"
@@ -335,8 +337,65 @@ func Load(path string) (*Config, error) {
 	return &cfg, nil
 }
 
-// Validate performs structural validation on the configuration
+// ValidationError is one structural configuration problem. Error returns the
+// full human-readable text; Path and Message expose it in structured form for
+// machine-readable diagnostics. Path is a dotted YAML path such as
+// "sources.left.parser.date_col" and is empty when the problem is not tied to a
+// single field.
+type ValidationError struct {
+	Path    string
+	Message string
+	text    string
+}
+
+// Error returns the human-readable validation text.
+func (e *ValidationError) Error() string { return e.text }
+
+// pathPrefix matches the leading YAML path token of a validation message.
+var pathPrefix = regexp.MustCompile(`^(version|timezone|(?:index|sources|pairs)(?:\.[A-Za-z0-9_\-\[\]]+)*)`)
+
+func newValidationError(err error) *ValidationError {
+	text := err.Error()
+	out := &ValidationError{Message: text, text: text}
+	switch {
+	case strings.HasPrefix(text, "at least one source is required"):
+		out.Path = "sources"
+	case pathPrefix.MatchString(text):
+		path := pathPrefix.FindString(text)
+		out.Path = path
+		if rest, ok := strings.CutPrefix(text, path+": "); ok {
+			out.Message = rest
+		}
+	}
+	return out
+}
+
+// ValidationErrors converts errors returned by Validate into structured
+// entries. Errors that did not originate from Validate keep an empty path.
+func ValidationErrors(errs []error) []ValidationError {
+	out := make([]ValidationError, 0, len(errs))
+	for _, err := range errs {
+		var ve *ValidationError
+		if errors.As(err, &ve) {
+			out = append(out, ValidationError{Path: ve.Path, Message: ve.Message, text: ve.text})
+			continue
+		}
+		out = append(out, ValidationError{Message: err.Error(), text: err.Error()})
+	}
+	return out
+}
+
+// Validate performs structural validation on the configuration. Every returned
+// error is a *ValidationError.
 func (c *Config) Validate() []error {
+	errs := c.validate()
+	for i, err := range errs {
+		errs[i] = newValidationError(err)
+	}
+	return errs
+}
+
+func (c *Config) validate() []error {
 	var errs []error
 
 	// Validate version

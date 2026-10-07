@@ -18,6 +18,7 @@ func newSchemaCmd() *cobra.Command {
 	cmd.AddCommand(newProfileSchemaCmd())
 	cmd.AddCommand(newConfigProposalSchemaCmd())
 	cmd.AddCommand(newExplanationSchemaCmd())
+	cmd.AddCommand(newVerificationSchemaCmd())
 	cmd.AddCommand(newEvalScenarioSchemaCmd())
 	cmd.AddCommand(newEvalScenarioV2SchemaCmd())
 	return cmd
@@ -77,6 +78,21 @@ func newExplanationSchemaCmd() *cobra.Command {
 			_ = args
 			if _, err := cmd.OutOrStdout().Write(schemas.ExplanationV1()); err != nil {
 				return fmt.Errorf("write explanation schema: %w", err)
+			}
+			return nil
+		},
+	}
+}
+
+func newVerificationSchemaCmd() *cobra.Command {
+	return &cobra.Command{
+		Use:   "verification",
+		Short: "Print the Engine verification schema",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			_ = args
+			if _, err := cmd.OutOrStdout().Write(schemas.VerificationV1()); err != nil {
+				return fmt.Errorf("write verification schema: %w", err)
 			}
 			return nil
 		},

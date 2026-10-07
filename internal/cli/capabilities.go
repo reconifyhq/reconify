@@ -31,6 +31,10 @@ func capabilityFormats() map[string]schemas.FormatCapability {
 			Formats: []string{"json"},
 			Default: "json",
 		},
+		"verify": {
+			Formats: []string{"json", "text"},
+			Default: "json",
+		},
 	}
 }
 
@@ -67,9 +71,10 @@ func capabilityExitCodes() map[string]string {
 	return map[string]string{
 		"0": "Success.",
 		"1": "Unexpected or internal error.",
-		"2": "Config or validation error (bad YAML, missing pair/source, column not found).",
+		"2": "Config, validation, or usage error (bad YAML, missing pair/source, column not found, unknown command or flag, wrong argument count).",
 		"3": "Reconcile completed with unmatched rows. Only returned when --fail-if-unmatched is set.",
 		"4": "Reconcile completed with exception events (amount_diff, timing_diff, financial, settlement, or unmatched). Only returned when --fail-if-exceptions is set. Takes precedence over exit code 3 when both flags are set.",
+		"5": "verify found a failing check (source mismatch, stale or non-reproducible result, inconsistent explanation). Exit code 2 is used instead when the config itself is invalid.",
 	}
 }
 
@@ -92,6 +97,8 @@ func capabilityCommands() map[string]schemas.CommandCapability {
 		"schema explanation":     {Description: "Print the published explanation schema.", Interactive: false},
 		"schema profile":         {Description: "Print the published file profile schema.", Interactive: false},
 		"schema result":          {Description: "Print the published reconciliation result schema.", Interactive: false},
+		"schema verification":    {Description: "Print the published verification schema.", Interactive: false},
+		"verify":                 {Description: "Verify reconify.yaml, result.json, and explanation.json: valid config, matching source files, reproducible result, consistent explanation.", Interactive: false},
 	}
 }
 
@@ -167,6 +174,14 @@ func capabilityErrorCodes() map[string]schemas.ErrorCodeCapability {
 			Category: diagnosticCategoryExecution, LegacyCode: "exceptions", ExitCode: ErrCodeExceptions,
 			Description: "Reconciliation completed with exception events under --fail-if-exceptions.",
 		},
+		diagnosticCodeUsageError: {
+			Category: diagnosticCategoryUsage, LegacyCode: "usage_error", ExitCode: ErrCodeUsage,
+			Description: "Unknown command or flag, wrong argument count, or an invalid flag value. details.usage holds the usage line; details.did_you_mean names the closest valid command or flag.",
+		},
+		diagnosticCodeVerificationFailed: {
+			Category: diagnosticCategoryVerification, LegacyCode: "verification_failed", ExitCode: ErrCodeVerification,
+			Description: "reconify verify found one or more failing checks.",
+		},
 		diagnosticCodeInternalError: {
 			Category: diagnosticCategoryInternal, LegacyCode: "error", ExitCode: 1,
 			Description: "An unexpected internal or command error occurred.",
@@ -194,6 +209,7 @@ func buildCapabilities() schemas.Capabilities {
 			"explanation":     schemas.ExplanationSchemaV1,
 			"profile":         schemas.ProfileSchemaV1,
 			"result":          schemas.ResultSchemaV1,
+			"verification":    schemas.VerificationSchemaV1,
 		},
 		ErrorCodes: capabilityErrorCodes(),
 		ExitCodes:  capabilityExitCodes(),

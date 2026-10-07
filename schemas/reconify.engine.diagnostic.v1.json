@@ -34,7 +34,9 @@
                 "input",
                 "inference",
                 "execution",
-                "internal"
+                "internal",
+                "usage",
+                "verification"
               ]
             },
             "message": {

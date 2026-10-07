@@ -33,10 +33,10 @@ Formats:
 		RunE: func(cmd *cobra.Command, args []string) error {
 			_ = args
 			if sourceName == "" {
-				return fmt.Errorf("--source is required")
+				return usageErr(cmd, "--source is required", "")
 			}
 			if filePath == "" {
-				return fmt.Errorf("--file is required")
+				return usageErr(cmd, "--file is required", "")
 			}
 
 			cfgPath := getConfigPath()
@@ -46,7 +46,7 @@ Formats:
 			}
 
 			if errs := cfg.Validate(); len(errs) > 0 {
-				return configErrf("config validation failed: %v", errs[0])
+				return validationErr(fmt.Sprintf("config validation failed: %v", errs[0]), errs)
 			}
 
 			source, ok := cfg.Sources[sourceName]
@@ -69,7 +69,7 @@ Formats:
 			case "table":
 				return parseTable(sourceName, resolvedPath, source.Parser, cmd)
 			default:
-				return fmt.Errorf("unknown format %q (valid: ndjson, csv, table, json)", format)
+				return usageErr(cmd, fmt.Sprintf("unknown format %q (valid: ndjson, csv, table, json)", format), "")
 			}
 		},
 	}

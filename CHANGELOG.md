@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+
+- **`reconify verify`** — checks the agent workflow deliverables and prints a `reconify.engine.verification.v1` checklist: `config_valid`, `source_check:<name>` (each `file_pattern` resolved relative to the config file, then the same checks as `config check-source`), `result_present`, `result_reproducible` (a fresh run must reproduce the recorded summary counters, for any result format or mode), `explanation_present`, and `explanation_consistent` (equals `reconify explain`). Exits `0` when every check passes or is skipped, `2` for an invalid config, and `5` (`VERIFICATION_FAILED`) for any other failing check. Published as `reconify schema verification`.
+- **`RECONIFY_TRACE_FILE`** — when set, every `reconify` process appends one JSON line (`argv`, `exit_code`, `duration_ms`, `diagnostic_code`) to that file on exit. Write failures never change output or exit codes.
+- **Structured validation errors** — `CONFIG_INVALID` diagnostics from config validation carry `details.errors`, an array of `{path, message}`. Under `--agent` or `--error-format json` the human `is invalid` listing is no longer written to stderr; the JSON envelope is the only stderr output.
+- **`reconify config infer LEFT RIGHT`** accepts the two files positionally. Mixing positional files with `--left`/`--right` is a usage error.
+- **Default `--pair`** — `reconcile` and `verify` use the only pair when the config defines exactly one. With several pairs, the `CONFIG_INVALID` diagnostic lists them in `details.pairs`.
+- The published diagnostic schema allows the `usage` and `verification` categories, and `capabilities` lists `verify`, `schema verification`, the `USAGE_ERROR` and `VERIFICATION_FAILED` codes, and exit code `5`.
+
+### Changed
+
+- **Usage errors now exit `2` with `USAGE_ERROR`** instead of exiting `1` as `INTERNAL_ERROR`. This covers unknown commands and flags, wrong argument counts, and invalid flag values (`--top abc`). The diagnostic has category `usage`, legacy code `usage_error`, `details.usage`, `details.did_you_mean` when a close command or flag exists, and a suggestion naming `reconify <command> --help`. Scripts that matched exit code `1` for these cases must now match `2`. Bare group commands (`reconify config`) still print help; an unknown subcommand under them is now a usage error rather than silently printing help.
+- Commands that accept no positional arguments now reject them as usage errors instead of ignoring them.
+
 ## [0.7.0] - 2026-08-30
 
 ### Added

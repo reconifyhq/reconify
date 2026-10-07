@@ -5,7 +5,9 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/reconifyhq/reconify/config"
 	"github.com/reconifyhq/reconify/schemas"
+	"github.com/spf13/cobra"
 )
 
 // Exit codes for the CLI. Agents and scripts should branch on these values.
@@ -18,6 +20,13 @@ const (
 	// amount_diff, timing_diff, or unmatched event was emitted. It is a superset of
 	// --fail-if-unmatched and takes precedence over ErrCodeUnmatched when both flags are set.
 	ErrCodeExceptions = 4
+	// ErrCodeVerification is returned by verify when the config is valid but any
+	// other deliverable check fails.
+	ErrCodeVerification = 5
+	// ErrCodeUsage is returned for command-line usage errors: unknown command or
+	// flag, wrong argument count, or an unparsable flag value. It shares the
+	// value of ErrCodeConfig because both mean "fix the invocation or config".
+	ErrCodeUsage = 2
 )
 
 const (
@@ -30,6 +39,8 @@ const (
 	diagnosticCodeUnmatchedRows          = "UNMATCHED_ROWS"
 	diagnosticCodeExceptionsFound        = "EXCEPTIONS_FOUND"
 	diagnosticCodeInternalError          = "INTERNAL_ERROR"
+	diagnosticCodeUsageError             = "USAGE_ERROR"
+	diagnosticCodeVerificationFailed     = "VERIFICATION_FAILED"
 )
 
 const (
@@ -38,6 +49,9 @@ const (
 	diagnosticCategoryInference = "inference"
 	diagnosticCategoryExecution = "execution"
 	diagnosticCategoryInternal  = "internal"
+
+	diagnosticCategoryUsage        = "usage"
+	diagnosticCategoryVerification = "verification"
 )
 
 // Error is a typed error that carries an exit code and a short machine-readable
@@ -64,6 +78,58 @@ func configErr(msg string) *Error {
 // configErrf wraps a formatted message in an Error with ErrCodeConfig.
 func configErrf(format string, a ...any) *Error {
 	return configErr(fmt.Sprintf(format, a...))
+}
+
+// configErrDetails is configErr with extra structured details.
+func configErrDetails(msg string, details map[string]any) *Error {
+	return newCLIError(ErrCodeConfig, "config_error", msg,
+		diagnosticCodeConfigInvalid, diagnosticCategoryConfig,
+		"Fix the reported configuration or command arguments and rerun `reconify config validate`.", details)
+}
+
+// validationDetail is one entry of details.errors.
+type validationDetail struct {
+	Path    string `json:"path"`
+	Message string `json:"message"`
+}
+
+// validationErr reports structural config validation failures. msg keeps the
+// historical human text; details.errors carries every {path, message} entry.
+func validationErr(msg string, errs []error) *Error {
+	entries := config.ValidationErrors(errs)
+	list := make([]validationDetail, 0, len(entries))
+	for _, entry := range entries {
+		list = append(list, validationDetail{Path: entry.Path, Message: entry.Message})
+	}
+	return configErrDetails(msg, map[string]any{"errors": list})
+}
+
+// usageErr reports a command-line usage mistake. cmd supplies the usage line
+// and the --help suggestion; didYouMean is optional.
+func usageErr(cmd *cobra.Command, msg, didYouMean string) *Error {
+	commandPath := "reconify"
+	usage := "reconify [command] [flags]"
+	if cmd != nil {
+		commandPath = cmd.CommandPath()
+		usage = cmd.UseLine()
+		if cmd.HasSubCommands() {
+			usage = commandPath + " [command]"
+		}
+	}
+	details := map[string]any{"usage": usage}
+	if didYouMean != "" {
+		details["did_you_mean"] = didYouMean
+	}
+	return newCLIError(ErrCodeUsage, "usage_error", msg,
+		diagnosticCodeUsageError, diagnosticCategoryUsage,
+		fmt.Sprintf("Run `%s --help` to see valid usage.", commandPath), details)
+}
+
+// verificationErr reports that verify found failing checks.
+func verificationErr(msg string, details map[string]any) *Error {
+	return newCLIError(ErrCodeVerification, "verification_failed", msg,
+		diagnosticCodeVerificationFailed, diagnosticCategoryVerification,
+		"Fix the failing checks listed in the verification output and rerun `reconify verify`.", details)
 }
 
 // inputErr creates an input-related diagnostic while preserving the caller's
@@ -200,4 +266,17 @@ func DiagnosticEnvelope(err error) schemas.DiagnosticEnvelope {
 // MarshalDiagnosticEnvelope serializes a command error for stderr.
 func MarshalDiagnosticEnvelope(err error) ([]byte, error) {
 	return json.Marshal(DiagnosticEnvelope(err))
+}
+
+// TextError renders err for stderr in the default (non-JSON) error format. Usage
+// errors with a close match gain a "Did you mean" line.
+func TextError(err error) string {
+	text := fmt.Sprintf("Error: %v", err)
+	var cliErr *Error
+	if errors.As(err, &cliErr) && cliErr.Diagnostic != nil {
+		if suggestion, ok := cliErr.Diagnostic.Details["did_you_mean"].(string); ok && suggestion != "" {
+			text += fmt.Sprintf("\nDid you mean `%s`?", suggestion)
+		}
+	}
+	return text
 }

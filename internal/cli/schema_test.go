@@ -156,3 +156,18 @@ func TestConfigSchemaIncludesPublishedResultSchema(t *testing.T) {
 		}
 	}
 }
+
+func TestVerificationSchemaCommandPrintsPublishedArtifact(t *testing.T) {
+	root := newRootCmd("test", "test")
+	var out bytes.Buffer
+	root.SetOut(&out)
+	root.SetErr(&out)
+	root.SetArgs([]string{"schema", "verification"})
+
+	if err := root.Execute(); err != nil {
+		t.Fatalf("schema verification: %v", err)
+	}
+	if !bytes.Equal(out.Bytes(), schemas.VerificationV1()) {
+		t.Fatal("schema verification output differs from embedded published artifact")
+	}
+}
