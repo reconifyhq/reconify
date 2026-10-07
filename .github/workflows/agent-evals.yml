@@ -1,0 +1,95 @@
+name: Agent Evals
+
+# Lane 1 of the agent harness gates: a real coding agent reconciles the core and
+# messy scenarios once. It runs nightly, on demand, and on pull requests that
+# carry the `run-agent-evals` label. It needs the ANTHROPIC_API_KEY secret and
+# skips with a notice when the secret is absent (for example on fork PRs).
+
+on:
+  workflow_dispatch:
+    inputs:
+      agent:
+        description: 'Agent to evaluate (this workflow only installs the claude CLI)'
+        required: false
+        default: 'claude'
+      model:
+        description: 'Model id passed to the agent (empty uses the agent default)'
+        required: false
+        default: ''
+  schedule:
+    - cron: '17 3 * * *'
+  pull_request:
+    types: [labeled, synchronize]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: agent-evals-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  smoke:
+    name: Smoke (claude, core + messy)
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-agent-evals')
+    env:
+      EVAL_AGENT: ${{ inputs.agent || 'claude' }}
+      EVAL_MODEL: ${{ inputs.model }}
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # @v4
+
+    - name: Check for API key
+      id: guard
+      env:
+        ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      run: |
+        if [ -z "$ANTHROPIC_API_KEY" ]; then
+          echo "::notice title=Agent evals skipped::ANTHROPIC_API_KEY is not available to this run, so no agent was started."
+          echo "enabled=false" >> "$GITHUB_OUTPUT"
+        else
+          echo "enabled=true" >> "$GITHUB_OUTPUT"
+        fi
+
+    - name: Set up Go
+      if: steps.guard.outputs.enabled == 'true'
+      uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # @v5
+      with:
+        go-version: '1.25.13'
+
+    - name: Set up Node.js
+      if: steps.guard.outputs.enabled == 'true'
+      uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # @v7
+      with:
+        node-version: '24'
+        package-manager-cache: false
+
+    - name: Install Claude Code
+      if: steps.guard.outputs.enabled == 'true'
+      run: npm install -g @anthropic-ai/claude-code
+
+    - name: Run smoke evals
+      if: steps.guard.outputs.enabled == 'true'
+      env:
+        ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      run: make eval-smoke
+
+    - name: Summarize results
+      if: always() && steps.guard.outputs.enabled == 'true'
+      run: |
+        if [ -f .context/evals/smoke/report.json ]; then
+          go run ./cmd/reconify-eval summarize .context/evals/smoke/report.json --markdown >> "$GITHUB_STEP_SUMMARY"
+        else
+          echo "No eval report was produced." >> "$GITHUB_STEP_SUMMARY"
+        fi
+
+    - name: Upload eval artifacts
+      if: always() && steps.guard.outputs.enabled == 'true'
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # @v4
+      with:
+        name: agent-evals-smoke
+        path: .context/evals/smoke
+        if-no-files-found: ignore
