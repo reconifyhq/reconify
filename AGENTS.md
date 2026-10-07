@@ -8,12 +8,15 @@ Reconify is a Go CLI and library for reconciling financial CSV data across syste
 - Read `docs/content/docs/cli/engine/index.md` before changing matching behavior.
 - Read `docs/content/docs/cli/performance/index.md` before changing streaming, indexing, or large-file behavior.
 - Read `docs/architecture/partitioned-parallelism.md` before changing partition workers, result chunks, carry-forward, or queue behavior.
+- Read `docs/architecture/agent-harness.md` before changing diagnostics, `verify`, `mcp`, skills, hooks, or anything under `evals/` and `internal/evals/`.
 - Use canonical agent skills in `.agents/skills/` for repeatable workflows.
 
 ## Repo Map
 
 - `cmd/reconify/`: CLI entrypoint.
 - `internal/cli/`: Cobra commands and flags.
+- `internal/mcp/`: `reconify mcp`, the stdio MCP server (`reconify-engine`).
+- `internal/evals/`, `cmd/reconify-eval/`, `evals/`: the agent eval harness, its runner, and the graded corpus.
 - `config/`: YAML config loading and validation.
 - `engine/`: parser, reconciliation engine, indexes, output writers, audit data.
 - `examples/reconify.yaml`: baseline config example.
@@ -31,10 +34,12 @@ make lint
 make security
 make build
 make check
+make check-fast
 make preflight
+make eval-smoke
 ```
 
-Use `go test ./...` for quick verification. Use `make test` when race detection and coverage output are needed. **After any code change and before opening a PR, run `make check`.** It is the local equivalent of the GitHub Actions quality gate: dependency drift checks, formatting checks, linting, security scans, race-tested coverage, build, and smoke benchmarks. `make preflight` remains an alias for compatibility.
+Use `make check-fast` (or `go test ./...`) for quick verification while iterating. Use `make test` when race detection and coverage output are needed. **After any code change and before opening a PR, run `make check`.** It is the local equivalent of the GitHub Actions quality gate: dependency drift checks, formatting checks, linting, security scans, race-tested coverage, build, and smoke benchmarks. `make preflight` remains an alias for compatibility.
 
 ## CLI Conventions
 
@@ -80,6 +85,22 @@ Tool-specific files should be thin adapters that point back to these canonical s
 Financial configuration and output are covered by the reconcile, config, CLI, debug, and CI skills. Keep those skills aligned with `README.md`, `config/config.go`, and the generated result schema when changing the financial contract.
 
 **Installing skills into another project:** `npx @reconifyhq/skills` copies all skill files into the target project's `.agents/skills/`, `.claude/skills/`, and `.codex/skills/` directories. The npm package is defined in `package.json` at the repo root; the install script is `scripts/install-skills.js`.
+
+## Agent Harness
+
+The harness has a runtime half (structured diagnostics, `reconify verify`, skills, the optional hooks
+in `skills/.hooks/`, and `reconify mcp`) and an eval half (`reconify-eval`). When a change affects how
+agents use the Engine, measure it rather than assuming it helps:
+
+```bash
+make eval-smoke                       # 1 agent, 1 trial, core + messy tiers (spends API credits)
+make eval-summary                     # markdown summary of the smoke report
+make eval-compare BASE=a.json HEAD=b.json
+```
+
+`make check` runs only the deterministic lane: corpus honesty tests, the skill/CLI drift lint, and
+harness unit tests. It never calls an agent. Exit codes are frozen by the Agent Protocol: new failure
+modes reuse codes `0`–`4` and add a diagnostic code instead.
 
 ## Pull Requests
 
