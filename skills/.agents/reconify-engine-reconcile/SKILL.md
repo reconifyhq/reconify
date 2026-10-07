@@ -171,7 +171,7 @@ reconify verify --config reconify.yaml --pair PAIR
 
 `verify` checks the config, each source file, that `result.json` reproduces on a fresh deterministic
 run, and that `explanation.json` agrees with `result.json`. It exits `0` when every check passes or
-is skipped, `2` for an invalid config, and `5` when any other check fails. Read the failing entries
+is skipped and `2` when any check fails. Read the failing entries
 in `checks[]`, correct the cause at the earliest checkpoint it points to, regenerate the artifacts,
 and rerun. A `skip` means that artifact does not exist yet; produce it rather than accepting the skip.
 

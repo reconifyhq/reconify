@@ -535,9 +535,9 @@ func TestVerifyWorkspaceUnknownSubcommandMessage(t *testing.T) {
 }
 
 func TestVerifyWorkspaceReportsFailedChecksWithoutError(t *testing.T) {
-	// Exit code 5 means the checks ran and at least one failed: not a tool error.
+	// Exit code 2 with a checklist means the checks ran and at least one failed: not a tool error.
 	script := filepath.Join(t.TempDir(), "verify-reconify")
-	body := "#!/bin/sh\necho '{\"schema\":\"reconify.engine.verification.v1\",\"ok\":false,\"checks\":[]}'\nexit 5\n"
+	body := "#!/bin/sh\necho '{\"schema\":\"reconify.engine.verification.v1\",\"ok\":false,\"checks\":[]}'\nexit 2\n"
 	if err := os.WriteFile(script, []byte(body), 0o700); err != nil { // #nosec G306 -- test executable.
 		t.Fatal(err)
 	}

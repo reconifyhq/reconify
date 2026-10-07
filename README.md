@@ -311,10 +311,9 @@ Exit codes are stable for scripts and CI:
 |---:|---|
 | `0` | Command succeeded |
 | `1` | Unexpected or internal error |
-| `2` | Configuration, validation, or usage error (unknown command or flag, wrong argument count, invalid flag value) |
+| `2` | Configuration, validation, usage, or verification error (unknown command or flag, wrong argument count, invalid flag value, failing `reconify verify` check); the diagnostic code distinguishes them |
 | `3` | Reconciliation completed with unmatched rows when `--fail-if-unmatched` is set |
 | `4` | Reconciliation completed with exception events when `--fail-if-exceptions` is set; takes precedence over `3` |
-| `5` | `reconify verify` found a failing check; exit `2` is used instead when the config itself is invalid |
 
 Usage errors previously exited `1` as `INTERNAL_ERROR`. They now exit `2` with diagnostic code `USAGE_ERROR`, `details.usage`, and, when a close match exists, `details.did_you_mean`.
 

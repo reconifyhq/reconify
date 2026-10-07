@@ -240,6 +240,12 @@ with these clarified applications:
   write the output file and MUST return exit code `2`, with diagnostic code `INFERENCE_AMBIGUOUS`.
 - `reconcile --auto` that fails its confidence gate (see below) MUST emit `INFERENCE_AMBIGUOUS` to stderr,
   MUST NOT emit any result data, and MUST return exit code `2`.
+- Command-line usage errors (unknown command or flag, wrong argument count, invalid flag value) return
+  exit code `2` with diagnostic code `USAGE_ERROR` (category `usage`) and legacy code `config_error`.
+  `details.usage` carries the usage line and `details.did_you_mean` the closest valid command or flag.
+- `verify` returns exit code `0` when every check passes or is skipped. Any failing check returns exit
+  code `2` with legacy code `config_error`: `CONFIG_INVALID` when the config is invalid, otherwise
+  `VERIFICATION_FAILED` (category `verification`). The checklist is still written to stdout.
 
 ## Config inference gates
 

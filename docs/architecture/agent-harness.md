@@ -49,7 +49,7 @@ log remains for older binaries.
   "message": "required field is missing"}`. Under `--agent` or `--error-format json`, the human
   `❌ … is invalid` listing is not written to stderr; the JSON envelope is the only stderr output.
 - **Usage errors** (unknown command, unknown flag, wrong argument count, invalid flag value) use code
-  `USAGE_ERROR`, category `usage`, exit code `2`, legacy code `usage_error`. `details` carries
+  `USAGE_ERROR`, category `usage`, exit code `2`, legacy code `config_error`. `details` carries
   `usage` (the command's usage line) and, when a close match exists, `did_you_mean`. The suggestion
   names `reconify <command> --help`. They are never `INTERNAL_ERROR`.
 
@@ -94,8 +94,9 @@ Writes `reconify.engine.verification.v1` JSON to stdout:
 - `result_reproducible` reruns the pair deterministically and compares summary counters, so any
   `--format`/`--result-mode` the agent chose is accepted.
 - `explanation_consistent` compares `explanation.json` with `reconify explain result.json`.
-- Exit code `0` when every check passes or skips, `2` when the config is invalid, `5` when any other
-  check fails. A missing optional artifact is `skip`, unless `--result`/`--explanation` named it.
+- Exit code `0` when every check passes or skips, and `2` when any check fails: `CONFIG_INVALID` when
+  the config is invalid, `VERIFICATION_FAILED` (category `verification`) otherwise. The Agent Protocol
+  forbids new numeric exit codes and legacy codes, so both keep legacy code `config_error`. A missing optional artifact is `skip`, unless `--result`/`--explanation` named it.
 
 The schema is published as `schemas/reconify.engine.verification.v1.json` and printed by
 `reconify schema verification`. `capabilities` lists the command.

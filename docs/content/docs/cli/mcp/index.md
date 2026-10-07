@@ -114,7 +114,8 @@ stderr, both as text and as `structuredContent`. Branch on `diagnostic.code` and
 - `reconcile` exit code `3` or `4` (only possible with `fail_if_unmatched` or `fail_if_exceptions`) means the
   run completed with findings. The response reports `exit_code` and the diagnostic, and the result file is
   written.
-- `verify_workspace` exit code `5` means the checks ran and at least one failed. Read `ok` and `checks`.
+- `verify_workspace` exit code `2` with a verification checklist on stdout means the checks ran and at least one
+  failed. Read `ok` and `checks`.
 
 `verify_workspace` needs a `reconify` build that includes the `verify` command. On an older binary it returns
 an error that says so.

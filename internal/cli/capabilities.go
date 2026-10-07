@@ -71,10 +71,9 @@ func capabilityExitCodes() map[string]string {
 	return map[string]string{
 		"0": "Success.",
 		"1": "Unexpected or internal error.",
-		"2": "Config, validation, or usage error (bad YAML, missing pair/source, column not found, unknown command or flag, wrong argument count).",
+		"2": "Config, validation, usage, or verification error (bad YAML, missing pair/source, column not found, unknown command or flag, wrong argument count, failing verify check). The diagnostic code distinguishes them.",
 		"3": "Reconcile completed with unmatched rows. Only returned when --fail-if-unmatched is set.",
 		"4": "Reconcile completed with exception events (amount_diff, timing_diff, financial, settlement, or unmatched). Only returned when --fail-if-exceptions is set. Takes precedence over exit code 3 when both flags are set.",
-		"5": "verify found a failing check (source mismatch, stale or non-reproducible result, inconsistent explanation). Exit code 2 is used instead when the config itself is invalid.",
 	}
 }
 
@@ -175,11 +174,11 @@ func capabilityErrorCodes() map[string]schemas.ErrorCodeCapability {
 			Description: "Reconciliation completed with exception events under --fail-if-exceptions.",
 		},
 		diagnosticCodeUsageError: {
-			Category: diagnosticCategoryUsage, LegacyCode: "usage_error", ExitCode: ErrCodeUsage,
+			Category: diagnosticCategoryUsage, LegacyCode: "config_error", ExitCode: ErrCodeUsage,
 			Description: "Unknown command or flag, wrong argument count, or an invalid flag value. details.usage holds the usage line; details.did_you_mean names the closest valid command or flag.",
 		},
 		diagnosticCodeVerificationFailed: {
-			Category: diagnosticCategoryVerification, LegacyCode: "verification_failed", ExitCode: ErrCodeVerification,
+			Category: diagnosticCategoryVerification, LegacyCode: "config_error", ExitCode: ErrCodeVerification,
 			Description: "reconify verify found one or more failing checks.",
 		},
 		diagnosticCodeInternalError: {

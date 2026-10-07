@@ -151,8 +151,8 @@ func failCheck(name, message string, err error) schemas.VerificationCheck {
 }
 
 // runVerify performs every check. It always returns the (possibly partial)
-// checklist; the error carries the exit code: configuration problems exit 2,
-// any other failing check exits 5.
+// checklist; any failing check exits 2, with CONFIG_INVALID when the config
+// itself is invalid and VERIFICATION_FAILED otherwise.
 func runVerify(ctx context.Context, opts verifyOptions) (schemas.Verification, error) {
 	v := &verification{doc: schemas.Verification{
 		Schema: schemas.VerificationSchemaV1,

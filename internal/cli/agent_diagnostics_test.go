@@ -206,8 +206,8 @@ func TestUsageErrors(t *testing.T) {
 			if err == nil {
 				t.Fatal("expected a usage error")
 			}
-			if ExitCode(err) != 2 || LegacyErrorCode(err) != "usage_error" {
-				t.Fatalf("compatibility fields = (%d, %q), want (2, usage_error)", ExitCode(err), LegacyErrorCode(err))
+			if ExitCode(err) != 2 || LegacyErrorCode(err) != "config_error" {
+				t.Fatalf("compatibility fields = (%d, %q), want (2, config_error)", ExitCode(err), LegacyErrorCode(err))
 			}
 			envelope := DiagnosticEnvelope(err)
 			diagnostic := envelope.Diagnostic
@@ -257,7 +257,7 @@ func TestUsageErrorMarshalsAsDiagnosticEnvelope(t *testing.T) {
 	if unmarshalErr := json.Unmarshal(payload, &envelope); unmarshalErr != nil {
 		t.Fatal(unmarshalErr)
 	}
-	if envelope.Diagnostic.Code != diagnosticCodeUsageError || envelope.Code != "usage_error" {
+	if envelope.Diagnostic.Code != diagnosticCodeUsageError || envelope.Code != "config_error" {
 		t.Fatalf("envelope = %+v", envelope)
 	}
 }

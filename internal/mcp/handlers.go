@@ -13,7 +13,7 @@ import (
 const (
 	exitUnmatched  = 3
 	exitExceptions = 4
-	exitVerifyFail = 5
+	exitVerifyFail = 2
 )
 
 func runCapabilities(ctx context.Context, s *Server, args map[string]any) toolResult {
@@ -389,7 +389,9 @@ func runVerifyWorkspace(ctx context.Context, s *Server, args map[string]any) too
 		return errorResult("EXECUTION_FAILED", "this reconify binary does not include the verify command; upgrade reconify to a release that supports `reconify verify`, "+
 			"or check the deliverables manually with validate_config, reconcile, and explain_result")
 	}
-	if run.exitCode == 0 || run.exitCode == exitVerifyFail {
+	// verify prints its checklist even when a check fails (exit 2), so a
+	// parsable checklist is a report, not a tool error.
+	if run.exitCode == 0 || (run.exitCode == exitVerifyFail && isVerificationDoc(run.stdout)) {
 		return stdoutJSON(run)
 	}
 	return failureResult(run)
@@ -399,4 +401,12 @@ func runVerifyWorkspace(ctx context.Context, s *Server, args map[string]any) too
 // plain text or embedded in a JSON diagnostic (where quotes are escaped).
 func isUnknownVerify(stderr string) bool {
 	return strings.Contains(stderr, "unknown command \"verify\"") || strings.Contains(stderr, "unknown command \\\"verify\\\"")
+}
+
+// isVerificationDoc reports whether stdout holds a verification checklist.
+func isVerificationDoc(stdout []byte) bool {
+	var doc struct {
+		Schema string `json:"schema"`
+	}
+	return json.Unmarshal(stdout, &doc) == nil && doc.Schema == "reconify.engine.verification.v1"
 }

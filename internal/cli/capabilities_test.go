@@ -90,13 +90,13 @@ func TestCapabilitiesDescribeVerifyAndUsageErrors(t *testing.T) {
 	if got.Schemas["verification"] != schemas.VerificationSchemaV1 {
 		t.Fatalf("verification schema ID = %q", got.Schemas["verification"])
 	}
-	if code := got.ErrorCodes[diagnosticCodeVerificationFailed]; code.ExitCode != ErrCodeVerification || code.Category != "verification" || code.LegacyCode != "verification_failed" {
+	if code := got.ErrorCodes[diagnosticCodeVerificationFailed]; code.ExitCode != ErrCodeVerification || code.Category != "verification" || code.LegacyCode != "config_error" {
 		t.Fatalf("VERIFICATION_FAILED = %+v", code)
 	}
-	if code := got.ErrorCodes[diagnosticCodeUsageError]; code.ExitCode != 2 || code.Category != "usage" || code.LegacyCode != "usage_error" {
+	if code := got.ErrorCodes[diagnosticCodeUsageError]; code.ExitCode != 2 || code.Category != "usage" || code.LegacyCode != "config_error" {
 		t.Fatalf("USAGE_ERROR = %+v", code)
 	}
-	if got.ExitCodes["5"] == "" {
-		t.Fatal("capabilities omitted exit code 5")
+	if _, ok := got.ExitCodes["5"]; ok {
+		t.Fatal("capabilities must not invent exit code 5; the Agent Protocol reuses codes 0-4")
 	}
 }

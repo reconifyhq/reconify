@@ -75,7 +75,7 @@ func TestPublishedDiagnosticSchemaAcceptsUsageAndVerificationCategories(t *testi
 	resolved := resolvePublished(t, schemas.DiagnosticV1())
 	for _, category := range []string{"usage", "verification"} {
 		validateJSON(t, resolved, schemas.DiagnosticEnvelope{
-			Error: "x", Code: "usage_error", OK: false, Schema: schemas.DiagnosticSchemaV1,
+			Error: "x", Code: "config_error", OK: false, Schema: schemas.DiagnosticSchemaV1,
 			Diagnostic: schemas.Diagnostic{
 				Code: "USAGE_ERROR", Category: category, Message: "x",
 				Details: map[string]any{}, Suggestions: []string{"y"},

@@ -20,9 +20,10 @@ const (
 	// amount_diff, timing_diff, or unmatched event was emitted. It is a superset of
 	// --fail-if-unmatched and takes precedence over ErrCodeUnmatched when both flags are set.
 	ErrCodeExceptions = 4
-	// ErrCodeVerification is returned by verify when the config is valid but any
-	// other deliverable check fails.
-	ErrCodeVerification = 5
+	// ErrCodeVerification is returned by verify when any deliverable check
+	// fails. The Agent Protocol forbids new numeric exit codes, so it shares the
+	// value of ErrCodeConfig; the VERIFICATION_FAILED diagnostic distinguishes it.
+	ErrCodeVerification = 2
 	// ErrCodeUsage is returned for command-line usage errors: unknown command or
 	// flag, wrong argument count, or an unparsable flag value. It shares the
 	// value of ErrCodeConfig because both mean "fix the invocation or config".
@@ -120,14 +121,14 @@ func usageErr(cmd *cobra.Command, msg, didYouMean string) *Error {
 	if didYouMean != "" {
 		details["did_you_mean"] = didYouMean
 	}
-	return newCLIError(ErrCodeUsage, "usage_error", msg,
+	return newCLIError(ErrCodeUsage, "config_error", msg,
 		diagnosticCodeUsageError, diagnosticCategoryUsage,
 		fmt.Sprintf("Run `%s --help` to see valid usage.", commandPath), details)
 }
 
 // verificationErr reports that verify found failing checks.
 func verificationErr(msg string, details map[string]any) *Error {
-	return newCLIError(ErrCodeVerification, "verification_failed", msg,
+	return newCLIError(ErrCodeVerification, "config_error", msg,
 		diagnosticCodeVerificationFailed, diagnosticCategoryVerification,
 		"Fix the failing checks listed in the verification output and rerun `reconify verify`.", details)
 }

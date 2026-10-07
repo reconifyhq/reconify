@@ -34,7 +34,7 @@ envelope and nothing else. Branch on `diagnostic.code`, then read `details`:
 |---|---|---|
 | `CONFIG_INVALID` | 2 | `details.errors` is a list of `{path, message}`; fix each `path` in `reconify.yaml`, then rerun `config validate`. `details.pairs` lists the pair names when several exist and `--pair` was omitted. |
 | `USAGE_ERROR` | 2 | The command line is wrong, not the config. Apply `details.did_you_mean` when present, otherwise run the command named in `suggestions` (`reconify COMMAND --help`); `details.usage` is the usage line. |
-| `VERIFICATION_FAILED` | 5 | Read the failing checks in the `verify` output on stdout. |
+| `VERIFICATION_FAILED` | 2 | Read the failing checks in the `verify` output on stdout. |
 
 A usage error is never an Engine fault: do not retry it unchanged or report it as a bug.
 
@@ -55,8 +55,8 @@ reconify --agent verify
 each source's `file_pattern` resolves and matches its mapping, a fresh run reproduces the summary
 counters in `result.json`, and `explanation.json` equals `reconify explain result.json`. Each check
 is `pass`, `fail`, or `skip`; a missing artifact is skipped unless `--result` or `--explanation`
-names it. Exit `0` means every check passed or was skipped, `2` an invalid config, `5` any other
-failing check. Fix the first failing check and rerun; do not hand-edit an artifact to satisfy it.
+names it. Exit `0` means every check passed or was skipped; exit `2` means a check failed, with
+`CONFIG_INVALID` for an invalid config and `VERIFICATION_FAILED` for any other failing check. Fix the first failing check and rerun; do not hand-edit an artifact to satisfy it.
 
 ## Choose the retained artifact deliberately
 

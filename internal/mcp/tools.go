@@ -74,7 +74,7 @@ func errorResultExit(code, message string, exitCode int) toolResult {
 	suggestion := "Rerun the tool; if the problem persists, check the reconify binary and file permissions."
 	switch code {
 	case "INVALID_ARGUMENTS":
-		code, category, exit, legacy = "USAGE_ERROR", "usage", 2, "usage_error"
+		code, category, exit, legacy = "USAGE_ERROR", "usage", 2, "config_error"
 		suggestion = "Fix the tool arguments to match the tool's inputSchema and call it again."
 	case "INPUT_UNREADABLE":
 		category, exit, legacy = "input", 2, "config_error"

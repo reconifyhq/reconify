@@ -194,7 +194,7 @@ func TestVerifyDetectsStaleResult(t *testing.T) {
 		t.Fatalf("result_reproducible = %+v", check)
 	}
 	if envelope := DiagnosticEnvelope(verifyErr); envelope.Diagnostic.Code != diagnosticCodeVerificationFailed ||
-		envelope.Diagnostic.Category != diagnosticCategoryVerification || envelope.Code != "verification_failed" {
+		envelope.Diagnostic.Category != diagnosticCategoryVerification || envelope.Code != "config_error" {
 		t.Fatalf("diagnostic = %+v", envelope)
 	}
 }

@@ -97,7 +97,7 @@ func TestJSONDiagnosticCoversUsageErrors(t *testing.T) {
 	if err := json.Unmarshal([]byte(strings.TrimSpace(stderr)), &envelope); err != nil {
 		t.Fatalf("decode stderr JSON: %v\nstderr=%s", err, stderr)
 	}
-	if envelope.Code != "usage_error" || envelope.Diagnostic.Code != "USAGE_ERROR" || envelope.Diagnostic.Category != "usage" {
+	if envelope.Code != "config_error" || envelope.Diagnostic.Code != "USAGE_ERROR" || envelope.Diagnostic.Category != "usage" {
 		t.Fatalf("envelope = %+v", envelope)
 	}
 	if envelope.Diagnostic.Details["usage"] == "" || len(envelope.Diagnostic.Suggestions) != 1 ||
@@ -119,7 +119,7 @@ func TestAgentProfileStructuresUsageErrors(t *testing.T) {
 	if err := json.Unmarshal([]byte(strings.TrimSpace(stderr)), &envelope); err != nil {
 		t.Fatalf("decode stderr JSON: %v\nstderr=%s", err, stderr)
 	}
-	if envelope.Code != "usage_error" || envelope.Diagnostic.Code != "USAGE_ERROR" {
+	if envelope.Code != "config_error" || envelope.Diagnostic.Code != "USAGE_ERROR" {
 		t.Fatalf("envelope = %+v", envelope)
 	}
 }
@@ -137,7 +137,7 @@ func TestAgentProfileStructuresUnknownCommands(t *testing.T) {
 	if err := json.Unmarshal([]byte(strings.TrimSpace(stderr)), &envelope); err != nil {
 		t.Fatalf("decode stderr JSON: %v\nstderr=%s", err, stderr)
 	}
-	if envelope.Code != "usage_error" || envelope.Diagnostic.Code != "USAGE_ERROR" {
+	if envelope.Code != "config_error" || envelope.Diagnostic.Code != "USAGE_ERROR" {
 		t.Fatalf("envelope = %+v", envelope)
 	}
 }
