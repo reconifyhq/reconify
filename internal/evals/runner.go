@@ -13,6 +13,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"slices"
 	"sort"
 	"strings"
 	"sync"
@@ -184,9 +185,11 @@ type FailureReport struct {
 
 type scenario struct {
 	ID, Prompt, ExpectedResult, ExpectedExplanation, Pair, Dir string
+	ReferenceConfig                                            string
 	Inputs                                                     []string
 	InitialFiles                                               []string
 	Assertions                                                 schemas.EvalAssertions
+	Tags, DecisionKeywords                                     []string
 }
 
 // Run evaluates selected local agents without making ordinary CI tests invoke them.
@@ -216,6 +219,9 @@ func Run(ctx context.Context, options Options) (Report, error) {
 	scenarios, err := loadScenarios(options.CorpusDir, options.ScenarioIDs)
 	if err != nil {
 		return Report{}, err
+	}
+	if scenarios = filterByTags(scenarios, options.Tags); len(scenarios) == 0 {
+		return Report{}, fmt.Errorf("no scenarios carry any of the tags %q", options.Tags)
 	}
 	report := Report{Schema: reportSchemaV1, Skipped: skipped}
 	for _, agent := range agents {
@@ -335,6 +341,23 @@ func containsAgent(agents []Agent, target Agent) bool {
 	return false
 }
 
+// filterByTags keeps scenarios carrying at least one requested tag; no tags keeps all.
+func filterByTags(scenarios []scenario, tags []string) []scenario {
+	if len(tags) == 0 {
+		return scenarios
+	}
+	var kept []scenario
+	for _, item := range scenarios {
+		for _, tag := range tags {
+			if slices.Contains(item.Tags, tag) {
+				kept = append(kept, item)
+				break
+			}
+		}
+	}
+	return kept
+}
+
 func loadScenarios(corpusDir string, only []string) ([]scenario, error) {
 	if corpusDir == "" {
 		corpusDir = "evals"
@@ -368,7 +391,7 @@ func loadScenarios(corpusDir string, only []string) ([]scenario, error) {
 			if err := json.Unmarshal(data, &document); err != nil {
 				return nil, fmt.Errorf("parse %s: %w", path, err)
 			}
-			found = append(found, scenario{ID: document.ID, Prompt: document.Prompt, Inputs: document.Inputs, ExpectedResult: document.ExpectedResult, Pair: document.Pair, Assertions: document.Assertions, Dir: filepath.Join(corpusDir, entry.Name())})
+			found = append(found, scenario{ID: document.ID, Prompt: document.Prompt, Inputs: document.Inputs, ExpectedResult: document.ExpectedResult, ReferenceConfig: document.ReferenceConfig, Pair: document.Pair, Assertions: document.Assertions, Dir: filepath.Join(corpusDir, entry.Name())})
 			continue
 		}
 		if header.Schema != schemas.EvalScenarioSchemaV2 {
@@ -378,7 +401,7 @@ func loadScenarios(corpusDir string, only []string) ([]scenario, error) {
 		if err := json.Unmarshal(data, &document); err != nil {
 			return nil, fmt.Errorf("parse %s: %w", path, err)
 		}
-		found = append(found, scenario{ID: document.ID, Prompt: document.Prompt, Inputs: document.Inputs, InitialFiles: document.InitialFiles, ExpectedResult: document.ExpectedResult, ExpectedExplanation: document.ExpectedExplanation, Pair: document.Pair, Assertions: document.Assertions, Dir: filepath.Join(corpusDir, entry.Name())})
+		found = append(found, scenario{ID: document.ID, Prompt: document.Prompt, Inputs: document.Inputs, InitialFiles: document.InitialFiles, ExpectedResult: document.ExpectedResult, ExpectedExplanation: document.ExpectedExplanation, ReferenceConfig: document.ReferenceConfig, Pair: document.Pair, Assertions: document.Assertions, Tags: document.Tags, DecisionKeywords: document.DecisionKeywords, Dir: filepath.Join(corpusDir, entry.Name())})
 	}
 	if len(found) == 0 {
 		return nil, errors.New("no requested scenarios found")
@@ -387,8 +410,8 @@ func loadScenarios(corpusDir string, only []string) ([]scenario, error) {
 	return found, nil
 }
 
-func runTrial(ctx context.Context, options Options, agent Agent, item scenario, trial int) TrialReport {
-	report := TrialReport{Trial: trial}
+func runTrial(ctx context.Context, options Options, agent Agent, item scenario, trial int) (report TrialReport) {
+	report.Trial = trial
 	workspace, cleanup, err := materialize(options, item)
 	if err != nil {
 		report.Error = err.Error()
@@ -399,17 +422,21 @@ func runTrial(ctx context.Context, options Options, agent Agent, item scenario, 
 			cleanup()
 			return
 		}
-		if err := os.MkdirAll(options.ArtifactDir, 0o750); err == nil {
-			destination := filepath.Join(options.ArtifactDir, fmt.Sprintf("%s-%s-%d", agent, item.ID, trial))
-			if os.Rename(workspace, destination) == nil {
-				report.ArtifactPath = destination
-				return
+		destination := filepath.Join(options.ArtifactDir, fmt.Sprintf("%s-%s-%d", agent, item.ID, trial))
+		if err := retainWorkspace(workspace, destination); err != nil {
+			if report.Error == "" {
+				report.Error = fmt.Sprintf("retain artifacts: %v", err)
 			}
+			cleanup()
+			return
 		}
-		cleanup()
+		report.ArtifactPath = destination
 	}()
+	started := time.Now()
 	output, agentErr := runAgent(ctx, agent, workspace, taskPrompt(item), options.ReconifyPath, options.ModelArguments[string(agent)])
+	wall := time.Since(started)
 	report.AgentOutput = boundAgentOutput(output)
+	report.Usage = parseUsage(agent, output, wall.Milliseconds())
 	if agentErr != nil {
 		report.Error = agentErr.Error()
 	}
@@ -418,43 +445,78 @@ func runTrial(ctx context.Context, options Options, agent Agent, item scenario, 
 		report.Error = readErr.Error()
 	}
 	report.Commands = commands
-	report.Discovery = containsCommand(commands, "capabilities")
+	report.Trace = readTrace(filepath.Join(workspace, traceFileName))
+	report.Efficiency = computeEfficiency(report.Trace)
+
+	evidence := trialEvidence{commands: commands, trace: report.Trace, messages: agentMessages(agent, output), decisionKeywords: item.DecisionKeywords, hasExplanationKey: item.ExpectedExplanation != "", assertions: item.Assertions}
+	input := classifyInput{agentErr: agentErr, item: item, workspace: workspace}
 	config := filepath.Join(workspace, "reconify.yaml")
-	if !fileExists(config) {
+	evidence.configPresent = fileExists(config)
+	input.configPresent = evidence.configPresent
+	if !evidence.configPresent {
 		if report.Error == "" {
 			report.Error = "agent did not create reconify.yaml"
 		}
-		return report
+	} else {
+		verifyEngine(ctx, options.ReconifyPath, workspace, item, &evidence, &input, &report)
 	}
-	report.Configuration = containsCommand(commands, "config validate") && runReconify(ctx, options.ReconifyPath, workspace, "config", "validate", "--config", config) == nil
+	report.Grades = gradeTrial(evidence)
+	report.Discovery = gradePass(report.Grades, gradeDiscovery)
+	report.Configuration = gradePass(report.Grades, gradeConfiguration)
+	report.Execution = gradePass(report.Grades, gradeExecution)
+	report.Classification = gradePass(report.Grades, gradeClassification)
+	report.ExactResult = gradePass(report.Grades, gradeExactResult)
+	report.AssertionsMatch = gradePass(report.Grades, gradeAssertionsMatch)
+	report.Explanation = gradePass(report.Grades, gradeExplanation)
+	if !report.Classification {
+		input.ctxErr = ctx.Err()
+		report.Failure = classifyFailure(input)
+	}
+	return report
+}
+
+// verifyEngine re-runs the agent's config through the evaluator's own Engine
+// calls, which never carry the trace variable, and records what graders and the
+// failure classifier need.
+func verifyEngine(ctx context.Context, binary, workspace string, item scenario, evidence *trialEvidence, input *classifyInput, report *TrialReport) {
+	config := filepath.Join(workspace, "reconify.yaml")
+	stderr, err := runEngine(ctx, binary, workspace, "--error-format", "json", "config", "validate", "--config", config)
+	evidence.configValidated, input.configValid = err == nil, err == nil
+	if err != nil {
+		diag := parseDiagnostic(stderr)
+		evidence.configDetail = diag.detail(err.Error())
+		input.configDetail = evidence.configDetail
+	}
 	verified := filepath.Join(workspace, "verified-result.json")
-	if err := runReconify(ctx, options.ReconifyPath, workspace, "reconcile", "--config", config, "--pair", item.Pair, "--format", "json", "--deterministic", "--out", verified); err != nil {
+	stderr, err = runEngine(ctx, binary, workspace, "--error-format", "json", "reconcile", "--config", config, "--pair", item.Pair, "--format", "json", "--deterministic", "--out", verified)
+	if err != nil {
+		input.verifyDiag = parseDiagnostic(stderr)
+		evidence.verifyDetail = input.verifyDiag.detail(err.Error())
+		input.verifyDetail = evidence.verifyDetail
 		if report.Error == "" {
 			report.Error = fmt.Sprintf("verify reconciliation: %v", err)
 		}
-		return report
+		return
 	}
-	report.Execution = containsCommand(commands, "reconcile") && resolveArtifact(workspace, resultArtifactNames) != ""
-	actual, _ := os.ReadFile(verified)                                       // #nosec G304 -- evaluator workspace.
-	expected, _ := os.ReadFile(filepath.Join(item.Dir, item.ExpectedResult)) // #nosec G304 -- checked-in fixture.
-	report.ExactResult = bytes.Equal(bytes.TrimSpace(actual), bytes.TrimSpace(expected))
-	// Assertions remain a diagnostic legacy gate; task success requires the
-	// normalized event set to agree with the independently verified answer key.
-	report.Classification = semanticResultEqual(actual, expected)
-	report.AssertionsMatch = assertionsMatch(actual, item.Assertions)
+	evidence.verified, input.verified = true, true
+	evidence.artifact = resolveArtifact(workspace, resultArtifactNames) != ""
+	input.artifact = evidence.artifact
+	evidence.actual, _ = os.ReadFile(verified)                                       // #nosec G304 -- evaluator workspace.
+	evidence.expected, _ = os.ReadFile(filepath.Join(item.Dir, item.ExpectedResult)) // #nosec G304 -- checked-in fixture.
 	if item.ExpectedExplanation == "" {
-		return report
+		return
 	}
 	explanationPath := resolveArtifact(workspace, explanationArtifactNames)
 	if explanationPath == "" {
-		return report
+		return
 	}
 	agentExplanation, err := os.ReadFile(explanationPath) // #nosec G304 -- evaluator workspace.
-	if err == nil {
-		expectedExplanation, readErr := os.ReadFile(filepath.Join(item.Dir, item.ExpectedExplanation)) // #nosec G304 -- checked-in fixture.
-		report.Explanation = readErr == nil && containsCommand(commands, "explain") && bytes.Equal(bytes.TrimSpace(agentExplanation), bytes.TrimSpace(expectedExplanation))
+	if err != nil {
+		return
 	}
-	return report
+	evidence.explanationFound = true
+	expectedExplanation, readErr := os.ReadFile(filepath.Join(item.Dir, item.ExpectedExplanation)) // #nosec G304 -- checked-in fixture.
+	evidence.explanationEqual = readErr == nil && bytes.Equal(bytes.TrimSpace(agentExplanation), bytes.TrimSpace(expectedExplanation))
 }
 
 const maxAgentOutputBytes = 40000
@@ -552,6 +614,16 @@ func materialize(options Options, item scenario) (string, func(), error) {
 			return "", nil, err
 		}
 	}
+	if options.Hooks {
+		hooks := filepath.Join(options.SkillsDir, ".hooks", "claude")
+		if err := copyTreeMode(hooks, filepath.Join(workspace, ".claude")); err != nil {
+			cleanup()
+			if errors.Is(err, os.ErrNotExist) {
+				return "", nil, errors.New("hooks arm requested but package has no .hooks/claude")
+			}
+			return "", nil, err
+		}
+	}
 	if err := writeWrapper(workspace); err != nil {
 		cleanup()
 		return "", nil, err
@@ -594,6 +666,63 @@ func copyTree(src, dst string) error {
 	return nil
 }
 
+// retainWorkspace moves a trial workspace into the artifact directory. A plain
+// rename fails across filesystems (for example /tmp versus the repository), so
+// it falls back to a mode-preserving copy followed by removing the source.
+func retainWorkspace(workspace, destination string) error {
+	if err := os.MkdirAll(filepath.Dir(destination), 0o750); err != nil {
+		return err
+	}
+	_ = os.RemoveAll(destination) // a stale trial from an earlier run
+	if os.Rename(workspace, destination) == nil {
+		return nil
+	}
+	if err := copyTreeMode(workspace, destination); err != nil {
+		_ = os.RemoveAll(destination)
+		return err
+	}
+	return os.RemoveAll(workspace)
+}
+
+// copyTreeMode copies a tree like copyTree but keeps each file's permission
+// bits, so hook scripts stay executable.
+func copyTreeMode(src, dst string) error {
+	entries, err := os.ReadDir(src)
+	if err != nil {
+		return err
+	}
+	for _, entry := range entries {
+		from, to := filepath.Join(src, entry.Name()), filepath.Join(dst, entry.Name())
+		if entry.IsDir() {
+			if err := os.MkdirAll(to, 0o750); err != nil {
+				return err
+			}
+			if err := copyTreeMode(from, to); err != nil {
+				return err
+			}
+			continue
+		}
+		info, err := entry.Info()
+		if err != nil {
+			return err
+		}
+		if !info.Mode().IsRegular() {
+			continue
+		}
+		data, err := os.ReadFile(from) // #nosec G304 -- packaged hook or retained workspace path.
+		if err != nil {
+			return err
+		}
+		if err := os.MkdirAll(filepath.Dir(to), 0o750); err != nil {
+			return err
+		}
+		if err := os.WriteFile(to, data, info.Mode().Perm()|0o600); err != nil { // #nosec G306,G703 -- hook scripts must keep exec bits in the evaluator workspace.
+			return err
+		}
+	}
+	return nil
+}
+
 func writeWrapper(workspace string) error {
 	bin := filepath.Join(workspace, ".bin")
 	if err := os.MkdirAll(bin, 0o750); err != nil {
@@ -607,10 +736,16 @@ func taskPrompt(item scenario) string {
 	return fmt.Sprintf("%s\n\nWork only in this temporary workspace. Solve the business reconciliation problem described above for pair %q. Leave a valid configuration, the resulting reconciliation artifact, and a concise explanation of that result at the workspace root. You may inspect the available files and installed documentation or tools as needed. Verify the configuration and result before finishing; recover from errors and do not stop at a partial artifact.", item.Prompt, item.Pair)
 }
 
-func runReconify(ctx context.Context, binary, dir string, args ...string) error {
+// runEngine runs the Engine for the evaluator's own verification and returns
+// stderr. The trace variable is stripped so these calls never enter the agent trace.
+func runEngine(ctx context.Context, binary, dir string, args ...string) ([]byte, error) {
 	cmd := exec.CommandContext(ctx, binary, args...) // #nosec G204 -- binary is explicit CLI input.
 	cmd.Dir = dir
-	return cmd.Run()
+	cmd.Env = envWithout(os.Environ(), traceEnv)
+	var stderr bytes.Buffer
+	cmd.Stderr = &stderr
+	err := cmd.Run()
+	return stderr.Bytes(), err
 }
 
 func readCommands(path string) ([]string, error) {

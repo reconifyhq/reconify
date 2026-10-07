@@ -15,12 +15,19 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"slices"
 	"sort"
 	"strings"
 	"time"
 )
 
 const promptVersion = "neutral-v1"
+
+// armCandidateHooks is the candidate skills plus the packaged agent hooks.
+const armCandidateHooks = "candidate+hooks"
+
+// coreArms are the variants that decide the release verdict.
+var coreArms = []string{"candidate", "released", "no-skill"}
 
 // maxPackageEntryBytes bounds a single extracted skills-package entry so a
 // malformed or hostile tarball cannot exhaust local disk during a release run.
@@ -67,6 +74,10 @@ func Release(ctx context.Context, options ReleaseOptions) (Report, error) {
 	}
 	if options.Trials != 3 {
 		return Report{}, errors.New("qualifying release runs require exactly three trials")
+	}
+	extraArms, err := resolveExtraArms(options.ExtraArms)
+	if err != nil {
+		return Report{}, err
 	}
 	if err := os.MkdirAll(options.OutDir, 0o750); err != nil {
 		return Report{}, err
@@ -115,7 +126,10 @@ func Release(ctx context.Context, options ReleaseOptions) (Report, error) {
 			return Report{}, fmt.Errorf("build reconify: %w: %s", e, out)
 		}
 	}
-	variants := []struct{ name, skills string }{{"candidate", filepath.Join(candidate, "skills")}, {"released", filepath.Join(baseline, "skills")}, {"no-skill", noSkills}}
+	variants := []releaseArm{{name: "candidate", skills: filepath.Join(candidate, "skills")}, {name: "released", skills: filepath.Join(baseline, "skills")}, {name: "no-skill", skills: noSkills}}
+	for _, name := range extraArms {
+		variants = append(variants, releaseArm{name: name, skills: filepath.Join(candidate, "skills"), hooks: true})
+	}
 	// #nosec G404 -- arm ordering must be reproducible from the recorded seed, not unpredictable.
 	rng := rand.New(rand.NewSource(options.Seed))
 	rng.Shuffle(len(variants), func(i, j int) { variants[i], variants[j] = variants[j], variants[i] })
@@ -139,7 +153,7 @@ func Release(ctx context.Context, options ReleaseOptions) (Report, error) {
 		if resumedVariant {
 			continue
 		}
-		v, e := Run(ctx, Options{CorpusDir: options.CorpusDir, SkillsDir: variant.skills, ReconifyPath: options.ReconifyPath, Agents: agentNames(options.Models), Trials: options.Trials, Timeout: options.Timeout, ArtifactDir: filepath.Join(options.OutDir, variant.name), MaxParallel: options.MaxParallel, ModelArguments: modelArguments, ScenarioIDs: options.ScenarioIDs})
+		v, e := Run(ctx, Options{CorpusDir: options.CorpusDir, SkillsDir: variant.skills, ReconifyPath: options.ReconifyPath, Agents: agentNames(options.Models), Trials: options.Trials, Timeout: options.Timeout, ArtifactDir: filepath.Join(options.OutDir, variant.name), MaxParallel: options.MaxParallel, ModelArguments: modelArguments, ScenarioIDs: options.ScenarioIDs, Tags: options.Tags, Hooks: variant.hooks})
 		if e != nil {
 			return Report{}, fmt.Errorf("run %s: %w", variant.name, e)
 		}
@@ -152,19 +166,41 @@ func Release(ctx context.Context, options ReleaseOptions) (Report, error) {
 	report.Experiment.ModelArguments = append([]string(nil), options.Models...)
 	report.Experiment.OS = runtime.GOOS
 	report.Experiment.Arch = runtime.GOARCH
-	report.Comparisons, report.Verdict = releaseVerdict(report.Variants, len(scenariosOrZero(options.CorpusDir, options.ScenarioIDs))*len(supportedAgents())*options.Trials)
+	report.Comparisons, report.Verdict = releaseVerdict(report.Variants, len(scenariosOrZero(options.CorpusDir, options.ScenarioIDs, options.Tags))*len(supportedAgents())*options.Trials)
 	if err := WriteReport(report, filepath.Join(options.OutDir, "report.json"), io.Discard); err != nil {
 		return Report{}, err
 	}
 	return report, nil
 }
 
-func scenariosOrZero(corpus string, only []string) []scenario {
+// releaseArm is one cell of the release matrix: a skills tree and whether the
+// packaged agent hooks are installed alongside it.
+type releaseArm struct {
+	name, skills string
+	hooks        bool
+}
+
+// resolveExtraArms validates diagnostic arm names. Only "candidate+hooks" exists.
+func resolveExtraArms(names []string) ([]string, error) {
+	var arms []string
+	for _, name := range names {
+		name = strings.TrimSpace(name)
+		if name != armCandidateHooks {
+			return nil, fmt.Errorf("unknown extra arm %q (supported: %s)", name, armCandidateHooks)
+		}
+		if !slices.Contains(arms, name) {
+			arms = append(arms, name)
+		}
+	}
+	return arms, nil
+}
+
+func scenariosOrZero(corpus string, only, tags []string) []scenario {
 	result, err := loadScenarios(corpus, only)
 	if err != nil {
 		return nil
 	}
-	return result
+	return filterByTags(result, tags)
 }
 
 func releaseVerdict(variants []VariantReport, expected int) ([]Comparison, *Verdict) {
@@ -184,7 +220,12 @@ func releaseVerdict(variants []VariantReport, expected int) ([]Comparison, *Verd
 		m.PassRate = rate(m.Passed, m.Total)
 		metricsByName[variant.Name] = m
 	}
-	if expected == 0 || len(metricsByName) != 3 {
+	for _, name := range coreArms {
+		if _, ok := metricsByName[name]; !ok {
+			expected = 0
+		}
+	}
+	if expected == 0 {
 		return nil, &Verdict{Status: "inconclusive", Reason: "required variants or scenarios are missing"}
 	}
 	for _, name := range []string{"candidate", "no-skill"} {
@@ -193,7 +234,7 @@ func releaseVerdict(variants []VariantReport, expected int) ([]Comparison, *Verd
 		}
 	}
 	released := metricsByName["released"]
-	comparisons := make([]Comparison, 0, 2)
+	comparisons := make([]Comparison, 0, 2+len(variants))
 	status, reason := "pass", "release matrix completed"
 	for _, name := range []string{"candidate", "no-skill"} {
 		current := metricsByName[name]
@@ -206,6 +247,19 @@ func releaseVerdict(variants []VariantReport, expected int) ([]Comparison, *Verd
 				status, reason = "warn", fmt.Sprintf("%s has a small or concentrated delta versus released", name)
 			}
 		}
+	}
+	// Extra arms are diagnostic: compared with the candidate, never in the verdict.
+	candidate := metricsByName["candidate"]
+	var extras []string
+	for name := range metricsByName {
+		if !slices.Contains(coreArms, name) {
+			extras = append(extras, name)
+		}
+	}
+	sort.Strings(extras)
+	for _, name := range extras {
+		current := metricsByName[name]
+		comparisons = append(comparisons, Comparison{Variant: name, Against: "candidate", Passed: current.Passed, Total: current.Total, PassRate: current.PassRate, Delta: current.PassRate - candidate.PassRate})
 	}
 	return comparisons, &Verdict{Status: status, Reason: reason}
 }
