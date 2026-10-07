@@ -1,0 +1,167 @@
+{
+  "schema": "reconify.engine.explanation.v1",
+  "summary": {
+    "currency": "USD",
+    "total_left": 3,
+    "total_right": 4,
+    "matched": 2,
+    "unmatched_left": 0,
+    "unmatched_right": 1,
+    "amount_diff_count": 1,
+    "timing_diff_count": 0,
+    "duplicate_count": 2,
+    "match_rate_pct": 50,
+    "reconciled_rate_pct": 75,
+    "matched_amount_left": 25000,
+    "matched_amount_right": 25000,
+    "unmatched_amount_left": 0,
+    "unmatched_amount_right": 4000,
+    "amount_diff_total": 4000,
+    "total_discrepancy": 8000
+  },
+  "findings": [
+    {
+      "category": "matched",
+      "count": 2
+    },
+    {
+      "category": "unmatched_left",
+      "count": 0
+    },
+    {
+      "category": "unmatched_right",
+      "count": 1
+    },
+    {
+      "category": "amount_diff",
+      "count": 1
+    },
+    {
+      "category": "timing_diff",
+      "count": 0
+    },
+    {
+      "category": "duplicates",
+      "count": 2
+    },
+    {
+      "category": "grouped_matched",
+      "count": 0
+    },
+    {
+      "category": "grouped_amount_diff",
+      "count": 0
+    },
+    {
+      "category": "grouped_timing_diff",
+      "count": 0
+    },
+    {
+      "category": "many_to_many_matched",
+      "count": 0
+    },
+    {
+      "category": "many_to_many_amount_diff",
+      "count": 0
+    },
+    {
+      "category": "many_to_many_timing_diff",
+      "count": 0
+    },
+    {
+      "category": "ambiguous_group",
+      "count": 0
+    }
+  ],
+  "top_exceptions": [
+    {
+      "type": "unmatched_right",
+      "data": {
+        "amount": 4000,
+        "currency": "USD",
+        "date": "2024-04-03T00:00:00Z",
+        "id": "right-2",
+        "name": "Customer payment",
+        "reference": "INV-5001",
+        "source": "right"
+      }
+    },
+    {
+      "type": "amount_diff",
+      "data": {
+        "diff_minor": 4000,
+        "left": {
+          "amount": 10000,
+          "currency": "USD",
+          "date": "2024-04-02T00:00:00Z",
+          "group_key": "INV-5001",
+          "id": "left-1",
+          "name": "Invoice",
+          "raw": {
+            "amount": "100.00",
+            "currency": "USD",
+            "date": "2024-04-02",
+            "description": "Invoice",
+            "reference": "INV-5001"
+          },
+          "reference": "INV-5001",
+          "source": "left"
+        },
+        "right": {
+          "amount": 6000,
+          "currency": "USD",
+          "date": "2024-04-02T00:00:00Z",
+          "id": "right-1",
+          "name": "Customer payment",
+          "reference": "INV-5001",
+          "source": "right"
+        }
+      }
+    },
+    {
+      "type": "duplicate",
+      "data": {
+        "reference": "INV-5001",
+        "source": "right",
+        "transactions": [
+          {
+            "amount": 6000,
+            "currency": "USD",
+            "date": "2024-04-02T00:00:00Z",
+            "group_key": "INV-5001",
+            "id": "right-1",
+            "name": "Customer payment",
+            "raw": {
+              "amount": "60.00",
+              "currency": "USD",
+              "date": "2024-04-02",
+              "description": "Customer payment",
+              "reference": "INV-5001"
+            },
+            "reference": "INV-5001",
+            "source": "right"
+          },
+          {
+            "amount": 4000,
+            "currency": "USD",
+            "date": "2024-04-03T00:00:00Z",
+            "group_key": "INV-5001",
+            "id": "right-2",
+            "name": "Customer payment",
+            "raw": {
+              "amount": "40.00",
+              "currency": "USD",
+              "date": "2024-04-03",
+              "description": "Customer payment",
+              "reference": "INV-5001"
+            },
+            "reference": "INV-5001",
+            "source": "right"
+          }
+        ]
+      }
+    }
+  ],
+  "exceptions_total": 3,
+  "truncated": false
+}

@@ -1,0 +1,260 @@
+{
+  "schema": "reconify.engine.explanation.v1",
+  "summary": {
+    "currency": "USD",
+    "total_left": 120,
+    "total_right": 119,
+    "matched": 114,
+    "unmatched_left": 2,
+    "unmatched_right": 1,
+    "amount_diff_count": 2,
+    "timing_diff_count": 2,
+    "duplicate_count": 0,
+    "match_rate_pct": 95,
+    "reconciled_rate_pct": 98.33,
+    "matched_amount_left": 13595112,
+    "matched_amount_right": 13595112,
+    "unmatched_amount_left": 329646,
+    "unmatched_amount_right": 18750,
+    "amount_diff_total": 6575,
+    "total_discrepancy": 354971
+  },
+  "findings": [
+    {
+      "category": "matched",
+      "count": 114
+    },
+    {
+      "category": "unmatched_left",
+      "count": 2
+    },
+    {
+      "category": "unmatched_right",
+      "count": 1
+    },
+    {
+      "category": "amount_diff",
+      "count": 2
+    },
+    {
+      "category": "timing_diff",
+      "count": 2
+    },
+    {
+      "category": "duplicates",
+      "count": 0
+    },
+    {
+      "category": "grouped_matched",
+      "count": 0
+    },
+    {
+      "category": "grouped_amount_diff",
+      "count": 0
+    },
+    {
+      "category": "grouped_timing_diff",
+      "count": 0
+    },
+    {
+      "category": "many_to_many_matched",
+      "count": 0
+    },
+    {
+      "category": "many_to_many_amount_diff",
+      "count": 0
+    },
+    {
+      "category": "many_to_many_timing_diff",
+      "count": 0
+    },
+    {
+      "category": "ambiguous_group",
+      "count": 0
+    }
+  ],
+  "top_exceptions": [
+    {
+      "type": "unmatched_left",
+      "data": {
+        "amount": 168080,
+        "currency": "USD",
+        "date": "2024-01-04T00:00:00Z",
+        "group_key": "TX-2401-0018",
+        "id": "left-18",
+        "name": "Wingtip Gifts sale",
+        "raw": {
+          "amount": "1680.80",
+          "currency": "USD",
+          "date": "2024-01-04",
+          "description": "Wingtip Gifts sale",
+          "reference": "TX-2401-0018"
+        },
+        "reference": "TX-2401-0018",
+        "source": "left"
+      }
+    },
+    {
+      "type": "unmatched_left",
+      "data": {
+        "amount": 161566,
+        "currency": "USD",
+        "date": "2024-01-20T00:00:00Z",
+        "group_key": "TX-2401-0089",
+        "id": "left-89",
+        "name": "Tailspin Toys sale",
+        "raw": {
+          "amount": "1615.66",
+          "currency": "USD",
+          "date": "2024-01-20",
+          "description": "Tailspin Toys sale",
+          "reference": "TX-2401-0089"
+        },
+        "reference": "TX-2401-0089",
+        "source": "left"
+      }
+    },
+    {
+      "type": "unmatched_right",
+      "data": {
+        "amount": 18750,
+        "currency": "USD",
+        "date": "2024-01-19T00:00:00Z",
+        "id": "right-83",
+        "name": "Unidentified card settlement",
+        "reference": "TX-2401-0999",
+        "source": "right"
+      }
+    },
+    {
+      "type": "amount_diff",
+      "data": {
+        "diff_minor": 2500,
+        "left": {
+          "amount": 100645,
+          "currency": "USD",
+          "date": "2024-01-09T00:00:00Z",
+          "group_key": "TX-2401-0042",
+          "id": "left-42",
+          "name": "Contoso Retail sale",
+          "raw": {
+            "amount": "1006.45",
+            "currency": "USD",
+            "date": "2024-01-09",
+            "description": "Contoso Retail sale",
+            "reference": "TX-2401-0042"
+          },
+          "reference": "TX-2401-0042",
+          "source": "left"
+        },
+        "right": {
+          "amount": 98145,
+          "currency": "USD",
+          "date": "2024-01-11T00:00:00Z",
+          "id": "right-43",
+          "name": "Contoso Retail sale settlement",
+          "reference": "TX-2401-0042",
+          "source": "right"
+        }
+      }
+    },
+    {
+      "type": "amount_diff",
+      "data": {
+        "diff_minor": 4075,
+        "left": {
+          "amount": 145427,
+          "currency": "USD",
+          "date": "2024-01-22T00:00:00Z",
+          "group_key": "TX-2401-0104",
+          "id": "left-104",
+          "name": "Wingtip Gifts sale",
+          "raw": {
+            "amount": "1454.27",
+            "currency": "USD",
+            "date": "2024-01-22",
+            "description": "Wingtip Gifts sale",
+            "reference": "TX-2401-0104"
+          },
+          "reference": "TX-2401-0104",
+          "source": "left"
+        },
+        "right": {
+          "amount": 141352,
+          "currency": "USD",
+          "date": "2024-01-24T00:00:00Z",
+          "id": "right-105",
+          "name": "Wingtip Gifts sale settlement",
+          "reference": "TX-2401-0104",
+          "source": "right"
+        }
+      }
+    },
+    {
+      "type": "timing_diff",
+      "data": {
+        "days_diff": 6,
+        "left": {
+          "amount": 49350,
+          "currency": "USD",
+          "date": "2024-01-07T00:00:00Z",
+          "group_key": "TX-2401-0030",
+          "id": "left-30",
+          "name": "Adventure Works sale",
+          "raw": {
+            "amount": "493.50",
+            "currency": "USD",
+            "date": "2024-01-07",
+            "description": "Adventure Works sale",
+            "reference": "TX-2401-0030"
+          },
+          "reference": "TX-2401-0030",
+          "source": "left"
+        },
+        "right": {
+          "amount": 49350,
+          "currency": "USD",
+          "date": "2024-01-13T00:00:00Z",
+          "id": "right-52",
+          "name": "Adventure Works sale settlement",
+          "reference": "TX-2401-0030",
+          "source": "right"
+        }
+      }
+    },
+    {
+      "type": "timing_diff",
+      "data": {
+        "days_diff": 9,
+        "left": {
+          "amount": 93840,
+          "currency": "USD",
+          "date": "2024-01-17T00:00:00Z",
+          "group_key": "TX-2401-0075",
+          "id": "left-75",
+          "name": "Litware Foods sale",
+          "raw": {
+            "amount": "938.40",
+            "currency": "USD",
+            "date": "2024-01-17",
+            "description": "Litware Foods sale",
+            "reference": "TX-2401-0075"
+          },
+          "reference": "TX-2401-0075",
+          "source": "left"
+        },
+        "right": {
+          "amount": 93840,
+          "currency": "USD",
+          "date": "2024-01-26T00:00:00Z",
+          "id": "right-115",
+          "name": "Litware Foods sale settlement",
+          "reference": "TX-2401-0075",
+          "source": "right"
+        }
+      }
+    }
+  ],
+  "exceptions_total": 7,
+  "truncated": false
+}

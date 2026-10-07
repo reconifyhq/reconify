@@ -1,0 +1,5 @@
+date,amount,currency,reference,description
+2024-04-02,60.00,USD,INV-5001,Customer payment
+2024-04-03,40.00,USD,INV-5001,Customer payment
+2024-04-03,30.00,USD,INV-5002,Customer payment
+2024-04-04,220.00,USD,INV-5003,Customer payment

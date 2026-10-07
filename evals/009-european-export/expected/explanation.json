@@ -1,0 +1,176 @@
+{
+  "schema": "reconify.engine.explanation.v1",
+  "summary": {
+    "currency": "EUR",
+    "total_left": 8,
+    "total_right": 8,
+    "matched": 5,
+    "unmatched_left": 1,
+    "unmatched_right": 1,
+    "amount_diff_count": 1,
+    "timing_diff_count": 1,
+    "duplicate_count": 0,
+    "match_rate_pct": 62.5,
+    "reconciled_rate_pct": 87.5,
+    "matched_amount_left": 1755039,
+    "matched_amount_right": 1755039,
+    "unmatched_amount_left": 7525,
+    "unmatched_amount_right": 199999,
+    "amount_diff_total": 5400,
+    "total_discrepancy": 212924
+  },
+  "findings": [
+    {
+      "category": "matched",
+      "count": 5
+    },
+    {
+      "category": "unmatched_left",
+      "count": 1
+    },
+    {
+      "category": "unmatched_right",
+      "count": 1
+    },
+    {
+      "category": "amount_diff",
+      "count": 1
+    },
+    {
+      "category": "timing_diff",
+      "count": 1
+    },
+    {
+      "category": "duplicates",
+      "count": 0
+    },
+    {
+      "category": "grouped_matched",
+      "count": 0
+    },
+    {
+      "category": "grouped_amount_diff",
+      "count": 0
+    },
+    {
+      "category": "grouped_timing_diff",
+      "count": 0
+    },
+    {
+      "category": "many_to_many_matched",
+      "count": 0
+    },
+    {
+      "category": "many_to_many_amount_diff",
+      "count": 0
+    },
+    {
+      "category": "many_to_many_timing_diff",
+      "count": 0
+    },
+    {
+      "category": "ambiguous_group",
+      "count": 0
+    }
+  ],
+  "top_exceptions": [
+    {
+      "type": "unmatched_left",
+      "data": {
+        "amount": 7525,
+        "currency": "EUR",
+        "date": "2024-01-10T00:00:00Z",
+        "group_key": "INV-9006",
+        "id": "left-6",
+        "name": "Courier fees",
+        "raw": {
+          "amount": "75.25",
+          "currency": "EUR",
+          "date": "2024-01-10",
+          "description": "Courier fees",
+          "reference": "INV-9006"
+        },
+        "reference": "INV-9006",
+        "source": "left"
+      }
+    },
+    {
+      "type": "unmatched_right",
+      "data": {
+        "amount": 199999,
+        "currency": "EUR",
+        "date": "2024-01-11T00:00:00Z",
+        "id": "right-6",
+        "name": "Unidentified credit",
+        "reference": "REF-7731",
+        "source": "right"
+      }
+    },
+    {
+      "type": "amount_diff",
+      "data": {
+        "diff_minor": 5400,
+        "left": {
+          "amount": 56000,
+          "currency": "EUR",
+          "date": "2024-01-09T00:00:00Z",
+          "group_key": "INV-9005",
+          "id": "left-5",
+          "name": "Training workshop",
+          "raw": {
+            "amount": "560.00",
+            "currency": "EUR",
+            "date": "2024-01-09",
+            "description": "Training workshop",
+            "reference": "INV-9005"
+          },
+          "reference": "INV-9005",
+          "source": "left"
+        },
+        "right": {
+          "amount": 50600,
+          "currency": "EUR",
+          "date": "2024-01-09T00:00:00Z",
+          "id": "right-5",
+          "name": "SEPA credit transfer",
+          "reference": "INV-9005",
+          "source": "right"
+        }
+      }
+    },
+    {
+      "type": "timing_diff",
+      "data": {
+        "days_diff": 6,
+        "left": {
+          "amount": 20000,
+          "currency": "EUR",
+          "date": "2024-01-15T00:00:00Z",
+          "group_key": "INV-9007",
+          "id": "left-7",
+          "name": "Maintenance contract",
+          "raw": {
+            "amount": "200.00",
+            "currency": "EUR",
+            "date": "2024-01-15",
+            "description": "Maintenance contract",
+            "reference": "INV-9007"
+          },
+          "reference": "INV-9007",
+          "source": "left"
+        },
+        "right": {
+          "amount": 20000,
+          "currency": "EUR",
+          "date": "2024-01-21T00:00:00Z",
+          "id": "right-7",
+          "name": "SEPA credit transfer",
+          "reference": "INV-9007",
+          "source": "right"
+        }
+      }
+    }
+  ],
+  "exceptions_total": 4,
+  "truncated": false
+}

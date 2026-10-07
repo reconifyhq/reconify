@@ -1,0 +1,210 @@
+{
+  "schema": "reconify.engine.result.v1",
+  "index_selection": {
+    "requested_backend": "memory",
+    "backend": "memory",
+    "reason": "memory estimate fits configured policy",
+    "estimated_memory_bytes": 201326720
+  },
+  "pair": "ledger_vs_bank",
+  "left_source": "ledger",
+  "right_source": "bank",
+  "summary": {
+    "currency": "GBP",
+    "total_left": 6,
+    "total_right": 6,
+    "matched": 3,
+    "unmatched_left": 1,
+    "unmatched_right": 1,
+    "amount_diff_count": 1,
+    "timing_diff_count": 1,
+    "duplicate_count": 0,
+    "match_rate_pct": 50,
+    "reconciled_rate_pct": 83.33,
+    "matched_amount_left": 80000,
+    "matched_amount_right": 79850,
+    "unmatched_amount_left": 6000,
+    "unmatched_amount_right": 3500,
+    "amount_diff_total": 1000,
+    "total_discrepancy": 10500
+  },
+  "matched": [
+    {
+      "left": {
+        "id": "ledger-1",
+        "date": "2024-03-01T00:00:00Z",
+        "amount": 50000,
+        "currency": "GBP",
+        "reference": "PAY-3001",
+        "name": "Card sale",
+        "source": "ledger",
+        "raw": {
+          "amount": "500.00",
+          "currency": "GBP",
+          "date": "2024-03-01",
+          "description": "Card sale",
+          "reference": "PAY-3001"
+        },
+        "group_key": "PAY-3001"
+      },
+      "right": {
+        "id": "bank-1",
+        "date": "2024-03-01T00:00:00Z",
+        "amount": 50000,
+        "currency": "GBP",
+        "reference": "PAY-3001",
+        "name": "Card settlement",
+        "source": "bank"
+      }
+    },
+    {
+      "left": {
+        "id": "ledger-2",
+        "date": "2024-03-04T00:00:00Z",
+        "amount": 20000,
+        "currency": "GBP",
+        "reference": "PAY-3002",
+        "name": "Card sale",
+        "source": "ledger",
+        "raw": {
+          "amount": "200.00",
+          "currency": "GBP",
+          "date": "2024-03-04",
+          "description": "Card sale",
+          "reference": "PAY-3002"
+        },
+        "group_key": "PAY-3002"
+      },
+      "right": {
+        "id": "bank-2",
+        "date": "2024-03-07T00:00:00Z",
+        "amount": 20000,
+        "currency": "GBP",
+        "reference": "PAY-3002",
+        "name": "Card settlement",
+        "source": "bank"
+      }
+    },
+    {
+      "left": {
+        "id": "ledger-3",
+        "date": "2024-03-05T00:00:00Z",
+        "amount": 10000,
+        "currency": "GBP",
+        "reference": "PAY-3003",
+        "name": "Card sale",
+        "source": "ledger",
+        "raw": {
+          "amount": "100.00",
+          "currency": "GBP",
+          "date": "2024-03-05",
+          "description": "Card sale",
+          "reference": "PAY-3003"
+        },
+        "group_key": "PAY-3003"
+      },
+      "right": {
+        "id": "bank-3",
+        "date": "2024-03-05T00:00:00Z",
+        "amount": 9850,
+        "currency": "GBP",
+        "reference": "PAY-3003",
+        "name": "Card settlement less fee",
+        "source": "bank"
+      }
+    }
+  ],
+  "unmatched_left": [
+    {
+      "id": "ledger-6",
+      "date": "2024-03-11T00:00:00Z",
+      "amount": 6000,
+      "currency": "GBP",
+      "reference": "PAY-3006",
+      "name": "Card sale",
+      "source": "ledger",
+      "raw": {
+        "amount": "60.00",
+        "currency": "GBP",
+        "date": "2024-03-11",
+        "description": "Card sale",
+        "reference": "PAY-3006"
+      },
+      "group_key": "PAY-3006"
+    }
+  ],
+  "unmatched_right": [
+    {
+      "id": "bank-6",
+      "date": "2024-03-12T00:00:00Z",
+      "amount": 3500,
+      "currency": "GBP",
+      "reference": "PAY-9999",
+      "name": "Unidentified credit",
+      "source": "bank"
+    }
+  ],
+  "amount_diff": [
+    {
+      "left": {
+        "id": "ledger-4",
+        "date": "2024-03-06T00:00:00Z",
+        "amount": 75000,
+        "currency": "GBP",
+        "reference": "PAY-3004",
+        "name": "Card sale",
+        "source": "ledger",
+        "raw": {
+          "amount": "750.00",
+          "currency": "GBP",
+          "date": "2024-03-06",
+          "description": "Card sale",
+          "reference": "PAY-3004"
+        },
+        "group_key": "PAY-3004"
+      },
+      "right": {
+        "id": "bank-4",
+        "date": "2024-03-06T00:00:00Z",
+        "amount": 74000,
+        "currency": "GBP",
+        "reference": "PAY-3004",
+        "name": "Card settlement less fee",
+        "source": "bank"
+      },
+      "diff_minor": 1000
+    }
+  ],
+  "timing_diff": [
+    {
+      "left": {
+        "id": "ledger-5",
+        "date": "2024-03-07T00:00:00Z",
+        "amount": 32000,
+        "currency": "GBP",
+        "reference": "PAY-3005",
+        "name": "Card sale",
+        "source": "ledger",
+        "raw": {
+          "amount": "320.00",
+          "currency": "GBP",
+          "date": "2024-03-07",
+          "description": "Card sale",
+          "reference": "PAY-3005"
+        },
+        "group_key": "PAY-3005"
+      },
+      "right": {
+        "id": "bank-5",
+        "date": "2024-03-14T00:00:00Z",
+        "amount": 32000,
+        "currency": "GBP",
+        "reference": "PAY-3005",
+        "name": "Card settlement",
+        "source": "bank"
+      },
+      "days_diff": 7
+    }
+  ],
+  "duplicates": null
+}

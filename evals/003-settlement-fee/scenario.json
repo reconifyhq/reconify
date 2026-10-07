@@ -23,5 +23,8 @@
   },
   "counter_examples": [
     "counter_examples/tolerance-too-wide.yaml"
+  ],
+  "tags": [
+    "core"
   ]
 }

@@ -1,0 +1,3393 @@
+{
+  "schema": "reconify.engine.result.v1",
+  "index_selection": {
+    "requested_backend": "memory",
+    "backend": "memory",
+    "reason": "memory estimate fits configured policy",
+    "estimated_memory_bytes": 201330240
+  },
+  "pair": "left_vs_right",
+  "left_source": "left",
+  "right_source": "right",
+  "summary": {
+    "currency": "USD",
+    "total_left": 120,
+    "total_right": 119,
+    "matched": 114,
+    "unmatched_left": 2,
+    "unmatched_right": 1,
+    "amount_diff_count": 2,
+    "timing_diff_count": 2,
+    "duplicate_count": 0,
+    "match_rate_pct": 95,
+    "reconciled_rate_pct": 98.33,
+    "matched_amount_left": 13595112,
+    "matched_amount_right": 13595112,
+    "unmatched_amount_left": 329646,
+    "unmatched_amount_right": 18750,
+    "amount_diff_total": 6575,
+    "total_discrepancy": 354971
+  },
+  "matched": [
+    {
+      "left": {
+        "id": "left-1",
+        "date": "2024-01-02T00:00:00Z",
+        "amount": 175068,
+        "currency": "USD",
+        "reference": "TX-2401-0001",
+        "name": "Contoso Retail sale",
+        "source": "left",
+        "raw": {
+          "amount": "1750.68",
+          "currency": "USD",
+          "date": "2024-01-02",
+          "description": "Contoso Retail sale",
+          "reference": "TX-2401-0001"
+        },
+        "group_key": "TX-2401-0001"
+      },
+      "right": {
+        "id": "right-1",
+        "date": "2024-01-02T00:00:00Z",
+        "amount": 175068,
+        "currency": "USD",
+        "reference": "TX-2401-0001",
+        "name": "Contoso Retail sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-2",
+        "date": "2024-01-02T00:00:00Z",
+        "amount": 17290,
+        "currency": "USD",
+        "reference": "TX-2401-0002",
+        "name": "Lucerne Publishing sale",
+        "source": "left",
+        "raw": {
+          "amount": "172.90",
+          "currency": "USD",
+          "date": "2024-01-02",
+          "description": "Lucerne Publishing sale",
+          "reference": "TX-2401-0002"
+        },
+        "group_key": "TX-2401-0002"
+      },
+      "right": {
+        "id": "right-5",
+        "date": "2024-01-03T00:00:00Z",
+        "amount": 17290,
+        "currency": "USD",
+        "reference": "TX-2401-0002",
+        "name": "Lucerne Publishing sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-3",
+        "date": "2024-01-02T00:00:00Z",
+        "amount": 168061,
+        "currency": "USD",
+        "reference": "TX-2401-0003",
+        "name": "Fabrikam Goods sale",
+        "source": "left",
+        "raw": {
+          "amount": "1680.61",
+          "currency": "USD",
+          "date": "2024-01-02",
+          "description": "Fabrikam Goods sale",
+          "reference": "TX-2401-0003"
+        },
+        "group_key": "TX-2401-0003"
+      },
+      "right": {
+        "id": "right-8",
+        "date": "2024-01-04T00:00:00Z",
+        "amount": 168061,
+        "currency": "USD",
+        "reference": "TX-2401-0003",
+        "name": "Fabrikam Goods sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-4",
+        "date": "2024-01-02T00:00:00Z",
+        "amount": 207327,
+        "currency": "USD",
+        "reference": "TX-2401-0004",
+        "name": "Litware Foods sale",
+        "source": "left",
+        "raw": {
+          "amount": "2073.27",
+          "currency": "USD",
+          "date": "2024-01-02",
+          "description": "Litware Foods sale",
+          "reference": "TX-2401-0004"
+        },
+        "group_key": "TX-2401-0004"
+      },
+      "right": {
+        "id": "right-2",
+        "date": "2024-01-02T00:00:00Z",
+        "amount": 207327,
+        "currency": "USD",
+        "reference": "TX-2401-0004",
+        "name": "Litware Foods sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-5",
+        "date": "2024-01-02T00:00:00Z",
+        "amount": 199981,
+        "currency": "USD",
+        "reference": "TX-2401-0005",
+        "name": "Northwind Traders sale",
+        "source": "left",
+        "raw": {
+          "amount": "1999.81",
+          "currency": "USD",
+          "date": "2024-01-02",
+          "description": "Northwind Traders sale",
+          "reference": "TX-2401-0005"
+        },
+        "group_key": "TX-2401-0005"
+      },
+      "right": {
+        "id": "right-3",
+        "date": "2024-01-02T00:00:00Z",
+        "amount": 199981,
+        "currency": "USD",
+        "reference": "TX-2401-0005",
+        "name": "Northwind Traders sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-6",
+        "date": "2024-01-02T00:00:00Z",
+        "amount": 208217,
+        "currency": "USD",
+        "reference": "TX-2401-0006",
+        "name": "Fabrikam Goods sale",
+        "source": "left",
+        "raw": {
+          "amount": "2082.17",
+          "currency": "USD",
+          "date": "2024-01-02",
+          "description": "Fabrikam Goods sale",
+          "reference": "TX-2401-0006"
+        },
+        "group_key": "TX-2401-0006"
+      },
+      "right": {
+        "id": "right-6",
+        "date": "2024-01-03T00:00:00Z",
+        "amount": 208217,
+        "currency": "USD",
+        "reference": "TX-2401-0006",
+        "name": "Fabrikam Goods sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-7",
+        "date": "2024-01-02T00:00:00Z",
+        "amount": 112056,
+        "currency": "USD",
+        "reference": "TX-2401-0007",
+        "name": "Lucerne Publishing sale",
+        "source": "left",
+        "raw": {
+          "amount": "1120.56",
+          "currency": "USD",
+          "date": "2024-01-02",
+          "description": "Lucerne Publishing sale",
+          "reference": "TX-2401-0007"
+        },
+        "group_key": "TX-2401-0007"
+      },
+      "right": {
+        "id": "right-9",
+        "date": "2024-01-04T00:00:00Z",
+        "amount": 112056,
+        "currency": "USD",
+        "reference": "TX-2401-0007",
+        "name": "Lucerne Publishing sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-8",
+        "date": "2024-01-02T00:00:00Z",
+        "amount": 122227,
+        "currency": "USD",
+        "reference": "TX-2401-0008",
+        "name": "Proseware Cafe sale",
+        "source": "left",
+        "raw": {
+          "amount": "1222.27",
+          "currency": "USD",
+          "date": "2024-01-02",
+          "description": "Proseware Cafe sale",
+          "reference": "TX-2401-0008"
+        },
+        "group_key": "TX-2401-0008"
+      },
+      "right": {
+        "id": "right-4",
+        "date": "2024-01-02T00:00:00Z",
+        "amount": 122227,
+        "currency": "USD",
+        "reference": "TX-2401-0008",
+        "name": "Proseware Cafe sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-9",
+        "date": "2024-01-03T00:00:00Z",
+        "amount": 101933,
+        "currency": "USD",
+        "reference": "TX-2401-0009",
+        "name": "Proseware Cafe sale",
+        "source": "left",
+        "raw": {
+          "amount": "1019.33",
+          "currency": "USD",
+          "date": "2024-01-03",
+          "description": "Proseware Cafe sale",
+          "reference": "TX-2401-0009"
+        },
+        "group_key": "TX-2401-0009"
+      },
+      "right": {
+        "id": "right-15",
+        "date": "2024-01-05T00:00:00Z",
+        "amount": 101933,
+        "currency": "USD",
+        "reference": "TX-2401-0009",
+        "name": "Proseware Cafe sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-10",
+        "date": "2024-01-03T00:00:00Z",
+        "amount": 77279,
+        "currency": "USD",
+        "reference": "TX-2401-0010",
+        "name": "Coho Vineyard sale",
+        "source": "left",
+        "raw": {
+          "amount": "772.79",
+          "currency": "USD",
+          "date": "2024-01-03",
+          "description": "Coho Vineyard sale",
+          "reference": "TX-2401-0010"
+        },
+        "group_key": "TX-2401-0010"
+      },
+      "right": {
+        "id": "right-7",
+        "date": "2024-01-03T00:00:00Z",
+        "amount": 77279,
+        "currency": "USD",
+        "reference": "TX-2401-0010",
+        "name": "Coho Vineyard sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-11",
+        "date": "2024-01-03T00:00:00Z",
+        "amount": 218501,
+        "currency": "USD",
+        "reference": "TX-2401-0011",
+        "name": "Contoso Retail sale",
+        "source": "left",
+        "raw": {
+          "amount": "2185.01",
+          "currency": "USD",
+          "date": "2024-01-03",
+          "description": "Contoso Retail sale",
+          "reference": "TX-2401-0011"
+        },
+        "group_key": "TX-2401-0011"
+      },
+      "right": {
+        "id": "right-10",
+        "date": "2024-01-04T00:00:00Z",
+        "amount": 218501,
+        "currency": "USD",
+        "reference": "TX-2401-0011",
+        "name": "Contoso Retail sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-12",
+        "date": "2024-01-03T00:00:00Z",
+        "amount": 193209,
+        "currency": "USD",
+        "reference": "TX-2401-0012",
+        "name": "Lucerne Publishing sale",
+        "source": "left",
+        "raw": {
+          "amount": "1932.09",
+          "currency": "USD",
+          "date": "2024-01-03",
+          "description": "Lucerne Publishing sale",
+          "reference": "TX-2401-0012"
+        },
+        "group_key": "TX-2401-0012"
+      },
+      "right": {
+        "id": "right-16",
+        "date": "2024-01-05T00:00:00Z",
+        "amount": 193209,
+        "currency": "USD",
+        "reference": "TX-2401-0012",
+        "name": "Lucerne Publishing sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-13",
+        "date": "2024-01-04T00:00:00Z",
+        "amount": 149119,
+        "currency": "USD",
+        "reference": "TX-2401-0013",
+        "name": "Contoso Retail sale",
+        "source": "left",
+        "raw": {
+          "amount": "1491.19",
+          "currency": "USD",
+          "date": "2024-01-04",
+          "description": "Contoso Retail sale",
+          "reference": "TX-2401-0013"
+        },
+        "group_key": "TX-2401-0013"
+      },
+      "right": {
+        "id": "right-11",
+        "date": "2024-01-04T00:00:00Z",
+        "amount": 149119,
+        "currency": "USD",
+        "reference": "TX-2401-0013",
+        "name": "Contoso Retail sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-14",
+        "date": "2024-01-04T00:00:00Z",
+        "amount": 207855,
+        "currency": "USD",
+        "reference": "TX-2401-0014",
+        "name": "Coho Vineyard sale",
+        "source": "left",
+        "raw": {
+          "amount": "2078.55",
+          "currency": "USD",
+          "date": "2024-01-04",
+          "description": "Coho Vineyard sale",
+          "reference": "TX-2401-0014"
+        },
+        "group_key": "TX-2401-0014"
+      },
+      "right": {
+        "id": "right-17",
+        "date": "2024-01-05T00:00:00Z",
+        "amount": 207855,
+        "currency": "USD",
+        "reference": "TX-2401-0014",
+        "name": "Coho Vineyard sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-15",
+        "date": "2024-01-04T00:00:00Z",
+        "amount": 176049,
+        "currency": "USD",
+        "reference": "TX-2401-0015",
+        "name": "Proseware Cafe sale",
+        "source": "left",
+        "raw": {
+          "amount": "1760.49",
+          "currency": "USD",
+          "date": "2024-01-04",
+          "description": "Proseware Cafe sale",
+          "reference": "TX-2401-0015"
+        },
+        "group_key": "TX-2401-0015"
+      },
+      "right": {
+        "id": "right-12",
+        "date": "2024-01-04T00:00:00Z",
+        "amount": 176049,
+        "currency": "USD",
+        "reference": "TX-2401-0015",
+        "name": "Proseware Cafe sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-16",
+        "date": "2024-01-04T00:00:00Z",
+        "amount": 100050,
+        "currency": "USD",
+        "reference": "TX-2401-0016",
+        "name": "Wingtip Gifts sale",
+        "source": "left",
+        "raw": {
+          "amount": "1000.50",
+          "currency": "USD",
+          "date": "2024-01-04",
+          "description": "Wingtip Gifts sale",
+          "reference": "TX-2401-0016"
+        },
+        "group_key": "TX-2401-0016"
+      },
+      "right": {
+        "id": "right-13",
+        "date": "2024-01-04T00:00:00Z",
+        "amount": 100050,
+        "currency": "USD",
+        "reference": "TX-2401-0016",
+        "name": "Wingtip Gifts sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-17",
+        "date": "2024-01-04T00:00:00Z",
+        "amount": 33838,
+        "currency": "USD",
+        "reference": "TX-2401-0017",
+        "name": "Contoso Retail sale",
+        "source": "left",
+        "raw": {
+          "amount": "338.38",
+          "currency": "USD",
+          "date": "2024-01-04",
+          "description": "Contoso Retail sale",
+          "reference": "TX-2401-0017"
+        },
+        "group_key": "TX-2401-0017"
+      },
+      "right": {
+        "id": "right-18",
+        "date": "2024-01-05T00:00:00Z",
+        "amount": 33838,
+        "currency": "USD",
+        "reference": "TX-2401-0017",
+        "name": "Contoso Retail sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-19",
+        "date": "2024-01-04T00:00:00Z",
+        "amount": 112571,
+        "currency": "USD",
+        "reference": "TX-2401-0019",
+        "name": "Coho Vineyard sale",
+        "source": "left",
+        "raw": {
+          "amount": "1125.71",
+          "currency": "USD",
+          "date": "2024-01-04",
+          "description": "Coho Vineyard sale",
+          "reference": "TX-2401-0019"
+        },
+        "group_key": "TX-2401-0019"
+      },
+      "right": {
+        "id": "right-14",
+        "date": "2024-01-04T00:00:00Z",
+        "amount": 112571,
+        "currency": "USD",
+        "reference": "TX-2401-0019",
+        "name": "Coho Vineyard sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-20",
+        "date": "2024-01-04T00:00:00Z",
+        "amount": 33243,
+        "currency": "USD",
+        "reference": "TX-2401-0020",
+        "name": "Tailspin Toys sale",
+        "source": "left",
+        "raw": {
+          "amount": "332.43",
+          "currency": "USD",
+          "date": "2024-01-04",
+          "description": "Tailspin Toys sale",
+          "reference": "TX-2401-0020"
+        },
+        "group_key": "TX-2401-0020"
+      },
+      "right": {
+        "id": "right-20",
+        "date": "2024-01-06T00:00:00Z",
+        "amount": 33243,
+        "currency": "USD",
+        "reference": "TX-2401-0020",
+        "name": "Tailspin Toys sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-21",
+        "date": "2024-01-04T00:00:00Z",
+        "amount": 55646,
+        "currency": "USD",
+        "reference": "TX-2401-0021",
+        "name": "Litware Foods sale",
+        "source": "left",
+        "raw": {
+          "amount": "556.46",
+          "currency": "USD",
+          "date": "2024-01-04",
+          "description": "Litware Foods sale",
+          "reference": "TX-2401-0021"
+        },
+        "group_key": "TX-2401-0021"
+      },
+      "right": {
+        "id": "right-19",
+        "date": "2024-01-05T00:00:00Z",
+        "amount": 55646,
+        "currency": "USD",
+        "reference": "TX-2401-0021",
+        "name": "Litware Foods sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-22",
+        "date": "2024-01-05T00:00:00Z",
+        "amount": 111749,
+        "currency": "USD",
+        "reference": "TX-2401-0022",
+        "name": "Adventure Works sale",
+        "source": "left",
+        "raw": {
+          "amount": "1117.49",
+          "currency": "USD",
+          "date": "2024-01-05",
+          "description": "Adventure Works sale",
+          "reference": "TX-2401-0022"
+        },
+        "group_key": "TX-2401-0022"
+      },
+      "right": {
+        "id": "right-23",
+        "date": "2024-01-07T00:00:00Z",
+        "amount": 111749,
+        "currency": "USD",
+        "reference": "TX-2401-0022",
+        "name": "Adventure Works sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-23",
+        "date": "2024-01-05T00:00:00Z",
+        "amount": 11555,
+        "currency": "USD",
+        "reference": "TX-2401-0023",
+        "name": "Adventure Works sale",
+        "source": "left",
+        "raw": {
+          "amount": "115.55",
+          "currency": "USD",
+          "date": "2024-01-05",
+          "description": "Adventure Works sale",
+          "reference": "TX-2401-0023"
+        },
+        "group_key": "TX-2401-0023"
+      },
+      "right": {
+        "id": "right-21",
+        "date": "2024-01-06T00:00:00Z",
+        "amount": 11555,
+        "currency": "USD",
+        "reference": "TX-2401-0023",
+        "name": "Adventure Works sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-24",
+        "date": "2024-01-05T00:00:00Z",
+        "amount": 190565,
+        "currency": "USD",
+        "reference": "TX-2401-0024",
+        "name": "Fabrikam Goods sale",
+        "source": "left",
+        "raw": {
+          "amount": "1905.65",
+          "currency": "USD",
+          "date": "2024-01-05",
+          "description": "Fabrikam Goods sale",
+          "reference": "TX-2401-0024"
+        },
+        "group_key": "TX-2401-0024"
+      },
+      "right": {
+        "id": "right-24",
+        "date": "2024-01-07T00:00:00Z",
+        "amount": 190565,
+        "currency": "USD",
+        "reference": "TX-2401-0024",
+        "name": "Fabrikam Goods sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-25",
+        "date": "2024-01-05T00:00:00Z",
+        "amount": 42256,
+        "currency": "USD",
+        "reference": "TX-2401-0025",
+        "name": "Wingtip Gifts sale",
+        "source": "left",
+        "raw": {
+          "amount": "422.56",
+          "currency": "USD",
+          "date": "2024-01-05",
+          "description": "Wingtip Gifts sale",
+          "reference": "TX-2401-0025"
+        },
+        "group_key": "TX-2401-0025"
+      },
+      "right": {
+        "id": "right-25",
+        "date": "2024-01-07T00:00:00Z",
+        "amount": 42256,
+        "currency": "USD",
+        "reference": "TX-2401-0025",
+        "name": "Wingtip Gifts sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-26",
+        "date": "2024-01-05T00:00:00Z",
+        "amount": 119343,
+        "currency": "USD",
+        "reference": "TX-2401-0026",
+        "name": "Fabrikam Goods sale",
+        "source": "left",
+        "raw": {
+          "amount": "1193.43",
+          "currency": "USD",
+          "date": "2024-01-05",
+          "description": "Fabrikam Goods sale",
+          "reference": "TX-2401-0026"
+        },
+        "group_key": "TX-2401-0026"
+      },
+      "right": {
+        "id": "right-26",
+        "date": "2024-01-07T00:00:00Z",
+        "amount": 119343,
+        "currency": "USD",
+        "reference": "TX-2401-0026",
+        "name": "Fabrikam Goods sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-27",
+        "date": "2024-01-05T00:00:00Z",
+        "amount": 13477,
+        "currency": "USD",
+        "reference": "TX-2401-0027",
+        "name": "Northwind Traders sale",
+        "source": "left",
+        "raw": {
+          "amount": "134.77",
+          "currency": "USD",
+          "date": "2024-01-05",
+          "description": "Northwind Traders sale",
+          "reference": "TX-2401-0027"
+        },
+        "group_key": "TX-2401-0027"
+      },
+      "right": {
+        "id": "right-22",
+        "date": "2024-01-06T00:00:00Z",
+        "amount": 13477,
+        "currency": "USD",
+        "reference": "TX-2401-0027",
+        "name": "Northwind Traders sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-28",
+        "date": "2024-01-06T00:00:00Z",
+        "amount": 174676,
+        "currency": "USD",
+        "reference": "TX-2401-0028",
+        "name": "Wingtip Gifts sale",
+        "source": "left",
+        "raw": {
+          "amount": "1746.76",
+          "currency": "USD",
+          "date": "2024-01-06",
+          "description": "Wingtip Gifts sale",
+          "reference": "TX-2401-0028"
+        },
+        "group_key": "TX-2401-0028"
+      },
+      "right": {
+        "id": "right-27",
+        "date": "2024-01-08T00:00:00Z",
+        "amount": 174676,
+        "currency": "USD",
+        "reference": "TX-2401-0028",
+        "name": "Wingtip Gifts sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-29",
+        "date": "2024-01-06T00:00:00Z",
+        "amount": 30741,
+        "currency": "USD",
+        "reference": "TX-2401-0029",
+        "name": "Fabrikam Goods sale",
+        "source": "left",
+        "raw": {
+          "amount": "307.41",
+          "currency": "USD",
+          "date": "2024-01-06",
+          "description": "Fabrikam Goods sale",
+          "reference": "TX-2401-0029"
+        },
+        "group_key": "TX-2401-0029"
+      },
+      "right": {
+        "id": "right-28",
+        "date": "2024-01-08T00:00:00Z",
+        "amount": 30741,
+        "currency": "USD",
+        "reference": "TX-2401-0029",
+        "name": "Fabrikam Goods sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-31",
+        "date": "2024-01-07T00:00:00Z",
+        "amount": 52870,
+        "currency": "USD",
+        "reference": "TX-2401-0031",
+        "name": "Lucerne Publishing sale",
+        "source": "left",
+        "raw": {
+          "amount": "528.70",
+          "currency": "USD",
+          "date": "2024-01-07",
+          "description": "Lucerne Publishing sale",
+          "reference": "TX-2401-0031"
+        },
+        "group_key": "TX-2401-0031"
+      },
+      "right": {
+        "id": "right-32",
+        "date": "2024-01-09T00:00:00Z",
+        "amount": 52870,
+        "currency": "USD",
+        "reference": "TX-2401-0031",
+        "name": "Lucerne Publishing sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-32",
+        "date": "2024-01-07T00:00:00Z",
+        "amount": 52693,
+        "currency": "USD",
+        "reference": "TX-2401-0032",
+        "name": "Proseware Cafe sale",
+        "source": "left",
+        "raw": {
+          "amount": "526.93",
+          "currency": "USD",
+          "date": "2024-01-07",
+          "description": "Proseware Cafe sale",
+          "reference": "TX-2401-0032"
+        },
+        "group_key": "TX-2401-0032"
+      },
+      "right": {
+        "id": "right-33",
+        "date": "2024-01-09T00:00:00Z",
+        "amount": 52693,
+        "currency": "USD",
+        "reference": "TX-2401-0032",
+        "name": "Proseware Cafe sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-33",
+        "date": "2024-01-07T00:00:00Z",
+        "amount": 223208,
+        "currency": "USD",
+        "reference": "TX-2401-0033",
+        "name": "Wingtip Gifts sale",
+        "source": "left",
+        "raw": {
+          "amount": "2232.08",
+          "currency": "USD",
+          "date": "2024-01-07",
+          "description": "Wingtip Gifts sale",
+          "reference": "TX-2401-0033"
+        },
+        "group_key": "TX-2401-0033"
+      },
+      "right": {
+        "id": "right-29",
+        "date": "2024-01-08T00:00:00Z",
+        "amount": 223208,
+        "currency": "USD",
+        "reference": "TX-2401-0033",
+        "name": "Wingtip Gifts sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-34",
+        "date": "2024-01-08T00:00:00Z",
+        "amount": 37136,
+        "currency": "USD",
+        "reference": "TX-2401-0034",
+        "name": "Coho Vineyard sale",
+        "source": "left",
+        "raw": {
+          "amount": "371.36",
+          "currency": "USD",
+          "date": "2024-01-08",
+          "description": "Coho Vineyard sale",
+          "reference": "TX-2401-0034"
+        },
+        "group_key": "TX-2401-0034"
+      },
+      "right": {
+        "id": "right-30",
+        "date": "2024-01-08T00:00:00Z",
+        "amount": 37136,
+        "currency": "USD",
+        "reference": "TX-2401-0034",
+        "name": "Coho Vineyard sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-35",
+        "date": "2024-01-08T00:00:00Z",
+        "amount": 188878,
+        "currency": "USD",
+        "reference": "TX-2401-0035",
+        "name": "Adventure Works sale",
+        "source": "left",
+        "raw": {
+          "amount": "1888.78",
+          "currency": "USD",
+          "date": "2024-01-08",
+          "description": "Adventure Works sale",
+          "reference": "TX-2401-0035"
+        },
+        "group_key": "TX-2401-0035"
+      },
+      "right": {
+        "id": "right-34",
+        "date": "2024-01-09T00:00:00Z",
+        "amount": 188878,
+        "currency": "USD",
+        "reference": "TX-2401-0035",
+        "name": "Adventure Works sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-36",
+        "date": "2024-01-08T00:00:00Z",
+        "amount": 154409,
+        "currency": "USD",
+        "reference": "TX-2401-0036",
+        "name": "Fabrikam Goods sale",
+        "source": "left",
+        "raw": {
+          "amount": "1544.09",
+          "currency": "USD",
+          "date": "2024-01-08",
+          "description": "Fabrikam Goods sale",
+          "reference": "TX-2401-0036"
+        },
+        "group_key": "TX-2401-0036"
+      },
+      "right": {
+        "id": "right-40",
+        "date": "2024-01-10T00:00:00Z",
+        "amount": 154409,
+        "currency": "USD",
+        "reference": "TX-2401-0036",
+        "name": "Fabrikam Goods sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-37",
+        "date": "2024-01-08T00:00:00Z",
+        "amount": 44854,
+        "currency": "USD",
+        "reference": "TX-2401-0037",
+        "name": "Litware Foods sale",
+        "source": "left",
+        "raw": {
+          "amount": "448.54",
+          "currency": "USD",
+          "date": "2024-01-08",
+          "description": "Litware Foods sale",
+          "reference": "TX-2401-0037"
+        },
+        "group_key": "TX-2401-0037"
+      },
+      "right": {
+        "id": "right-35",
+        "date": "2024-01-09T00:00:00Z",
+        "amount": 44854,
+        "currency": "USD",
+        "reference": "TX-2401-0037",
+        "name": "Litware Foods sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-38",
+        "date": "2024-01-08T00:00:00Z",
+        "amount": 78591,
+        "currency": "USD",
+        "reference": "TX-2401-0038",
+        "name": "Wingtip Gifts sale",
+        "source": "left",
+        "raw": {
+          "amount": "785.91",
+          "currency": "USD",
+          "date": "2024-01-08",
+          "description": "Wingtip Gifts sale",
+          "reference": "TX-2401-0038"
+        },
+        "group_key": "TX-2401-0038"
+      },
+      "right": {
+        "id": "right-36",
+        "date": "2024-01-09T00:00:00Z",
+        "amount": 78591,
+        "currency": "USD",
+        "reference": "TX-2401-0038",
+        "name": "Wingtip Gifts sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-39",
+        "date": "2024-01-08T00:00:00Z",
+        "amount": 224335,
+        "currency": "USD",
+        "reference": "TX-2401-0039",
+        "name": "Wingtip Gifts sale",
+        "source": "left",
+        "raw": {
+          "amount": "2243.35",
+          "currency": "USD",
+          "date": "2024-01-08",
+          "description": "Wingtip Gifts sale",
+          "reference": "TX-2401-0039"
+        },
+        "group_key": "TX-2401-0039"
+      },
+      "right": {
+        "id": "right-31",
+        "date": "2024-01-08T00:00:00Z",
+        "amount": 224335,
+        "currency": "USD",
+        "reference": "TX-2401-0039",
+        "name": "Wingtip Gifts sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-40",
+        "date": "2024-01-08T00:00:00Z",
+        "amount": 123617,
+        "currency": "USD",
+        "reference": "TX-2401-0040",
+        "name": "Wingtip Gifts sale",
+        "source": "left",
+        "raw": {
+          "amount": "1236.17",
+          "currency": "USD",
+          "date": "2024-01-08",
+          "description": "Wingtip Gifts sale",
+          "reference": "TX-2401-0040"
+        },
+        "group_key": "TX-2401-0040"
+      },
+      "right": {
+        "id": "right-37",
+        "date": "2024-01-09T00:00:00Z",
+        "amount": 123617,
+        "currency": "USD",
+        "reference": "TX-2401-0040",
+        "name": "Wingtip Gifts sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-41",
+        "date": "2024-01-09T00:00:00Z",
+        "amount": 14260,
+        "currency": "USD",
+        "reference": "TX-2401-0041",
+        "name": "Coho Vineyard sale",
+        "source": "left",
+        "raw": {
+          "amount": "142.60",
+          "currency": "USD",
+          "date": "2024-01-09",
+          "description": "Coho Vineyard sale",
+          "reference": "TX-2401-0041"
+        },
+        "group_key": "TX-2401-0041"
+      },
+      "right": {
+        "id": "right-38",
+        "date": "2024-01-09T00:00:00Z",
+        "amount": 14260,
+        "currency": "USD",
+        "reference": "TX-2401-0041",
+        "name": "Coho Vineyard sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-43",
+        "date": "2024-01-09T00:00:00Z",
+        "amount": 122995,
+        "currency": "USD",
+        "reference": "TX-2401-0043",
+        "name": "Litware Foods sale",
+        "source": "left",
+        "raw": {
+          "amount": "1229.95",
+          "currency": "USD",
+          "date": "2024-01-09",
+          "description": "Litware Foods sale",
+          "reference": "TX-2401-0043"
+        },
+        "group_key": "TX-2401-0043"
+      },
+      "right": {
+        "id": "right-39",
+        "date": "2024-01-09T00:00:00Z",
+        "amount": 122995,
+        "currency": "USD",
+        "reference": "TX-2401-0043",
+        "name": "Litware Foods sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-44",
+        "date": "2024-01-10T00:00:00Z",
+        "amount": 100750,
+        "currency": "USD",
+        "reference": "TX-2401-0044",
+        "name": "Lucerne Publishing sale",
+        "source": "left",
+        "raw": {
+          "amount": "1007.50",
+          "currency": "USD",
+          "date": "2024-01-10",
+          "description": "Lucerne Publishing sale",
+          "reference": "TX-2401-0044"
+        },
+        "group_key": "TX-2401-0044"
+      },
+      "right": {
+        "id": "right-41",
+        "date": "2024-01-10T00:00:00Z",
+        "amount": 100750,
+        "currency": "USD",
+        "reference": "TX-2401-0044",
+        "name": "Lucerne Publishing sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-45",
+        "date": "2024-01-10T00:00:00Z",
+        "amount": 224095,
+        "currency": "USD",
+        "reference": "TX-2401-0045",
+        "name": "Fabrikam Goods sale",
+        "source": "left",
+        "raw": {
+          "amount": "2240.95",
+          "currency": "USD",
+          "date": "2024-01-10",
+          "description": "Fabrikam Goods sale",
+          "reference": "TX-2401-0045"
+        },
+        "group_key": "TX-2401-0045"
+      },
+      "right": {
+        "id": "right-42",
+        "date": "2024-01-10T00:00:00Z",
+        "amount": 224095,
+        "currency": "USD",
+        "reference": "TX-2401-0045",
+        "name": "Fabrikam Goods sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-46",
+        "date": "2024-01-10T00:00:00Z",
+        "amount": 42415,
+        "currency": "USD",
+        "reference": "TX-2401-0046",
+        "name": "Wingtip Gifts sale",
+        "source": "left",
+        "raw": {
+          "amount": "424.15",
+          "currency": "USD",
+          "date": "2024-01-10",
+          "description": "Wingtip Gifts sale",
+          "reference": "TX-2401-0046"
+        },
+        "group_key": "TX-2401-0046"
+      },
+      "right": {
+        "id": "right-48",
+        "date": "2024-01-12T00:00:00Z",
+        "amount": 42415,
+        "currency": "USD",
+        "reference": "TX-2401-0046",
+        "name": "Wingtip Gifts sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-47",
+        "date": "2024-01-10T00:00:00Z",
+        "amount": 126302,
+        "currency": "USD",
+        "reference": "TX-2401-0047",
+        "name": "Contoso Retail sale",
+        "source": "left",
+        "raw": {
+          "amount": "1263.02",
+          "currency": "USD",
+          "date": "2024-01-10",
+          "description": "Contoso Retail sale",
+          "reference": "TX-2401-0047"
+        },
+        "group_key": "TX-2401-0047"
+      },
+      "right": {
+        "id": "right-44",
+        "date": "2024-01-11T00:00:00Z",
+        "amount": 126302,
+        "currency": "USD",
+        "reference": "TX-2401-0047",
+        "name": "Contoso Retail sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-48",
+        "date": "2024-01-10T00:00:00Z",
+        "amount": 217612,
+        "currency": "USD",
+        "reference": "TX-2401-0048",
+        "name": "Coho Vineyard sale",
+        "source": "left",
+        "raw": {
+          "amount": "2176.12",
+          "currency": "USD",
+          "date": "2024-01-10",
+          "description": "Coho Vineyard sale",
+          "reference": "TX-2401-0048"
+        },
+        "group_key": "TX-2401-0048"
+      },
+      "right": {
+        "id": "right-45",
+        "date": "2024-01-11T00:00:00Z",
+        "amount": 217612,
+        "currency": "USD",
+        "reference": "TX-2401-0048",
+        "name": "Coho Vineyard sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-49",
+        "date": "2024-01-11T00:00:00Z",
+        "amount": 30991,
+        "currency": "USD",
+        "reference": "TX-2401-0049",
+        "name": "Northwind Traders sale",
+        "source": "left",
+        "raw": {
+          "amount": "309.91",
+          "currency": "USD",
+          "date": "2024-01-11",
+          "description": "Northwind Traders sale",
+          "reference": "TX-2401-0049"
+        },
+        "group_key": "TX-2401-0049"
+      },
+      "right": {
+        "id": "right-46",
+        "date": "2024-01-11T00:00:00Z",
+        "amount": 30991,
+        "currency": "USD",
+        "reference": "TX-2401-0049",
+        "name": "Northwind Traders sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-50",
+        "date": "2024-01-11T00:00:00Z",
+        "amount": 174586,
+        "currency": "USD",
+        "reference": "TX-2401-0050",
+        "name": "Contoso Retail sale",
+        "source": "left",
+        "raw": {
+          "amount": "1745.86",
+          "currency": "USD",
+          "date": "2024-01-11",
+          "description": "Contoso Retail sale",
+          "reference": "TX-2401-0050"
+        },
+        "group_key": "TX-2401-0050"
+      },
+      "right": {
+        "id": "right-53",
+        "date": "2024-01-13T00:00:00Z",
+        "amount": 174586,
+        "currency": "USD",
+        "reference": "TX-2401-0050",
+        "name": "Contoso Retail sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-51",
+        "date": "2024-01-11T00:00:00Z",
+        "amount": 135267,
+        "currency": "USD",
+        "reference": "TX-2401-0051",
+        "name": "Northwind Traders sale",
+        "source": "left",
+        "raw": {
+          "amount": "1352.67",
+          "currency": "USD",
+          "date": "2024-01-11",
+          "description": "Northwind Traders sale",
+          "reference": "TX-2401-0051"
+        },
+        "group_key": "TX-2401-0051"
+      },
+      "right": {
+        "id": "right-47",
+        "date": "2024-01-11T00:00:00Z",
+        "amount": 135267,
+        "currency": "USD",
+        "reference": "TX-2401-0051",
+        "name": "Northwind Traders sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-52",
+        "date": "2024-01-12T00:00:00Z",
+        "amount": 151344,
+        "currency": "USD",
+        "reference": "TX-2401-0052",
+        "name": "Tailspin Toys sale",
+        "source": "left",
+        "raw": {
+          "amount": "1513.44",
+          "currency": "USD",
+          "date": "2024-01-12",
+          "description": "Tailspin Toys sale",
+          "reference": "TX-2401-0052"
+        },
+        "group_key": "TX-2401-0052"
+      },
+      "right": {
+        "id": "right-49",
+        "date": "2024-01-12T00:00:00Z",
+        "amount": 151344,
+        "currency": "USD",
+        "reference": "TX-2401-0052",
+        "name": "Tailspin Toys sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-53",
+        "date": "2024-01-12T00:00:00Z",
+        "amount": 8527,
+        "currency": "USD",
+        "reference": "TX-2401-0053",
+        "name": "Coho Vineyard sale",
+        "source": "left",
+        "raw": {
+          "amount": "85.27",
+          "currency": "USD",
+          "date": "2024-01-12",
+          "description": "Coho Vineyard sale",
+          "reference": "TX-2401-0053"
+        },
+        "group_key": "TX-2401-0053"
+      },
+      "right": {
+        "id": "right-59",
+        "date": "2024-01-14T00:00:00Z",
+        "amount": 8527,
+        "currency": "USD",
+        "reference": "TX-2401-0053",
+        "name": "Coho Vineyard sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-54",
+        "date": "2024-01-12T00:00:00Z",
+        "amount": 107966,
+        "currency": "USD",
+        "reference": "TX-2401-0054",
+        "name": "Proseware Cafe sale",
+        "source": "left",
+        "raw": {
+          "amount": "1079.66",
+          "currency": "USD",
+          "date": "2024-01-12",
+          "description": "Proseware Cafe sale",
+          "reference": "TX-2401-0054"
+        },
+        "group_key": "TX-2401-0054"
+      },
+      "right": {
+        "id": "right-54",
+        "date": "2024-01-13T00:00:00Z",
+        "amount": 107966,
+        "currency": "USD",
+        "reference": "TX-2401-0054",
+        "name": "Proseware Cafe sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-55",
+        "date": "2024-01-12T00:00:00Z",
+        "amount": 223369,
+        "currency": "USD",
+        "reference": "TX-2401-0055",
+        "name": "Lucerne Publishing sale",
+        "source": "left",
+        "raw": {
+          "amount": "2233.69",
+          "currency": "USD",
+          "date": "2024-01-12",
+          "description": "Lucerne Publishing sale",
+          "reference": "TX-2401-0055"
+        },
+        "group_key": "TX-2401-0055"
+      },
+      "right": {
+        "id": "right-50",
+        "date": "2024-01-12T00:00:00Z",
+        "amount": 223369,
+        "currency": "USD",
+        "reference": "TX-2401-0055",
+        "name": "Lucerne Publishing sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-56",
+        "date": "2024-01-12T00:00:00Z",
+        "amount": 83596,
+        "currency": "USD",
+        "reference": "TX-2401-0056",
+        "name": "Litware Foods sale",
+        "source": "left",
+        "raw": {
+          "amount": "835.96",
+          "currency": "USD",
+          "date": "2024-01-12",
+          "description": "Litware Foods sale",
+          "reference": "TX-2401-0056"
+        },
+        "group_key": "TX-2401-0056"
+      },
+      "right": {
+        "id": "right-51",
+        "date": "2024-01-12T00:00:00Z",
+        "amount": 83596,
+        "currency": "USD",
+        "reference": "TX-2401-0056",
+        "name": "Litware Foods sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-57",
+        "date": "2024-01-12T00:00:00Z",
+        "amount": 219528,
+        "currency": "USD",
+        "reference": "TX-2401-0057",
+        "name": "Adventure Works sale",
+        "source": "left",
+        "raw": {
+          "amount": "2195.28",
+          "currency": "USD",
+          "date": "2024-01-12",
+          "description": "Adventure Works sale",
+          "reference": "TX-2401-0057"
+        },
+        "group_key": "TX-2401-0057"
+      },
+      "right": {
+        "id": "right-55",
+        "date": "2024-01-13T00:00:00Z",
+        "amount": 219528,
+        "currency": "USD",
+        "reference": "TX-2401-0057",
+        "name": "Adventure Works sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-58",
+        "date": "2024-01-13T00:00:00Z",
+        "amount": 237204,
+        "currency": "USD",
+        "reference": "TX-2401-0058",
+        "name": "Proseware Cafe sale",
+        "source": "left",
+        "raw": {
+          "amount": "2372.04",
+          "currency": "USD",
+          "date": "2024-01-13",
+          "description": "Proseware Cafe sale",
+          "reference": "TX-2401-0058"
+        },
+        "group_key": "TX-2401-0058"
+      },
+      "right": {
+        "id": "right-56",
+        "date": "2024-01-13T00:00:00Z",
+        "amount": 237204,
+        "currency": "USD",
+        "reference": "TX-2401-0058",
+        "name": "Proseware Cafe sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-59",
+        "date": "2024-01-13T00:00:00Z",
+        "amount": 21000,
+        "currency": "USD",
+        "reference": "TX-2401-0059",
+        "name": "Lucerne Publishing sale",
+        "source": "left",
+        "raw": {
+          "amount": "210.00",
+          "currency": "USD",
+          "date": "2024-01-13",
+          "description": "Lucerne Publishing sale",
+          "reference": "TX-2401-0059"
+        },
+        "group_key": "TX-2401-0059"
+      },
+      "right": {
+        "id": "right-57",
+        "date": "2024-01-13T00:00:00Z",
+        "amount": 21000,
+        "currency": "USD",
+        "reference": "TX-2401-0059",
+        "name": "Lucerne Publishing sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-60",
+        "date": "2024-01-13T00:00:00Z",
+        "amount": 10976,
+        "currency": "USD",
+        "reference": "TX-2401-0060",
+        "name": "Litware Foods sale",
+        "source": "left",
+        "raw": {
+          "amount": "109.76",
+          "currency": "USD",
+          "date": "2024-01-13",
+          "description": "Litware Foods sale",
+          "reference": "TX-2401-0060"
+        },
+        "group_key": "TX-2401-0060"
+      },
+      "right": {
+        "id": "right-58",
+        "date": "2024-01-13T00:00:00Z",
+        "amount": 10976,
+        "currency": "USD",
+        "reference": "TX-2401-0060",
+        "name": "Litware Foods sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-61",
+        "date": "2024-01-14T00:00:00Z",
+        "amount": 142300,
+        "currency": "USD",
+        "reference": "TX-2401-0061",
+        "name": "Litware Foods sale",
+        "source": "left",
+        "raw": {
+          "amount": "1423.00",
+          "currency": "USD",
+          "date": "2024-01-14",
+          "description": "Litware Foods sale",
+          "reference": "TX-2401-0061"
+        },
+        "group_key": "TX-2401-0061"
+      },
+      "right": {
+        "id": "right-60",
+        "date": "2024-01-14T00:00:00Z",
+        "amount": 142300,
+        "currency": "USD",
+        "reference": "TX-2401-0061",
+        "name": "Litware Foods sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-62",
+        "date": "2024-01-14T00:00:00Z",
+        "amount": 51074,
+        "currency": "USD",
+        "reference": "TX-2401-0062",
+        "name": "Wingtip Gifts sale",
+        "source": "left",
+        "raw": {
+          "amount": "510.74",
+          "currency": "USD",
+          "date": "2024-01-14",
+          "description": "Wingtip Gifts sale",
+          "reference": "TX-2401-0062"
+        },
+        "group_key": "TX-2401-0062"
+      },
+      "right": {
+        "id": "right-61",
+        "date": "2024-01-14T00:00:00Z",
+        "amount": 51074,
+        "currency": "USD",
+        "reference": "TX-2401-0062",
+        "name": "Wingtip Gifts sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-63",
+        "date": "2024-01-15T00:00:00Z",
+        "amount": 23984,
+        "currency": "USD",
+        "reference": "TX-2401-0063",
+        "name": "Litware Foods sale",
+        "source": "left",
+        "raw": {
+          "amount": "239.84",
+          "currency": "USD",
+          "date": "2024-01-15",
+          "description": "Litware Foods sale",
+          "reference": "TX-2401-0063"
+        },
+        "group_key": "TX-2401-0063"
+      },
+      "right": {
+        "id": "right-63",
+        "date": "2024-01-16T00:00:00Z",
+        "amount": 23984,
+        "currency": "USD",
+        "reference": "TX-2401-0063",
+        "name": "Litware Foods sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-64",
+        "date": "2024-01-15T00:00:00Z",
+        "amount": 39892,
+        "currency": "USD",
+        "reference": "TX-2401-0064",
+        "name": "Northwind Traders sale",
+        "source": "left",
+        "raw": {
+          "amount": "398.92",
+          "currency": "USD",
+          "date": "2024-01-15",
+          "description": "Northwind Traders sale",
+          "reference": "TX-2401-0064"
+        },
+        "group_key": "TX-2401-0064"
+      },
+      "right": {
+        "id": "right-62",
+        "date": "2024-01-15T00:00:00Z",
+        "amount": 39892,
+        "currency": "USD",
+        "reference": "TX-2401-0064",
+        "name": "Northwind Traders sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-65",
+        "date": "2024-01-15T00:00:00Z",
+        "amount": 92199,
+        "currency": "USD",
+        "reference": "TX-2401-0065",
+        "name": "Fabrikam Goods sale",
+        "source": "left",
+        "raw": {
+          "amount": "921.99",
+          "currency": "USD",
+          "date": "2024-01-15",
+          "description": "Fabrikam Goods sale",
+          "reference": "TX-2401-0065"
+        },
+        "group_key": "TX-2401-0065"
+      },
+      "right": {
+        "id": "right-70",
+        "date": "2024-01-17T00:00:00Z",
+        "amount": 92199,
+        "currency": "USD",
+        "reference": "TX-2401-0065",
+        "name": "Fabrikam Goods sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-66",
+        "date": "2024-01-15T00:00:00Z",
+        "amount": 200407,
+        "currency": "USD",
+        "reference": "TX-2401-0066",
+        "name": "Lucerne Publishing sale",
+        "source": "left",
+        "raw": {
+          "amount": "2004.07",
+          "currency": "USD",
+          "date": "2024-01-15",
+          "description": "Lucerne Publishing sale",
+          "reference": "TX-2401-0066"
+        },
+        "group_key": "TX-2401-0066"
+      },
+      "right": {
+        "id": "right-64",
+        "date": "2024-01-16T00:00:00Z",
+        "amount": 200407,
+        "currency": "USD",
+        "reference": "TX-2401-0066",
+        "name": "Lucerne Publishing sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-67",
+        "date": "2024-01-16T00:00:00Z",
+        "amount": 68106,
+        "currency": "USD",
+        "reference": "TX-2401-0067",
+        "name": "Adventure Works sale",
+        "source": "left",
+        "raw": {
+          "amount": "681.06",
+          "currency": "USD",
+          "date": "2024-01-16",
+          "description": "Adventure Works sale",
+          "reference": "TX-2401-0067"
+        },
+        "group_key": "TX-2401-0067"
+      },
+      "right": {
+        "id": "right-65",
+        "date": "2024-01-16T00:00:00Z",
+        "amount": 68106,
+        "currency": "USD",
+        "reference": "TX-2401-0067",
+        "name": "Adventure Works sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-68",
+        "date": "2024-01-16T00:00:00Z",
+        "amount": 149071,
+        "currency": "USD",
+        "reference": "TX-2401-0068",
+        "name": "Tailspin Toys sale",
+        "source": "left",
+        "raw": {
+          "amount": "1490.71",
+          "currency": "USD",
+          "date": "2024-01-16",
+          "description": "Tailspin Toys sale",
+          "reference": "TX-2401-0068"
+        },
+        "group_key": "TX-2401-0068"
+      },
+      "right": {
+        "id": "right-66",
+        "date": "2024-01-16T00:00:00Z",
+        "amount": 149071,
+        "currency": "USD",
+        "reference": "TX-2401-0068",
+        "name": "Tailspin Toys sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-69",
+        "date": "2024-01-16T00:00:00Z",
+        "amount": 100858,
+        "currency": "USD",
+        "reference": "TX-2401-0069",
+        "name": "Fabrikam Goods sale",
+        "source": "left",
+        "raw": {
+          "amount": "1008.58",
+          "currency": "USD",
+          "date": "2024-01-16",
+          "description": "Fabrikam Goods sale",
+          "reference": "TX-2401-0069"
+        },
+        "group_key": "TX-2401-0069"
+      },
+      "right": {
+        "id": "right-67",
+        "date": "2024-01-16T00:00:00Z",
+        "amount": 100858,
+        "currency": "USD",
+        "reference": "TX-2401-0069",
+        "name": "Fabrikam Goods sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-70",
+        "date": "2024-01-16T00:00:00Z",
+        "amount": 19642,
+        "currency": "USD",
+        "reference": "TX-2401-0070",
+        "name": "Fabrikam Goods sale",
+        "source": "left",
+        "raw": {
+          "amount": "196.42",
+          "currency": "USD",
+          "date": "2024-01-16",
+          "description": "Fabrikam Goods sale",
+          "reference": "TX-2401-0070"
+        },
+        "group_key": "TX-2401-0070"
+      },
+      "right": {
+        "id": "right-68",
+        "date": "2024-01-16T00:00:00Z",
+        "amount": 19642,
+        "currency": "USD",
+        "reference": "TX-2401-0070",
+        "name": "Fabrikam Goods sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-71",
+        "date": "2024-01-16T00:00:00Z",
+        "amount": 225903,
+        "currency": "USD",
+        "reference": "TX-2401-0071",
+        "name": "Lucerne Publishing sale",
+        "source": "left",
+        "raw": {
+          "amount": "2259.03",
+          "currency": "USD",
+          "date": "2024-01-16",
+          "description": "Lucerne Publishing sale",
+          "reference": "TX-2401-0071"
+        },
+        "group_key": "TX-2401-0071"
+      },
+      "right": {
+        "id": "right-69",
+        "date": "2024-01-16T00:00:00Z",
+        "amount": 225903,
+        "currency": "USD",
+        "reference": "TX-2401-0071",
+        "name": "Lucerne Publishing sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-72",
+        "date": "2024-01-16T00:00:00Z",
+        "amount": 235858,
+        "currency": "USD",
+        "reference": "TX-2401-0072",
+        "name": "Fabrikam Goods sale",
+        "source": "left",
+        "raw": {
+          "amount": "2358.58",
+          "currency": "USD",
+          "date": "2024-01-16",
+          "description": "Fabrikam Goods sale",
+          "reference": "TX-2401-0072"
+        },
+        "group_key": "TX-2401-0072"
+      },
+      "right": {
+        "id": "right-72",
+        "date": "2024-01-18T00:00:00Z",
+        "amount": 235858,
+        "currency": "USD",
+        "reference": "TX-2401-0072",
+        "name": "Fabrikam Goods sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-73",
+        "date": "2024-01-16T00:00:00Z",
+        "amount": 36669,
+        "currency": "USD",
+        "reference": "TX-2401-0073",
+        "name": "Tailspin Toys sale",
+        "source": "left",
+        "raw": {
+          "amount": "366.69",
+          "currency": "USD",
+          "date": "2024-01-16",
+          "description": "Tailspin Toys sale",
+          "reference": "TX-2401-0073"
+        },
+        "group_key": "TX-2401-0073"
+      },
+      "right": {
+        "id": "right-73",
+        "date": "2024-01-18T00:00:00Z",
+        "amount": 36669,
+        "currency": "USD",
+        "reference": "TX-2401-0073",
+        "name": "Tailspin Toys sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-74",
+        "date": "2024-01-16T00:00:00Z",
+        "amount": 213391,
+        "currency": "USD",
+        "reference": "TX-2401-0074",
+        "name": "Coho Vineyard sale",
+        "source": "left",
+        "raw": {
+          "amount": "2133.91",
+          "currency": "USD",
+          "date": "2024-01-16",
+          "description": "Coho Vineyard sale",
+          "reference": "TX-2401-0074"
+        },
+        "group_key": "TX-2401-0074"
+      },
+      "right": {
+        "id": "right-71",
+        "date": "2024-01-17T00:00:00Z",
+        "amount": 213391,
+        "currency": "USD",
+        "reference": "TX-2401-0074",
+        "name": "Coho Vineyard sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-76",
+        "date": "2024-01-18T00:00:00Z",
+        "amount": 207291,
+        "currency": "USD",
+        "reference": "TX-2401-0076",
+        "name": "Tailspin Toys sale",
+        "source": "left",
+        "raw": {
+          "amount": "2072.91",
+          "currency": "USD",
+          "date": "2024-01-18",
+          "description": "Tailspin Toys sale",
+          "reference": "TX-2401-0076"
+        },
+        "group_key": "TX-2401-0076"
+      },
+      "right": {
+        "id": "right-77",
+        "date": "2024-01-19T00:00:00Z",
+        "amount": 207291,
+        "currency": "USD",
+        "reference": "TX-2401-0076",
+        "name": "Tailspin Toys sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-77",
+        "date": "2024-01-18T00:00:00Z",
+        "amount": 120172,
+        "currency": "USD",
+        "reference": "TX-2401-0077",
+        "name": "Wingtip Gifts sale",
+        "source": "left",
+        "raw": {
+          "amount": "1201.72",
+          "currency": "USD",
+          "date": "2024-01-18",
+          "description": "Wingtip Gifts sale",
+          "reference": "TX-2401-0077"
+        },
+        "group_key": "TX-2401-0077"
+      },
+      "right": {
+        "id": "right-74",
+        "date": "2024-01-18T00:00:00Z",
+        "amount": 120172,
+        "currency": "USD",
+        "reference": "TX-2401-0077",
+        "name": "Wingtip Gifts sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-78",
+        "date": "2024-01-18T00:00:00Z",
+        "amount": 194804,
+        "currency": "USD",
+        "reference": "TX-2401-0078",
+        "name": "Fabrikam Goods sale",
+        "source": "left",
+        "raw": {
+          "amount": "1948.04",
+          "currency": "USD",
+          "date": "2024-01-18",
+          "description": "Fabrikam Goods sale",
+          "reference": "TX-2401-0078"
+        },
+        "group_key": "TX-2401-0078"
+      },
+      "right": {
+        "id": "right-84",
+        "date": "2024-01-20T00:00:00Z",
+        "amount": 194804,
+        "currency": "USD",
+        "reference": "TX-2401-0078",
+        "name": "Fabrikam Goods sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-79",
+        "date": "2024-01-18T00:00:00Z",
+        "amount": 119266,
+        "currency": "USD",
+        "reference": "TX-2401-0079",
+        "name": "Coho Vineyard sale",
+        "source": "left",
+        "raw": {
+          "amount": "1192.66",
+          "currency": "USD",
+          "date": "2024-01-18",
+          "description": "Coho Vineyard sale",
+          "reference": "TX-2401-0079"
+        },
+        "group_key": "TX-2401-0079"
+      },
+      "right": {
+        "id": "right-75",
+        "date": "2024-01-18T00:00:00Z",
+        "amount": 119266,
+        "currency": "USD",
+        "reference": "TX-2401-0079",
+        "name": "Coho Vineyard sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-80",
+        "date": "2024-01-18T00:00:00Z",
+        "amount": 114663,
+        "currency": "USD",
+        "reference": "TX-2401-0080",
+        "name": "Litware Foods sale",
+        "source": "left",
+        "raw": {
+          "amount": "1146.63",
+          "currency": "USD",
+          "date": "2024-01-18",
+          "description": "Litware Foods sale",
+          "reference": "TX-2401-0080"
+        },
+        "group_key": "TX-2401-0080"
+      },
+      "right": {
+        "id": "right-78",
+        "date": "2024-01-19T00:00:00Z",
+        "amount": 114663,
+        "currency": "USD",
+        "reference": "TX-2401-0080",
+        "name": "Litware Foods sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-81",
+        "date": "2024-01-18T00:00:00Z",
+        "amount": 156090,
+        "currency": "USD",
+        "reference": "TX-2401-0081",
+        "name": "Lucerne Publishing sale",
+        "source": "left",
+        "raw": {
+          "amount": "1560.90",
+          "currency": "USD",
+          "date": "2024-01-18",
+          "description": "Lucerne Publishing sale",
+          "reference": "TX-2401-0081"
+        },
+        "group_key": "TX-2401-0081"
+      },
+      "right": {
+        "id": "right-76",
+        "date": "2024-01-18T00:00:00Z",
+        "amount": 156090,
+        "currency": "USD",
+        "reference": "TX-2401-0081",
+        "name": "Lucerne Publishing sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-82",
+        "date": "2024-01-19T00:00:00Z",
+        "amount": 185823,
+        "currency": "USD",
+        "reference": "TX-2401-0082",
+        "name": "Northwind Traders sale",
+        "source": "left",
+        "raw": {
+          "amount": "1858.23",
+          "currency": "USD",
+          "date": "2024-01-19",
+          "description": "Northwind Traders sale",
+          "reference": "TX-2401-0082"
+        },
+        "group_key": "TX-2401-0082"
+      },
+      "right": {
+        "id": "right-79",
+        "date": "2024-01-19T00:00:00Z",
+        "amount": 185823,
+        "currency": "USD",
+        "reference": "TX-2401-0082",
+        "name": "Northwind Traders sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-83",
+        "date": "2024-01-19T00:00:00Z",
+        "amount": 131266,
+        "currency": "USD",
+        "reference": "TX-2401-0083",
+        "name": "Coho Vineyard sale",
+        "source": "left",
+        "raw": {
+          "amount": "1312.66",
+          "currency": "USD",
+          "date": "2024-01-19",
+          "description": "Coho Vineyard sale",
+          "reference": "TX-2401-0083"
+        },
+        "group_key": "TX-2401-0083"
+      },
+      "right": {
+        "id": "right-80",
+        "date": "2024-01-19T00:00:00Z",
+        "amount": 131266,
+        "currency": "USD",
+        "reference": "TX-2401-0083",
+        "name": "Coho Vineyard sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-84",
+        "date": "2024-01-19T00:00:00Z",
+        "amount": 57626,
+        "currency": "USD",
+        "reference": "TX-2401-0084",
+        "name": "Lucerne Publishing sale",
+        "source": "left",
+        "raw": {
+          "amount": "576.26",
+          "currency": "USD",
+          "date": "2024-01-19",
+          "description": "Lucerne Publishing sale",
+          "reference": "TX-2401-0084"
+        },
+        "group_key": "TX-2401-0084"
+      },
+      "right": {
+        "id": "right-81",
+        "date": "2024-01-19T00:00:00Z",
+        "amount": 57626,
+        "currency": "USD",
+        "reference": "TX-2401-0084",
+        "name": "Lucerne Publishing sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-85",
+        "date": "2024-01-19T00:00:00Z",
+        "amount": 67936,
+        "currency": "USD",
+        "reference": "TX-2401-0085",
+        "name": "Adventure Works sale",
+        "source": "left",
+        "raw": {
+          "amount": "679.36",
+          "currency": "USD",
+          "date": "2024-01-19",
+          "description": "Adventure Works sale",
+          "reference": "TX-2401-0085"
+        },
+        "group_key": "TX-2401-0085"
+      },
+      "right": {
+        "id": "right-86",
+        "date": "2024-01-21T00:00:00Z",
+        "amount": 67936,
+        "currency": "USD",
+        "reference": "TX-2401-0085",
+        "name": "Adventure Works sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-86",
+        "date": "2024-01-19T00:00:00Z",
+        "amount": 35109,
+        "currency": "USD",
+        "reference": "TX-2401-0086",
+        "name": "Coho Vineyard sale",
+        "source": "left",
+        "raw": {
+          "amount": "351.09",
+          "currency": "USD",
+          "date": "2024-01-19",
+          "description": "Coho Vineyard sale",
+          "reference": "TX-2401-0086"
+        },
+        "group_key": "TX-2401-0086"
+      },
+      "right": {
+        "id": "right-87",
+        "date": "2024-01-21T00:00:00Z",
+        "amount": 35109,
+        "currency": "USD",
+        "reference": "TX-2401-0086",
+        "name": "Coho Vineyard sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-87",
+        "date": "2024-01-19T00:00:00Z",
+        "amount": 231344,
+        "currency": "USD",
+        "reference": "TX-2401-0087",
+        "name": "Northwind Traders sale",
+        "source": "left",
+        "raw": {
+          "amount": "2313.44",
+          "currency": "USD",
+          "date": "2024-01-19",
+          "description": "Northwind Traders sale",
+          "reference": "TX-2401-0087"
+        },
+        "group_key": "TX-2401-0087"
+      },
+      "right": {
+        "id": "right-82",
+        "date": "2024-01-19T00:00:00Z",
+        "amount": 231344,
+        "currency": "USD",
+        "reference": "TX-2401-0087",
+        "name": "Northwind Traders sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-88",
+        "date": "2024-01-19T00:00:00Z",
+        "amount": 88716,
+        "currency": "USD",
+        "reference": "TX-2401-0088",
+        "name": "Coho Vineyard sale",
+        "source": "left",
+        "raw": {
+          "amount": "887.16",
+          "currency": "USD",
+          "date": "2024-01-19",
+          "description": "Coho Vineyard sale",
+          "reference": "TX-2401-0088"
+        },
+        "group_key": "TX-2401-0088"
+      },
+      "right": {
+        "id": "right-88",
+        "date": "2024-01-21T00:00:00Z",
+        "amount": 88716,
+        "currency": "USD",
+        "reference": "TX-2401-0088",
+        "name": "Coho Vineyard sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-90",
+        "date": "2024-01-20T00:00:00Z",
+        "amount": 184943,
+        "currency": "USD",
+        "reference": "TX-2401-0090",
+        "name": "Litware Foods sale",
+        "source": "left",
+        "raw": {
+          "amount": "1849.43",
+          "currency": "USD",
+          "date": "2024-01-20",
+          "description": "Litware Foods sale",
+          "reference": "TX-2401-0090"
+        },
+        "group_key": "TX-2401-0090"
+      },
+      "right": {
+        "id": "right-89",
+        "date": "2024-01-21T00:00:00Z",
+        "amount": 184943,
+        "currency": "USD",
+        "reference": "TX-2401-0090",
+        "name": "Litware Foods sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-91",
+        "date": "2024-01-20T00:00:00Z",
+        "amount": 73691,
+        "currency": "USD",
+        "reference": "TX-2401-0091",
+        "name": "Contoso Retail sale",
+        "source": "left",
+        "raw": {
+          "amount": "736.91",
+          "currency": "USD",
+          "date": "2024-01-20",
+          "description": "Contoso Retail sale",
+          "reference": "TX-2401-0091"
+        },
+        "group_key": "TX-2401-0091"
+      },
+      "right": {
+        "id": "right-94",
+        "date": "2024-01-22T00:00:00Z",
+        "amount": 73691,
+        "currency": "USD",
+        "reference": "TX-2401-0091",
+        "name": "Contoso Retail sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-92",
+        "date": "2024-01-20T00:00:00Z",
+        "amount": 240422,
+        "currency": "USD",
+        "reference": "TX-2401-0092",
+        "name": "Coho Vineyard sale",
+        "source": "left",
+        "raw": {
+          "amount": "2404.22",
+          "currency": "USD",
+          "date": "2024-01-20",
+          "description": "Coho Vineyard sale",
+          "reference": "TX-2401-0092"
+        },
+        "group_key": "TX-2401-0092"
+      },
+      "right": {
+        "id": "right-95",
+        "date": "2024-01-22T00:00:00Z",
+        "amount": 240422,
+        "currency": "USD",
+        "reference": "TX-2401-0092",
+        "name": "Coho Vineyard sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-93",
+        "date": "2024-01-20T00:00:00Z",
+        "amount": 33530,
+        "currency": "USD",
+        "reference": "TX-2401-0093",
+        "name": "Northwind Traders sale",
+        "source": "left",
+        "raw": {
+          "amount": "335.30",
+          "currency": "USD",
+          "date": "2024-01-20",
+          "description": "Northwind Traders sale",
+          "reference": "TX-2401-0093"
+        },
+        "group_key": "TX-2401-0093"
+      },
+      "right": {
+        "id": "right-85",
+        "date": "2024-01-20T00:00:00Z",
+        "amount": 33530,
+        "currency": "USD",
+        "reference": "TX-2401-0093",
+        "name": "Northwind Traders sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-94",
+        "date": "2024-01-21T00:00:00Z",
+        "amount": 140580,
+        "currency": "USD",
+        "reference": "TX-2401-0094",
+        "name": "Litware Foods sale",
+        "source": "left",
+        "raw": {
+          "amount": "1405.80",
+          "currency": "USD",
+          "date": "2024-01-21",
+          "description": "Litware Foods sale",
+          "reference": "TX-2401-0094"
+        },
+        "group_key": "TX-2401-0094"
+      },
+      "right": {
+        "id": "right-90",
+        "date": "2024-01-21T00:00:00Z",
+        "amount": 140580,
+        "currency": "USD",
+        "reference": "TX-2401-0094",
+        "name": "Litware Foods sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-95",
+        "date": "2024-01-21T00:00:00Z",
+        "amount": 20286,
+        "currency": "USD",
+        "reference": "TX-2401-0095",
+        "name": "Wingtip Gifts sale",
+        "source": "left",
+        "raw": {
+          "amount": "202.86",
+          "currency": "USD",
+          "date": "2024-01-21",
+          "description": "Wingtip Gifts sale",
+          "reference": "TX-2401-0095"
+        },
+        "group_key": "TX-2401-0095"
+      },
+      "right": {
+        "id": "right-96",
+        "date": "2024-01-22T00:00:00Z",
+        "amount": 20286,
+        "currency": "USD",
+        "reference": "TX-2401-0095",
+        "name": "Wingtip Gifts sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-96",
+        "date": "2024-01-21T00:00:00Z",
+        "amount": 76477,
+        "currency": "USD",
+        "reference": "TX-2401-0096",
+        "name": "Lucerne Publishing sale",
+        "source": "left",
+        "raw": {
+          "amount": "764.77",
+          "currency": "USD",
+          "date": "2024-01-21",
+          "description": "Lucerne Publishing sale",
+          "reference": "TX-2401-0096"
+        },
+        "group_key": "TX-2401-0096"
+      },
+      "right": {
+        "id": "right-91",
+        "date": "2024-01-21T00:00:00Z",
+        "amount": 76477,
+        "currency": "USD",
+        "reference": "TX-2401-0096",
+        "name": "Lucerne Publishing sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-97",
+        "date": "2024-01-21T00:00:00Z",
+        "amount": 13304,
+        "currency": "USD",
+        "reference": "TX-2401-0097",
+        "name": "Adventure Works sale",
+        "source": "left",
+        "raw": {
+          "amount": "133.04",
+          "currency": "USD",
+          "date": "2024-01-21",
+          "description": "Adventure Works sale",
+          "reference": "TX-2401-0097"
+        },
+        "group_key": "TX-2401-0097"
+      },
+      "right": {
+        "id": "right-92",
+        "date": "2024-01-21T00:00:00Z",
+        "amount": 13304,
+        "currency": "USD",
+        "reference": "TX-2401-0097",
+        "name": "Adventure Works sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-98",
+        "date": "2024-01-21T00:00:00Z",
+        "amount": 153809,
+        "currency": "USD",
+        "reference": "TX-2401-0098",
+        "name": "Coho Vineyard sale",
+        "source": "left",
+        "raw": {
+          "amount": "1538.09",
+          "currency": "USD",
+          "date": "2024-01-21",
+          "description": "Coho Vineyard sale",
+          "reference": "TX-2401-0098"
+        },
+        "group_key": "TX-2401-0098"
+      },
+      "right": {
+        "id": "right-93",
+        "date": "2024-01-21T00:00:00Z",
+        "amount": 153809,
+        "currency": "USD",
+        "reference": "TX-2401-0098",
+        "name": "Coho Vineyard sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-99",
+        "date": "2024-01-22T00:00:00Z",
+        "amount": 220475,
+        "currency": "USD",
+        "reference": "TX-2401-0099",
+        "name": "Adventure Works sale",
+        "source": "left",
+        "raw": {
+          "amount": "2204.75",
+          "currency": "USD",
+          "date": "2024-01-22",
+          "description": "Adventure Works sale",
+          "reference": "TX-2401-0099"
+        },
+        "group_key": "TX-2401-0099"
+      },
+      "right": {
+        "id": "right-97",
+        "date": "2024-01-22T00:00:00Z",
+        "amount": 220475,
+        "currency": "USD",
+        "reference": "TX-2401-0099",
+        "name": "Adventure Works sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-100",
+        "date": "2024-01-22T00:00:00Z",
+        "amount": 79793,
+        "currency": "USD",
+        "reference": "TX-2401-0100",
+        "name": "Fabrikam Goods sale",
+        "source": "left",
+        "raw": {
+          "amount": "797.93",
+          "currency": "USD",
+          "date": "2024-01-22",
+          "description": "Fabrikam Goods sale",
+          "reference": "TX-2401-0100"
+        },
+        "group_key": "TX-2401-0100"
+      },
+      "right": {
+        "id": "right-98",
+        "date": "2024-01-22T00:00:00Z",
+        "amount": 79793,
+        "currency": "USD",
+        "reference": "TX-2401-0100",
+        "name": "Fabrikam Goods sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-101",
+        "date": "2024-01-22T00:00:00Z",
+        "amount": 95738,
+        "currency": "USD",
+        "reference": "TX-2401-0101",
+        "name": "Adventure Works sale",
+        "source": "left",
+        "raw": {
+          "amount": "957.38",
+          "currency": "USD",
+          "date": "2024-01-22",
+          "description": "Adventure Works sale",
+          "reference": "TX-2401-0101"
+        },
+        "group_key": "TX-2401-0101"
+      },
+      "right": {
+        "id": "right-104",
+        "date": "2024-01-24T00:00:00Z",
+        "amount": 95738,
+        "currency": "USD",
+        "reference": "TX-2401-0101",
+        "name": "Adventure Works sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-102",
+        "date": "2024-01-22T00:00:00Z",
+        "amount": 208947,
+        "currency": "USD",
+        "reference": "TX-2401-0102",
+        "name": "Lucerne Publishing sale",
+        "source": "left",
+        "raw": {
+          "amount": "2089.47",
+          "currency": "USD",
+          "date": "2024-01-22",
+          "description": "Lucerne Publishing sale",
+          "reference": "TX-2401-0102"
+        },
+        "group_key": "TX-2401-0102"
+      },
+      "right": {
+        "id": "right-99",
+        "date": "2024-01-23T00:00:00Z",
+        "amount": 208947,
+        "currency": "USD",
+        "reference": "TX-2401-0102",
+        "name": "Lucerne Publishing sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-103",
+        "date": "2024-01-22T00:00:00Z",
+        "amount": 27472,
+        "currency": "USD",
+        "reference": "TX-2401-0103",
+        "name": "Lucerne Publishing sale",
+        "source": "left",
+        "raw": {
+          "amount": "274.72",
+          "currency": "USD",
+          "date": "2024-01-22",
+          "description": "Lucerne Publishing sale",
+          "reference": "TX-2401-0103"
+        },
+        "group_key": "TX-2401-0103"
+      },
+      "right": {
+        "id": "right-100",
+        "date": "2024-01-23T00:00:00Z",
+        "amount": 27472,
+        "currency": "USD",
+        "reference": "TX-2401-0103",
+        "name": "Lucerne Publishing sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-105",
+        "date": "2024-01-22T00:00:00Z",
+        "amount": 240281,
+        "currency": "USD",
+        "reference": "TX-2401-0105",
+        "name": "Proseware Cafe sale",
+        "source": "left",
+        "raw": {
+          "amount": "2402.81",
+          "currency": "USD",
+          "date": "2024-01-22",
+          "description": "Proseware Cafe sale",
+          "reference": "TX-2401-0105"
+        },
+        "group_key": "TX-2401-0105"
+      },
+      "right": {
+        "id": "right-106",
+        "date": "2024-01-24T00:00:00Z",
+        "amount": 240281,
+        "currency": "USD",
+        "reference": "TX-2401-0105",
+        "name": "Proseware Cafe sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-106",
+        "date": "2024-01-23T00:00:00Z",
+        "amount": 89234,
+        "currency": "USD",
+        "reference": "TX-2401-0106",
+        "name": "Coho Vineyard sale",
+        "source": "left",
+        "raw": {
+          "amount": "892.34",
+          "currency": "USD",
+          "date": "2024-01-23",
+          "description": "Coho Vineyard sale",
+          "reference": "TX-2401-0106"
+        },
+        "group_key": "TX-2401-0106"
+      },
+      "right": {
+        "id": "right-107",
+        "date": "2024-01-24T00:00:00Z",
+        "amount": 89234,
+        "currency": "USD",
+        "reference": "TX-2401-0106",
+        "name": "Coho Vineyard sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-107",
+        "date": "2024-01-23T00:00:00Z",
+        "amount": 34881,
+        "currency": "USD",
+        "reference": "TX-2401-0107",
+        "name": "Contoso Retail sale",
+        "source": "left",
+        "raw": {
+          "amount": "348.81",
+          "currency": "USD",
+          "date": "2024-01-23",
+          "description": "Contoso Retail sale",
+          "reference": "TX-2401-0107"
+        },
+        "group_key": "TX-2401-0107"
+      },
+      "right": {
+        "id": "right-101",
+        "date": "2024-01-23T00:00:00Z",
+        "amount": 34881,
+        "currency": "USD",
+        "reference": "TX-2401-0107",
+        "name": "Contoso Retail sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-108",
+        "date": "2024-01-23T00:00:00Z",
+        "amount": 145221,
+        "currency": "USD",
+        "reference": "TX-2401-0108",
+        "name": "Northwind Traders sale",
+        "source": "left",
+        "raw": {
+          "amount": "1452.21",
+          "currency": "USD",
+          "date": "2024-01-23",
+          "description": "Northwind Traders sale",
+          "reference": "TX-2401-0108"
+        },
+        "group_key": "TX-2401-0108"
+      },
+      "right": {
+        "id": "right-108",
+        "date": "2024-01-24T00:00:00Z",
+        "amount": 145221,
+        "currency": "USD",
+        "reference": "TX-2401-0108",
+        "name": "Northwind Traders sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-109",
+        "date": "2024-01-23T00:00:00Z",
+        "amount": 30998,
+        "currency": "USD",
+        "reference": "TX-2401-0109",
+        "name": "Wingtip Gifts sale",
+        "source": "left",
+        "raw": {
+          "amount": "309.98",
+          "currency": "USD",
+          "date": "2024-01-23",
+          "description": "Wingtip Gifts sale",
+          "reference": "TX-2401-0109"
+        },
+        "group_key": "TX-2401-0109"
+      },
+      "right": {
+        "id": "right-102",
+        "date": "2024-01-23T00:00:00Z",
+        "amount": 30998,
+        "currency": "USD",
+        "reference": "TX-2401-0109",
+        "name": "Wingtip Gifts sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-110",
+        "date": "2024-01-23T00:00:00Z",
+        "amount": 231307,
+        "currency": "USD",
+        "reference": "TX-2401-0110",
+        "name": "Lucerne Publishing sale",
+        "source": "left",
+        "raw": {
+          "amount": "2313.07",
+          "currency": "USD",
+          "date": "2024-01-23",
+          "description": "Lucerne Publishing sale",
+          "reference": "TX-2401-0110"
+        },
+        "group_key": "TX-2401-0110"
+      },
+      "right": {
+        "id": "right-111",
+        "date": "2024-01-25T00:00:00Z",
+        "amount": 231307,
+        "currency": "USD",
+        "reference": "TX-2401-0110",
+        "name": "Lucerne Publishing sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-111",
+        "date": "2024-01-23T00:00:00Z",
+        "amount": 115365,
+        "currency": "USD",
+        "reference": "TX-2401-0111",
+        "name": "Lucerne Publishing sale",
+        "source": "left",
+        "raw": {
+          "amount": "1153.65",
+          "currency": "USD",
+          "date": "2024-01-23",
+          "description": "Lucerne Publishing sale",
+          "reference": "TX-2401-0111"
+        },
+        "group_key": "TX-2401-0111"
+      },
+      "right": {
+        "id": "right-109",
+        "date": "2024-01-24T00:00:00Z",
+        "amount": 115365,
+        "currency": "USD",
+        "reference": "TX-2401-0111",
+        "name": "Lucerne Publishing sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-112",
+        "date": "2024-01-23T00:00:00Z",
+        "amount": 67456,
+        "currency": "USD",
+        "reference": "TX-2401-0112",
+        "name": "Lucerne Publishing sale",
+        "source": "left",
+        "raw": {
+          "amount": "674.56",
+          "currency": "USD",
+          "date": "2024-01-23",
+          "description": "Lucerne Publishing sale",
+          "reference": "TX-2401-0112"
+        },
+        "group_key": "TX-2401-0112"
+      },
+      "right": {
+        "id": "right-112",
+        "date": "2024-01-25T00:00:00Z",
+        "amount": 67456,
+        "currency": "USD",
+        "reference": "TX-2401-0112",
+        "name": "Lucerne Publishing sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-113",
+        "date": "2024-01-23T00:00:00Z",
+        "amount": 145546,
+        "currency": "USD",
+        "reference": "TX-2401-0113",
+        "name": "Proseware Cafe sale",
+        "source": "left",
+        "raw": {
+          "amount": "1455.46",
+          "currency": "USD",
+          "date": "2024-01-23",
+          "description": "Proseware Cafe sale",
+          "reference": "TX-2401-0113"
+        },
+        "group_key": "TX-2401-0113"
+      },
+      "right": {
+        "id": "right-113",
+        "date": "2024-01-25T00:00:00Z",
+        "amount": 145546,
+        "currency": "USD",
+        "reference": "TX-2401-0113",
+        "name": "Proseware Cafe sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-114",
+        "date": "2024-01-23T00:00:00Z",
+        "amount": 118045,
+        "currency": "USD",
+        "reference": "TX-2401-0114",
+        "name": "Adventure Works sale",
+        "source": "left",
+        "raw": {
+          "amount": "1180.45",
+          "currency": "USD",
+          "date": "2024-01-23",
+          "description": "Adventure Works sale",
+          "reference": "TX-2401-0114"
+        },
+        "group_key": "TX-2401-0114"
+      },
+      "right": {
+        "id": "right-103",
+        "date": "2024-01-23T00:00:00Z",
+        "amount": 118045,
+        "currency": "USD",
+        "reference": "TX-2401-0114",
+        "name": "Adventure Works sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-115",
+        "date": "2024-01-24T00:00:00Z",
+        "amount": 18597,
+        "currency": "USD",
+        "reference": "TX-2401-0115",
+        "name": "Coho Vineyard sale",
+        "source": "left",
+        "raw": {
+          "amount": "185.97",
+          "currency": "USD",
+          "date": "2024-01-24",
+          "description": "Coho Vineyard sale",
+          "reference": "TX-2401-0115"
+        },
+        "group_key": "TX-2401-0115"
+      },
+      "right": {
+        "id": "right-114",
+        "date": "2024-01-25T00:00:00Z",
+        "amount": 18597,
+        "currency": "USD",
+        "reference": "TX-2401-0115",
+        "name": "Coho Vineyard sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-116",
+        "date": "2024-01-24T00:00:00Z",
+        "amount": 232788,
+        "currency": "USD",
+        "reference": "TX-2401-0116",
+        "name": "Wingtip Gifts sale",
+        "source": "left",
+        "raw": {
+          "amount": "2327.88",
+          "currency": "USD",
+          "date": "2024-01-24",
+          "description": "Wingtip Gifts sale",
+          "reference": "TX-2401-0116"
+        },
+        "group_key": "TX-2401-0116"
+      },
+      "right": {
+        "id": "right-116",
+        "date": "2024-01-26T00:00:00Z",
+        "amount": 232788,
+        "currency": "USD",
+        "reference": "TX-2401-0116",
+        "name": "Wingtip Gifts sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-117",
+        "date": "2024-01-24T00:00:00Z",
+        "amount": 58274,
+        "currency": "USD",
+        "reference": "TX-2401-0117",
+        "name": "Fabrikam Goods sale",
+        "source": "left",
+        "raw": {
+          "amount": "582.74",
+          "currency": "USD",
+          "date": "2024-01-24",
+          "description": "Fabrikam Goods sale",
+          "reference": "TX-2401-0117"
+        },
+        "group_key": "TX-2401-0117"
+      },
+      "right": {
+        "id": "right-110",
+        "date": "2024-01-24T00:00:00Z",
+        "amount": 58274,
+        "currency": "USD",
+        "reference": "TX-2401-0117",
+        "name": "Fabrikam Goods sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-118",
+        "date": "2024-01-25T00:00:00Z",
+        "amount": 133833,
+        "currency": "USD",
+        "reference": "TX-2401-0118",
+        "name": "Coho Vineyard sale",
+        "source": "left",
+        "raw": {
+          "amount": "1338.33",
+          "currency": "USD",
+          "date": "2024-01-25",
+          "description": "Coho Vineyard sale",
+          "reference": "TX-2401-0118"
+        },
+        "group_key": "TX-2401-0118"
+      },
+      "right": {
+        "id": "right-118",
+        "date": "2024-01-27T00:00:00Z",
+        "amount": 133833,
+        "currency": "USD",
+        "reference": "TX-2401-0118",
+        "name": "Coho Vineyard sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-119",
+        "date": "2024-01-25T00:00:00Z",
+        "amount": 142654,
+        "currency": "USD",
+        "reference": "TX-2401-0119",
+        "name": "Coho Vineyard sale",
+        "source": "left",
+        "raw": {
+          "amount": "1426.54",
+          "currency": "USD",
+          "date": "2024-01-25",
+          "description": "Coho Vineyard sale",
+          "reference": "TX-2401-0119"
+        },
+        "group_key": "TX-2401-0119"
+      },
+      "right": {
+        "id": "right-119",
+        "date": "2024-01-27T00:00:00Z",
+        "amount": 142654,
+        "currency": "USD",
+        "reference": "TX-2401-0119",
+        "name": "Coho Vineyard sale settlement",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-120",
+        "date": "2024-01-25T00:00:00Z",
+        "amount": 114449,
+        "currency": "USD",
+        "reference": "TX-2401-0120",
+        "name": "Contoso Retail sale",
+        "source": "left",
+        "raw": {
+          "amount": "1144.49",
+          "currency": "USD",
+          "date": "2024-01-25",
+          "description": "Contoso Retail sale",
+          "reference": "TX-2401-0120"
+        },
+        "group_key": "TX-2401-0120"
+      },
+      "right": {
+        "id": "right-117",
+        "date": "2024-01-26T00:00:00Z",
+        "amount": 114449,
+        "currency": "USD",
+        "reference": "TX-2401-0120",
+        "name": "Contoso Retail sale settlement",
+        "source": "right"
+      }
+    }
+  ],
+  "unmatched_left": [
+    {
+      "id": "left-18",
+      "date": "2024-01-04T00:00:00Z",
+      "amount": 168080,
+      "currency": "USD",
+      "reference": "TX-2401-0018",
+      "name": "Wingtip Gifts sale",
+      "source": "left",
+      "raw": {
+        "amount": "1680.80",
+        "currency": "USD",
+        "date": "2024-01-04",
+        "description": "Wingtip Gifts sale",
+        "reference": "TX-2401-0018"
+      },
+      "group_key": "TX-2401-0018"
+    },
+    {
+      "id": "left-89",
+      "date": "2024-01-20T00:00:00Z",
+      "amount": 161566,
+      "currency": "USD",
+      "reference": "TX-2401-0089",
+      "name": "Tailspin Toys sale",
+      "source": "left",
+      "raw": {
+        "amount": "1615.66",
+        "currency": "USD",
+        "date": "2024-01-20",
+        "description": "Tailspin Toys sale",
+        "reference": "TX-2401-0089"
+      },
+      "group_key": "TX-2401-0089"
+    }
+  ],
+  "unmatched_right": [
+    {
+      "id": "right-83",
+      "date": "2024-01-19T00:00:00Z",
+      "amount": 18750,
+      "currency": "USD",
+      "reference": "TX-2401-0999",
+      "name": "Unidentified card settlement",
+      "source": "right"
+    }
+  ],
+  "amount_diff": [
+    {
+      "left": {
+        "id": "left-42",
+        "date": "2024-01-09T00:00:00Z",
+        "amount": 100645,
+        "currency": "USD",
+        "reference": "TX-2401-0042",
+        "name": "Contoso Retail sale",
+        "source": "left",
+        "raw": {
+          "amount": "1006.45",
+          "currency": "USD",
+          "date": "2024-01-09",
+          "description": "Contoso Retail sale",
+          "reference": "TX-2401-0042"
+        },
+        "group_key": "TX-2401-0042"
+      },
+      "right": {
+        "id": "right-43",
+        "date": "2024-01-11T00:00:00Z",
+        "amount": 98145,
+        "currency": "USD",
+        "reference": "TX-2401-0042",
+        "name": "Contoso Retail sale settlement",
+        "source": "right"
+      },
+      "diff_minor": 2500
+    },
+    {
+      "left": {
+        "id": "left-104",
+        "date": "2024-01-22T00:00:00Z",
+        "amount": 145427,
+        "currency": "USD",
+        "reference": "TX-2401-0104",
+        "name": "Wingtip Gifts sale",
+        "source": "left",
+        "raw": {
+          "amount": "1454.27",
+          "currency": "USD",
+          "date": "2024-01-22",
+          "description": "Wingtip Gifts sale",
+          "reference": "TX-2401-0104"
+        },
+        "group_key": "TX-2401-0104"
+      },
+      "right": {
+        "id": "right-105",
+        "date": "2024-01-24T00:00:00Z",
+        "amount": 141352,
+        "currency": "USD",
+        "reference": "TX-2401-0104",
+        "name": "Wingtip Gifts sale settlement",
+        "source": "right"
+      },
+      "diff_minor": 4075
+    }
+  ],
+  "timing_diff": [
+    {
+      "left": {
+        "id": "left-30",
+        "date": "2024-01-07T00:00:00Z",
+        "amount": 49350,
+        "currency": "USD",
+        "reference": "TX-2401-0030",
+        "name": "Adventure Works sale",
+        "source": "left",
+        "raw": {
+          "amount": "493.50",
+          "currency": "USD",
+          "date": "2024-01-07",
+          "description": "Adventure Works sale",
+          "reference": "TX-2401-0030"
+        },
+        "group_key": "TX-2401-0030"
+      },
+      "right": {
+        "id": "right-52",
+        "date": "2024-01-13T00:00:00Z",
+        "amount": 49350,
+        "currency": "USD",
+        "reference": "TX-2401-0030",
+        "name": "Adventure Works sale settlement",
+        "source": "right"
+      },
+      "days_diff": 6
+    },
+    {
+      "left": {
+        "id": "left-75",
+        "date": "2024-01-17T00:00:00Z",
+        "amount": 93840,
+        "currency": "USD",
+        "reference": "TX-2401-0075",
+        "name": "Litware Foods sale",
+        "source": "left",
+        "raw": {
+          "amount": "938.40",
+          "currency": "USD",
+          "date": "2024-01-17",
+          "description": "Litware Foods sale",
+          "reference": "TX-2401-0075"
+        },
+        "group_key": "TX-2401-0075"
+      },
+      "right": {
+        "id": "right-115",
+        "date": "2024-01-26T00:00:00Z",
+        "amount": 93840,
+        "currency": "USD",
+        "reference": "TX-2401-0075",
+        "name": "Litware Foods sale settlement",
+        "source": "right"
+      },
+      "days_diff": 9
+    }
+  ],
+  "duplicates": null
+}

@@ -1,0 +1,208 @@
+{
+  "schema": "reconify.engine.result.v1",
+  "index_selection": {
+    "requested_backend": "memory",
+    "backend": "memory",
+    "reason": "memory estimate fits configured policy",
+    "estimated_memory_bytes": 201326720
+  },
+  "pair": "left_vs_right",
+  "left_source": "left",
+  "right_source": "right",
+  "summary": {
+    "currency": "USD",
+    "total_left": 6,
+    "total_right": 6,
+    "matched": 4,
+    "unmatched_left": 1,
+    "unmatched_right": 1,
+    "amount_diff_count": 1,
+    "timing_diff_count": 0,
+    "duplicate_count": 0,
+    "match_rate_pct": 66.67,
+    "reconciled_rate_pct": 83.33,
+    "matched_amount_left": 216525,
+    "matched_amount_right": 216525,
+    "unmatched_amount_left": -4500,
+    "unmatched_amount_right": -1800,
+    "amount_diff_total": 1000,
+    "total_discrepancy": -5300
+  },
+  "matched": [
+    {
+      "left": {
+        "id": "left-1",
+        "date": "2024-02-01T00:00:00Z",
+        "amount": 125000,
+        "currency": "USD",
+        "reference": "INV-1001",
+        "name": "Annual license",
+        "source": "left",
+        "raw": {
+          "amount": "1,250.00",
+          "currency": "USD",
+          "date": "2024-02-01",
+          "description": "Annual license",
+          "reference": "INV-1001"
+        },
+        "group_key": "INV-1001"
+      },
+      "right": {
+        "id": "right-1",
+        "date": "2024-02-01T00:00:00Z",
+        "amount": 125000,
+        "currency": "USD",
+        "reference": "INV-1001",
+        "name": "Wire in",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-2",
+        "date": "2024-02-02T00:00:00Z",
+        "amount": -32000,
+        "currency": "USD",
+        "reference": "CN-1002",
+        "name": "Credit note refund",
+        "source": "left",
+        "raw": {
+          "amount": "(320.00)",
+          "currency": "USD",
+          "date": "2024-02-02",
+          "description": "Credit note refund",
+          "reference": "CN-1002"
+        },
+        "group_key": "CN-1002"
+      },
+      "right": {
+        "id": "right-2",
+        "date": "2024-02-02T00:00:00Z",
+        "amount": -32000,
+        "currency": "USD",
+        "reference": "CN-1002",
+        "name": "Wire out",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-3",
+        "date": "2024-02-05T00:00:00Z",
+        "amount": -107550,
+        "currency": "USD",
+        "reference": "CN-1003",
+        "name": "Credit note refund",
+        "source": "left",
+        "raw": {
+          "amount": "(1,075.50)",
+          "currency": "USD",
+          "date": "2024-02-05",
+          "description": "Credit note refund",
+          "reference": "CN-1003"
+        },
+        "group_key": "CN-1003"
+      },
+      "right": {
+        "id": "right-3",
+        "date": "2024-02-05T00:00:00Z",
+        "amount": -107550,
+        "currency": "USD",
+        "reference": "CN-1003",
+        "name": "Wire out",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-6",
+        "date": "2024-02-08T00:00:00Z",
+        "amount": 231075,
+        "currency": "USD",
+        "reference": "INV-1006",
+        "name": "Support plan",
+        "source": "left",
+        "raw": {
+          "amount": "2,310.75",
+          "currency": "USD",
+          "date": "2024-02-08",
+          "description": "Support plan",
+          "reference": "INV-1006"
+        },
+        "group_key": "INV-1006"
+      },
+      "right": {
+        "id": "right-5",
+        "date": "2024-02-08T00:00:00Z",
+        "amount": 231075,
+        "currency": "USD",
+        "reference": "INV-1006",
+        "name": "Wire in",
+        "source": "right"
+      }
+    }
+  ],
+  "unmatched_left": [
+    {
+      "id": "left-5",
+      "date": "2024-02-07T00:00:00Z",
+      "amount": -4500,
+      "currency": "USD",
+      "reference": "CN-1005",
+      "name": "Credit note refund",
+      "source": "left",
+      "raw": {
+        "amount": "(45.00)",
+        "currency": "USD",
+        "date": "2024-02-07",
+        "description": "Credit note refund",
+        "reference": "CN-1005"
+      },
+      "group_key": "CN-1005"
+    }
+  ],
+  "unmatched_right": [
+    {
+      "id": "right-6",
+      "date": "2024-02-09T00:00:00Z",
+      "amount": -1800,
+      "currency": "USD",
+      "reference": "BANK-CHG",
+      "name": "Account fee",
+      "source": "right"
+    }
+  ],
+  "amount_diff": [
+    {
+      "left": {
+        "id": "left-4",
+        "date": "2024-02-06T00:00:00Z",
+        "amount": 1500000,
+        "currency": "USD",
+        "reference": "INV-1004",
+        "name": "Project milestone",
+        "source": "left",
+        "raw": {
+          "amount": "15,000.00",
+          "currency": "USD",
+          "date": "2024-02-06",
+          "description": "Project milestone",
+          "reference": "INV-1004"
+        },
+        "group_key": "INV-1004"
+      },
+      "right": {
+        "id": "right-4",
+        "date": "2024-02-06T00:00:00Z",
+        "amount": 1499000,
+        "currency": "USD",
+        "reference": "INV-1004",
+        "name": "Wire in",
+        "source": "right"
+      },
+      "diff_minor": 1000
+    }
+  ],
+  "timing_diff": null,
+  "duplicates": null
+}

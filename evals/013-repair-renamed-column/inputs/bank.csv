@@ -1,0 +1,7 @@
+date,amount,currency,end_to_end_id,description
+2024-03-01,500.00,GBP,PAY-3001,Card settlement
+2024-03-07,200.00,GBP,PAY-3002,Card settlement
+2024-03-05,98.50,GBP,PAY-3003,Card settlement less fee
+2024-03-06,740.00,GBP,PAY-3004,Card settlement less fee
+2024-03-14,320.00,GBP,PAY-3005,Card settlement
+2024-03-12,35.00,GBP,PAY-9999,Unidentified credit

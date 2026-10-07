@@ -23,5 +23,8 @@
   },
   "counter_examples": [
     "counter_examples/match-without-reference.yaml"
+  ],
+  "tags": [
+    "core"
   ]
 }

@@ -24,5 +24,8 @@
   },
   "counter_examples": [
     "counter_examples/single-provider.yaml"
+  ],
+  "tags": [
+    "core"
   ]
 }

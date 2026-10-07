@@ -23,5 +23,8 @@
   },
   "counter_examples": [
     "counter_examples/duplicates-kept.yaml"
+  ],
+  "tags": [
+    "core"
   ]
 }

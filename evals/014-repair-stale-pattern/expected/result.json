@@ -1,0 +1,180 @@
+{
+  "schema": "reconify.engine.result.v1",
+  "index_selection": {
+    "requested_backend": "memory",
+    "backend": "memory",
+    "reason": "memory estimate fits configured policy",
+    "estimated_memory_bytes": 201326720
+  },
+  "pair": "ledger_vs_bank",
+  "left_source": "ledger",
+  "right_source": "bank",
+  "summary": {
+    "currency": "USD",
+    "total_left": 5,
+    "total_right": 5,
+    "matched": 3,
+    "unmatched_left": 1,
+    "unmatched_right": 1,
+    "amount_diff_count": 1,
+    "timing_diff_count": 0,
+    "duplicate_count": 0,
+    "match_rate_pct": 60,
+    "reconciled_rate_pct": 80,
+    "matched_amount_left": 50000,
+    "matched_amount_right": 50000,
+    "unmatched_amount_left": 4500,
+    "unmatched_amount_right": 1200,
+    "amount_diff_total": 900,
+    "total_discrepancy": 6600
+  },
+  "matched": [
+    {
+      "left": {
+        "id": "ledger-1",
+        "date": "2024-01-10T00:00:00Z",
+        "amount": 12000,
+        "currency": "USD",
+        "reference": "REF-4001",
+        "name": "Supplier payment",
+        "source": "ledger",
+        "raw": {
+          "amount": "120.00",
+          "currency": "USD",
+          "date": "2024-01-10",
+          "description": "Supplier payment",
+          "reference": "REF-4001"
+        },
+        "group_key": "REF-4001"
+      },
+      "right": {
+        "id": "bank-1",
+        "date": "2024-01-11T00:00:00Z",
+        "amount": 12000,
+        "currency": "USD",
+        "reference": "REF-4001",
+        "name": "Outgoing payment",
+        "source": "bank"
+      }
+    },
+    {
+      "left": {
+        "id": "ledger-2",
+        "date": "2024-01-15T00:00:00Z",
+        "amount": 8000,
+        "currency": "USD",
+        "reference": "REF-4002",
+        "name": "Supplier payment",
+        "source": "ledger",
+        "raw": {
+          "amount": "80.00",
+          "currency": "USD",
+          "date": "2024-01-15",
+          "description": "Supplier payment",
+          "reference": "REF-4002"
+        },
+        "group_key": "REF-4002"
+      },
+      "right": {
+        "id": "bank-2",
+        "date": "2024-01-15T00:00:00Z",
+        "amount": 8000,
+        "currency": "USD",
+        "reference": "REF-4002",
+        "name": "Outgoing payment",
+        "source": "bank"
+      }
+    },
+    {
+      "left": {
+        "id": "ledger-4",
+        "date": "2024-01-24T00:00:00Z",
+        "amount": 30000,
+        "currency": "USD",
+        "reference": "REF-4004",
+        "name": "Supplier payment",
+        "source": "ledger",
+        "raw": {
+          "amount": "300.00",
+          "currency": "USD",
+          "date": "2024-01-24",
+          "description": "Supplier payment",
+          "reference": "REF-4004"
+        },
+        "group_key": "REF-4004"
+      },
+      "right": {
+        "id": "bank-3",
+        "date": "2024-01-24T00:00:00Z",
+        "amount": 30000,
+        "currency": "USD",
+        "reference": "REF-4004",
+        "name": "Outgoing payment",
+        "source": "bank"
+      }
+    }
+  ],
+  "unmatched_left": [
+    {
+      "id": "ledger-3",
+      "date": "2024-01-22T00:00:00Z",
+      "amount": 4500,
+      "currency": "USD",
+      "reference": "REF-4003",
+      "name": "Supplier payment",
+      "source": "ledger",
+      "raw": {
+        "amount": "45.00",
+        "currency": "USD",
+        "date": "2024-01-22",
+        "description": "Supplier payment",
+        "reference": "REF-4003"
+      },
+      "group_key": "REF-4003"
+    }
+  ],
+  "unmatched_right": [
+    {
+      "id": "bank-5",
+      "date": "2024-01-30T00:00:00Z",
+      "amount": 1200,
+      "currency": "USD",
+      "reference": "REF-4099",
+      "name": "Unidentified debit",
+      "source": "bank"
+    }
+  ],
+  "amount_diff": [
+    {
+      "left": {
+        "id": "ledger-5",
+        "date": "2024-01-29T00:00:00Z",
+        "amount": 9900,
+        "currency": "USD",
+        "reference": "REF-4006",
+        "name": "Supplier payment",
+        "source": "ledger",
+        "raw": {
+          "amount": "99.00",
+          "currency": "USD",
+          "date": "2024-01-29",
+          "description": "Supplier payment",
+          "reference": "REF-4006"
+        },
+        "group_key": "REF-4006"
+      },
+      "right": {
+        "id": "bank-4",
+        "date": "2024-01-29T00:00:00Z",
+        "amount": 9000,
+        "currency": "USD",
+        "reference": "REF-4006",
+        "name": "Outgoing payment",
+        "source": "bank"
+      },
+      "diff_minor": 900
+    }
+  ],
+  "timing_diff": null,
+  "duplicates": null
+}
