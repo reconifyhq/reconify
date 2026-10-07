@@ -51,6 +51,13 @@ type EvalScenarioV2 struct {
 	Pair                string         `json:"pair"`
 	Assertions          EvalAssertions `json:"assertions"`
 	CounterExamples     []string       `json:"counter_examples"`
+	// Tags select scenario tiers such as core, messy, scale, repair, and
+	// ask-user. Runners may filter on them; they never change grading.
+	Tags []string `json:"tags,omitempty"`
+	// DecisionKeywords mark an ask-user scenario. A diagnostic grader records
+	// whether the agent's final output surfaces the business decision by
+	// mentioning any keyword. It is evidence, not a release gate.
+	DecisionKeywords []string `json:"decision_keywords,omitempty"`
 }
 
 // EvalAssertions is the subset of reconciliation summary counters that

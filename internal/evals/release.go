@@ -35,6 +35,11 @@ type ReleaseOptions struct {
 	Resume                                           bool
 	Timeout                                          time.Duration
 	ScenarioIDs                                      []string
+	Tags                                             []string
+	// ExtraArms adds diagnostic arms beyond candidate/released/no-skill, for
+	// example "candidate+hooks". They are reported and compared against
+	// "candidate" but never change the release verdict.
+	ExtraArms []string
 }
 
 // Release packs both skill versions, evaluates identical scenarios, and returns a report.

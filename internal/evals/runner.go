@@ -33,6 +33,11 @@ type Options struct {
 	ArtifactDir                        string
 	MaxParallel                        int
 	ModelArguments                     map[string]string
+	// Tags restricts the run to scenarios carrying at least one tag.
+	Tags []string
+	// Hooks installs the packaged agent hooks (<skills>/.hooks) into each
+	// trial workspace, so a hooks arm can be measured against a skills arm.
+	Hooks bool
 }
 
 // Report is the aggregate machine-readable evaluator output.
@@ -127,6 +132,54 @@ type TrialReport struct {
 	AgentOutput     string   `json:"agent_output,omitempty"`
 	Error           string   `json:"error,omitempty"`
 	ArtifactPath    string   `json:"artifact_path,omitempty"`
+	// Additive harness evidence. Absent values mean the evidence was not
+	// observable for this agent or run, never zero.
+	Trace      []TraceEntry   `json:"trace,omitempty"`
+	Usage      *Usage         `json:"usage,omitempty"`
+	Efficiency *Efficiency    `json:"efficiency,omitempty"`
+	Grades     []Grade        `json:"grades,omitempty"`
+	Failure    *FailureReport `json:"failure,omitempty"`
+}
+
+// TraceEntry is one Engine invocation recorded by the workspace wrapper.
+type TraceEntry struct {
+	Argv           []string `json:"argv"`
+	ExitCode       int      `json:"exit_code"`
+	DurationMS     int64    `json:"duration_ms"`
+	DiagnosticCode string   `json:"diagnostic_code,omitempty"`
+}
+
+// Usage is agent-reported resource consumption. Each pointer is nil when the
+// agent CLI does not expose that value.
+type Usage struct {
+	Turns        *int     `json:"turns,omitempty"`
+	InputTokens  *int     `json:"input_tokens,omitempty"`
+	OutputTokens *int     `json:"output_tokens,omitempty"`
+	CostUSD      *float64 `json:"cost_usd,omitempty"`
+	WallMS       int64    `json:"wall_ms"`
+}
+
+// Efficiency summarizes the trace into workflow-cost signals.
+type Efficiency struct {
+	EngineCalls            int  `json:"engine_calls"`
+	FailedCalls            int  `json:"failed_calls"`
+	UsageErrors            int  `json:"usage_errors"`
+	CallsToFirstValidation *int `json:"calls_to_first_valid_config,omitempty"`
+	Recovered              bool `json:"recovered"`
+}
+
+// Grade is one grader's verdict with the evidence that produced it.
+type Grade struct {
+	Name     string `json:"name"`
+	Pass     bool   `json:"pass"`
+	Gating   bool   `json:"gating"`
+	Evidence string `json:"evidence,omitempty"`
+}
+
+// FailureReport is the deterministic root-cause label for a failed trial.
+type FailureReport struct {
+	Label    string `json:"label"`
+	Evidence string `json:"evidence"`
 }
 
 type scenario struct {

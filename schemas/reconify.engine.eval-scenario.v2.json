@@ -93,6 +93,24 @@
           "items": {
             "type": "string"
           }
+        },
+        "tags": {
+          "type": [
+            "null",
+            "array"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "decision_keywords": {
+          "type": [
+            "null",
+            "array"
+          ],
+          "items": {
+            "type": "string"
+          }
         }
       },
       "required": [
