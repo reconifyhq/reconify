@@ -215,3 +215,35 @@ func TestCanonicalSkillsUsePublicArtifactNames(t *testing.T) {
 		}
 	}
 }
+
+func TestSemanticResultEqualIgnoresDescriptiveMappings(t *testing.T) {
+	expected := []byte(`{"matched":[{"left":{"amount":10,"reference":"R","name":"Sale","group_key":"R"},"right":{"amount":10,"reference":"R","name":"Settlement"}}],"amount_diff":[]}`)
+	actual := []byte(`{"matched":[{"left":{"amount":10,"reference":"R","name":""},"right":{"amount":10,"reference":"R","name":""}}],"amount_diff":null}`)
+	if !semanticResultEqual(actual, expected) {
+		t.Fatal("an unmapped description column must not change the classification")
+	}
+}
+
+func TestSemanticResultEqualComparesGroupedSections(t *testing.T) {
+	expected := []byte(`{"matched":[],"grouped_matched":[{"left":{"amount":30,"reference":"G"},"rights":[{"amount":10,"reference":"G"},{"amount":20,"reference":"G"}]}]}`)
+	split := []byte(`{"matched":[],"grouped_matched":[{"left":{"amount":30,"reference":"G"},"rights":[{"amount":15,"reference":"G"},{"amount":15,"reference":"G"}]}]}`)
+	if semanticResultEqual(split, expected) {
+		t.Fatal("different group compositions compared equal")
+	}
+	missing := []byte(`{"matched":[]}`)
+	if semanticResultEqual(missing, expected) {
+		t.Fatal("a missing grouped section compared equal")
+	}
+}
+
+func TestSemanticResultEqualComparesBySourceWithoutNames(t *testing.T) {
+	expected := []byte(`{"by_source":{"stripe":{"matched":2,"unmatched_right":0},"paypal":{"matched":1,"unmatched_right":1}}}`)
+	renamed := []byte(`{"by_source":{"psp_a":{"matched":1,"unmatched_right":1},"psp_b":{"matched":2,"unmatched_right":0}}}`)
+	if !semanticResultEqual(renamed, expected) {
+		t.Fatal("renamed counterpart sources must compare equal")
+	}
+	wrong := []byte(`{"by_source":{"stripe":{"matched":3,"unmatched_right":0},"paypal":{"matched":0,"unmatched_right":1}}}`)
+	if semanticResultEqual(wrong, expected) {
+		t.Fatal("different per-source counters compared equal")
+	}
+}

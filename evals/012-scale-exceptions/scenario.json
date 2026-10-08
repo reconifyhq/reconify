@@ -1,0 +1,32 @@
+{
+  "schema": "reconify.engine.eval-scenario.v2",
+  "id": "012-scale-exceptions",
+  "prompt": "We settle card sales through a processor that pays out into our bank. `left.csv` is our ledger for January and `right.csv` is the bank's record of the settlements, about a hundred and twenty rows each. Each sale has a unique reference that appears on both sides. The columns are date, amount, currency, reference and description, and dates look like 2024-01-31. Settlements normally post up to two days after the sale, and amounts must agree to the cent. Somewhere in these rows are a few sales that never reached the bank, a credit our ledger does not know about, payments for the wrong amount, and payments that took far longer than two days. Write a `reconify.yaml` that reconciles the files so that each of those is reported while the ordinary settlement lag is not.",
+  "inputs": [
+    "inputs/left.csv",
+    "inputs/right.csv"
+  ],
+  "reference_config": "reference/reconify.yaml",
+  "expected_result": "expected/result.json",
+  "expected_explanation": "expected/explanation.json",
+  "pair": "left_vs_right",
+  "assertions": {
+    "matched": 114,
+    "unmatched_left": 2,
+    "unmatched_right": 1,
+    "amount_diff_count": 2,
+    "timing_diff_count": 2,
+    "duplicate_count": 0,
+    "grouped_matched_count": 0,
+    "many_to_many_matched_count": 0,
+    "ambiguous_group_count": 0
+  },
+  "counter_examples": [
+    "counter_examples/inferred-default-window.yaml",
+    "counter_examples/tolerance-too-wide.yaml",
+    "counter_examples/window-too-wide.yaml"
+  ],
+  "tags": [
+    "scale"
+  ]
+}

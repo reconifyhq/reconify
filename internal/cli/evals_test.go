@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/reconifyhq/reconify/schemas"
@@ -201,5 +202,123 @@ func TestEvalCounterExamplesDoNotReproduceExpectedResults(t *testing.T) {
 				})
 			}
 		})
+	}
+}
+
+var validEvalTags = map[string]bool{"core": true, "messy": true, "scale": true, "repair": true, "ask-user": true}
+
+// configKeywords are config-surface terms a prompt must never contain. A prompt
+// describes the business situation; naming the key under test turns a scenario
+// into a typing exercise. The list covers keys whose names are not ordinary
+// business words.
+var configKeywords = []string{
+	"multiplier", "date_layout", "date_col", "amount_col", "ref_col", "name_col", "currency_col",
+	"group_col", "file_pattern", "date_window", "amount_tolerance", "name_mode", "name_match_threshold",
+	"duplicate_policy", "one_to_many", "many_to_many", "subset_sum", "reference_one_to_one",
+	"name_tokens_one_to_one", "skip_raw", "result_mode", "thousands:", "decimal:",
+}
+
+// TestEvalScenarioMetadata keeps the corpus contract honest beyond the answer
+// key: tiers are known, ask-user scenarios carry decision keywords, listed
+// inputs are exactly the files on disk, and prompts do not leak config keys.
+func TestEvalScenarioMetadata(t *testing.T) {
+	for name, scenario := range loadScenarios(t) {
+		t.Run(name, func(t *testing.T) {
+			scenarioDir := filepath.Join(evalsDir, name)
+
+			if len(scenario.Tags) == 0 {
+				t.Fatal("scenario has no tags; every scenario belongs to a tier")
+			}
+			tags := map[string]bool{}
+			for _, tag := range scenario.Tags {
+				if !validEvalTags[tag] {
+					t.Errorf("unknown tag %q", tag)
+				}
+				tags[tag] = true
+			}
+			if tags["ask-user"] != (len(scenario.DecisionKeywords) > 0) {
+				t.Errorf("decision_keywords must be set exactly on ask-user scenarios (tags=%v, keywords=%v)",
+					scenario.Tags, scenario.DecisionKeywords)
+			}
+			if tags["repair"] && len(scenario.InitialFiles) == 0 {
+				t.Error("repair scenario has no initial_files to repair")
+			}
+
+			entries, err := os.ReadDir(filepath.Join(scenarioDir, "inputs"))
+			if err != nil {
+				t.Fatalf("read inputs: %v", err)
+			}
+			onDisk := map[string]bool{}
+			for _, entry := range entries {
+				onDisk["inputs/"+entry.Name()] = true
+			}
+			listed := map[string]bool{}
+			for _, input := range scenario.Inputs {
+				listed[input] = true
+				if !onDisk[input] {
+					t.Errorf("listed input %s does not exist", input)
+				}
+			}
+			for input := range onDisk {
+				if !listed[input] {
+					t.Errorf("input %s exists on disk but is not listed in scenario.json", input)
+				}
+			}
+			for _, initial := range scenario.InitialFiles {
+				if _, err := os.Stat(filepath.Join(scenarioDir, initial)); err != nil {
+					t.Errorf("initial file %s: %v", initial, err)
+				}
+			}
+
+			prompt := strings.ToLower(scenario.Prompt)
+			for _, keyword := range configKeywords {
+				if strings.Contains(prompt, keyword) {
+					t.Errorf("prompt leaks config key %q; describe the business situation instead", keyword)
+				}
+			}
+		})
+	}
+}
+
+// TestEvalRepairStartingConfigsAreBroken proves a repair scenario is a real
+// repair: the config the agent starts with must fail a gate or produce a
+// different outcome than the answer key. Otherwise an agent that does nothing
+// would pass.
+func TestEvalRepairStartingConfigsAreBroken(t *testing.T) {
+	repairs := 0
+	for name, scenario := range loadScenarios(t) {
+		isRepair := false
+		for _, tag := range scenario.Tags {
+			isRepair = isRepair || tag == "repair"
+		}
+		if !isRepair {
+			continue
+		}
+		repairs++
+		t.Run(name, func(t *testing.T) {
+			scenarioDir := filepath.Join(evalsDir, name)
+			// A runner copies initial_files to the same relative path inside the
+			// workspace, so reconify.yaml lands at the workspace root.
+			var starting string
+			for _, initial := range scenario.InitialFiles {
+				if filepath.Clean(initial) == "reconify.yaml" {
+					starting = filepath.Join(scenarioDir, initial)
+				}
+			}
+			if starting == "" {
+				t.Fatal("repair scenario must ship a starting reconify.yaml among initial_files")
+			}
+			workDir := materialize(t, scenarioDir, starting)
+			result, gate := runScenario(t, workDir, scenario.Pair)
+			if gate != "" {
+				return
+			}
+			if got := assertionsOf(t, result); got == scenario.Assertions {
+				t.Errorf("the starting config already reproduces the expected summary %+v, so nothing needs repairing", got)
+			}
+		})
+	}
+	if repairs == 0 {
+		t.Fatal("no repair scenarios found")
 	}
 }

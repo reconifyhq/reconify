@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
@@ -83,11 +84,11 @@ func TestDefaultTextDiagnosticRemainsLegacyPresentation(t *testing.T) {
 	}
 }
 
-func TestJSONDiagnosticCoversGenericCobraErrors(t *testing.T) {
+func TestJSONDiagnosticCoversUsageErrors(t *testing.T) {
 	bin := buildTestBinary(t)
 	stdout, stderr, exitCode := runTestBinary(t, bin, "--error-format", "json", "reconcile", "--bogus")
-	if exitCode != 1 {
-		t.Fatalf("exit code = %d, want 1; stderr=%s", exitCode, stderr)
+	if exitCode != 2 {
+		t.Fatalf("exit code = %d, want 2; stderr=%s", exitCode, stderr)
 	}
 	if stdout != "" {
 		t.Fatalf("stdout = %q, want empty", stdout)
@@ -96,16 +97,20 @@ func TestJSONDiagnosticCoversGenericCobraErrors(t *testing.T) {
 	if err := json.Unmarshal([]byte(strings.TrimSpace(stderr)), &envelope); err != nil {
 		t.Fatalf("decode stderr JSON: %v\nstderr=%s", err, stderr)
 	}
-	if envelope.Code != "error" || envelope.Diagnostic.Code != "INTERNAL_ERROR" || envelope.Diagnostic.Category != "internal" {
+	if envelope.Code != "config_error" || envelope.Diagnostic.Code != "USAGE_ERROR" || envelope.Diagnostic.Category != "usage" {
 		t.Fatalf("envelope = %+v", envelope)
+	}
+	if envelope.Diagnostic.Details["usage"] == "" || len(envelope.Diagnostic.Suggestions) != 1 ||
+		!strings.Contains(envelope.Diagnostic.Suggestions[0], "reconify reconcile --help") {
+		t.Fatalf("usage diagnostic = %+v", envelope.Diagnostic)
 	}
 }
 
-func TestAgentProfileStructuresGenericCobraErrors(t *testing.T) {
+func TestAgentProfileStructuresUsageErrors(t *testing.T) {
 	bin := buildTestBinary(t)
 	stdout, stderr, exitCode := runTestBinary(t, bin, "--agent", "reconcile", "--bogus")
-	if exitCode != 1 {
-		t.Fatalf("exit code = %d, want 1; stderr=%s", exitCode, stderr)
+	if exitCode != 2 {
+		t.Fatalf("exit code = %d, want 2; stderr=%s", exitCode, stderr)
 	}
 	if stdout != "" {
 		t.Fatalf("stdout = %q, want empty", stdout)
@@ -114,7 +119,7 @@ func TestAgentProfileStructuresGenericCobraErrors(t *testing.T) {
 	if err := json.Unmarshal([]byte(strings.TrimSpace(stderr)), &envelope); err != nil {
 		t.Fatalf("decode stderr JSON: %v\nstderr=%s", err, stderr)
 	}
-	if envelope.Code != "error" || envelope.Diagnostic.Code != "INTERNAL_ERROR" {
+	if envelope.Code != "config_error" || envelope.Diagnostic.Code != "USAGE_ERROR" {
 		t.Fatalf("envelope = %+v", envelope)
 	}
 }
@@ -122,8 +127,8 @@ func TestAgentProfileStructuresGenericCobraErrors(t *testing.T) {
 func TestAgentProfileStructuresUnknownCommands(t *testing.T) {
 	bin := buildTestBinary(t)
 	stdout, stderr, exitCode := runTestBinary(t, bin, "--agent", "no-such-command")
-	if exitCode != 1 {
-		t.Fatalf("exit code = %d, want 1; stderr=%s", exitCode, stderr)
+	if exitCode != 2 {
+		t.Fatalf("exit code = %d, want 2; stderr=%s", exitCode, stderr)
 	}
 	if stdout != "" {
 		t.Fatalf("stdout = %q, want empty", stdout)
@@ -132,7 +137,60 @@ func TestAgentProfileStructuresUnknownCommands(t *testing.T) {
 	if err := json.Unmarshal([]byte(strings.TrimSpace(stderr)), &envelope); err != nil {
 		t.Fatalf("decode stderr JSON: %v\nstderr=%s", err, stderr)
 	}
-	if envelope.Code != "error" || envelope.Diagnostic.Code != "INTERNAL_ERROR" {
+	if envelope.Code != "config_error" || envelope.Diagnostic.Code != "USAGE_ERROR" {
 		t.Fatalf("envelope = %+v", envelope)
+	}
+}
+
+func TestAgentUnknownCommandSuggestsClosestMatch(t *testing.T) {
+	bin := buildTestBinary(t)
+	_, stderr, exitCode := runTestBinary(t, bin, "--agent", "reconsile")
+	if exitCode != 2 {
+		t.Fatalf("exit code = %d, want 2; stderr=%s", exitCode, stderr)
+	}
+	var envelope schemas.DiagnosticEnvelope
+	if err := json.Unmarshal([]byte(strings.TrimSpace(stderr)), &envelope); err != nil {
+		t.Fatalf("decode stderr JSON: %v\nstderr=%s", err, stderr)
+	}
+	if got := envelope.Diagnostic.Details["did_you_mean"]; got != "reconify reconcile" {
+		t.Fatalf("did_you_mean = %v; envelope = %+v", got, envelope)
+	}
+}
+
+func TestAgentConfigValidateWritesOnlyTheJSONEnvelopeToStderr(t *testing.T) {
+	bin := buildTestBinary(t)
+	path := filepath.Join(t.TempDir(), "reconify.yaml")
+	config := "version: 1\nsources:\n  a:\n    file_pattern: a.csv\n    parser:\n      amount_col: amount\n      multiplier: 100\n      date_layout: \"2006-01-02\"\npairs:\n  p:\n    left: a\n    right: a\n"
+	if err := os.WriteFile(path, []byte(config), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	stdout, stderr, exitCode := runTestBinary(t, bin, "--agent", "config", "validate", "--config", path)
+	if exitCode != 2 || stdout != "" {
+		t.Fatalf("exit=%d stdout=%q stderr=%s", exitCode, stdout, stderr)
+	}
+	lines := strings.Split(strings.TrimSpace(stderr), "\n")
+	if len(lines) != 1 {
+		t.Fatalf("stderr must be exactly one JSON envelope, got %d lines:\n%s", len(lines), stderr)
+	}
+	var envelope struct {
+		Diagnostic struct {
+			Code    string `json:"code"`
+			Details struct {
+				Errors []struct {
+					Path    string `json:"path"`
+					Message string `json:"message"`
+				} `json:"errors"`
+			} `json:"details"`
+		} `json:"diagnostic"`
+	}
+	if err := json.Unmarshal([]byte(lines[0]), &envelope); err != nil {
+		t.Fatalf("decode stderr JSON: %v\n%s", err, stderr)
+	}
+	if envelope.Diagnostic.Code != "CONFIG_INVALID" || len(envelope.Diagnostic.Details.Errors) < 2 {
+		t.Fatalf("envelope = %+v", envelope)
+	}
+	first := envelope.Diagnostic.Details.Errors[0]
+	if first.Path != "sources.a.parser.date_col" || first.Message != "required field is missing" {
+		t.Fatalf("first error = %+v", first)
 	}
 }

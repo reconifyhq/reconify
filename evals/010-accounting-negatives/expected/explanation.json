@@ -1,0 +1,144 @@
+{
+  "schema": "reconify.engine.explanation.v1",
+  "summary": {
+    "currency": "USD",
+    "total_left": 6,
+    "total_right": 6,
+    "matched": 4,
+    "unmatched_left": 1,
+    "unmatched_right": 1,
+    "amount_diff_count": 1,
+    "timing_diff_count": 0,
+    "duplicate_count": 0,
+    "match_rate_pct": 66.67,
+    "reconciled_rate_pct": 83.33,
+    "matched_amount_left": 216525,
+    "matched_amount_right": 216525,
+    "unmatched_amount_left": -4500,
+    "unmatched_amount_right": -1800,
+    "amount_diff_total": 1000,
+    "total_discrepancy": -5300
+  },
+  "findings": [
+    {
+      "category": "matched",
+      "count": 4
+    },
+    {
+      "category": "unmatched_left",
+      "count": 1
+    },
+    {
+      "category": "unmatched_right",
+      "count": 1
+    },
+    {
+      "category": "amount_diff",
+      "count": 1
+    },
+    {
+      "category": "timing_diff",
+      "count": 0
+    },
+    {
+      "category": "duplicates",
+      "count": 0
+    },
+    {
+      "category": "grouped_matched",
+      "count": 0
+    },
+    {
+      "category": "grouped_amount_diff",
+      "count": 0
+    },
+    {
+      "category": "grouped_timing_diff",
+      "count": 0
+    },
+    {
+      "category": "many_to_many_matched",
+      "count": 0
+    },
+    {
+      "category": "many_to_many_amount_diff",
+      "count": 0
+    },
+    {
+      "category": "many_to_many_timing_diff",
+      "count": 0
+    },
+    {
+      "category": "ambiguous_group",
+      "count": 0
+    }
+  ],
+  "top_exceptions": [
+    {
+      "type": "unmatched_left",
+      "data": {
+        "amount": -4500,
+        "currency": "USD",
+        "date": "2024-02-07T00:00:00Z",
+        "group_key": "CN-1005",
+        "id": "left-5",
+        "name": "Credit note refund",
+        "raw": {
+          "amount": "(45.00)",
+          "currency": "USD",
+          "date": "2024-02-07",
+          "description": "Credit note refund",
+          "reference": "CN-1005"
+        },
+        "reference": "CN-1005",
+        "source": "left"
+      }
+    },
+    {
+      "type": "unmatched_right",
+      "data": {
+        "amount": -1800,
+        "currency": "USD",
+        "date": "2024-02-09T00:00:00Z",
+        "id": "right-6",
+        "name": "Account fee",
+        "reference": "BANK-CHG",
+        "source": "right"
+      }
+    },
+    {
+      "type": "amount_diff",
+      "data": {
+        "diff_minor": 1000,
+        "left": {
+          "amount": 1500000,
+          "currency": "USD",
+          "date": "2024-02-06T00:00:00Z",
+          "group_key": "INV-1004",
+          "id": "left-4",
+          "name": "Project milestone",
+          "raw": {
+            "amount": "15,000.00",
+            "currency": "USD",
+            "date": "2024-02-06",
+            "description": "Project milestone",
+            "reference": "INV-1004"
+          },
+          "reference": "INV-1004",
+          "source": "left"
+        },
+        "right": {
+          "amount": 1499000,
+          "currency": "USD",
+          "date": "2024-02-06T00:00:00Z",
+          "id": "right-4",
+          "name": "Wire in",
+          "reference": "INV-1004",
+          "source": "right"
+        }
+      }
+    }
+  ],
+  "exceptions_total": 3,
+  "truncated": false
+}

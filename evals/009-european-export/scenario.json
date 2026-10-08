@@ -1,0 +1,31 @@
+{
+  "schema": "reconify.engine.eval-scenario.v2",
+  "id": "009-european-export",
+  "prompt": "Our ledger (`left.csv`) is in EUR with the columns date, amount, currency, reference and description, and dates like 2024-01-31. The bank's `right.csv` comes from its European online portal, so it looks different: the columns are Booking date, Amount, Currency, Reference and Details, dates are written day first with dots, like 31.01.2024, and amounts use a comma for the decimals and a dot to group the thousands, like 12.400,50. The bank normally books a payment within two days of our ledger date, and amounts must agree to the cent. Write a `reconify.yaml` that reconciles the two files so that every difference is reported: a payment missing on either side, an amount that does not agree, and a payment that took longer than two days.",
+  "inputs": [
+    "inputs/left.csv",
+    "inputs/right.csv"
+  ],
+  "reference_config": "reference/reconify.yaml",
+  "expected_result": "expected/result.json",
+  "expected_explanation": "expected/explanation.json",
+  "pair": "left_vs_right",
+  "assertions": {
+    "matched": 5,
+    "unmatched_left": 1,
+    "unmatched_right": 1,
+    "amount_diff_count": 1,
+    "timing_diff_count": 1,
+    "duplicate_count": 0,
+    "grouped_matched_count": 0,
+    "many_to_many_matched_count": 0,
+    "ambiguous_group_count": 0
+  },
+  "counter_examples": [
+    "counter_examples/month-first-dates.yaml",
+    "counter_examples/us-number-format.yaml"
+  ],
+  "tags": [
+    "core"
+  ]
+}

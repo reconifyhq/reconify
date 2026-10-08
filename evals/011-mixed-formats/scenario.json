@@ -1,0 +1,31 @@
+{
+  "schema": "reconify.engine.eval-scenario.v2",
+  "id": "011-mixed-formats",
+  "prompt": "The ledger export (`left.csv`) has the columns Posting Date, Amount, Currency, Invoice and Memo, with dates like 03-Jan-2024. The bank portal can only export JSON: `right.json` is a list of records with the fields booked_at (a full timestamp such as 2024-01-03T14:22:05Z), value, ccy, end_to_end_id (the invoice number the customer quoted) and narrative (free text typed by the payer). The bank books a payment on the same day or the next, and amounts must agree to the cent. Write a `reconify.yaml` that reconciles the two files and reports anything missing on either side or with an amount that does not agree.",
+  "inputs": [
+    "inputs/left.csv",
+    "inputs/right.json"
+  ],
+  "reference_config": "reference/reconify.yaml",
+  "expected_result": "expected/result.json",
+  "expected_explanation": "expected/explanation.json",
+  "pair": "left_vs_right",
+  "assertions": {
+    "matched": 4,
+    "unmatched_left": 1,
+    "unmatched_right": 1,
+    "amount_diff_count": 1,
+    "timing_diff_count": 0,
+    "duplicate_count": 0,
+    "grouped_matched_count": 0,
+    "many_to_many_matched_count": 0,
+    "ambiguous_group_count": 0
+  },
+  "counter_examples": [
+    "counter_examples/date-only-layout.yaml",
+    "counter_examples/narrative-as-reference.yaml"
+  ],
+  "tags": [
+    "messy"
+  ]
+}

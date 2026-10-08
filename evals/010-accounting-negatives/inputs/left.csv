@@ -1,0 +1,7 @@
+date,amount,currency,reference,description
+2024-02-01,"1,250.00",USD,INV-1001,Annual license
+2024-02-02,(320.00),USD,CN-1002,Credit note refund
+2024-02-05,"(1,075.50)",USD,CN-1003,Credit note refund
+2024-02-06,"15,000.00",USD,INV-1004,Project milestone
+2024-02-07,(45.00),USD,CN-1005,Credit note refund
+2024-02-08,"2,310.75",USD,INV-1006,Support plan

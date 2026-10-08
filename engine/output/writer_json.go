@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"io"
 	"sort"
+	"strconv"
+	"strings"
 
 	. "github.com/reconifyhq/reconify/engine/domain"
 )
@@ -166,56 +168,56 @@ func (j *jsonWriter) SetDeterministic(on bool) { j.deterministic = on }
 
 // sortResult sorts all result sections in place for deterministic output.
 func (j *jsonWriter) sortResult() {
-	sort.Slice(j.result.Matched, func(i, k int) bool {
-		return j.result.Matched[i].Left.ID < j.result.Matched[k].Left.ID
+	sort.SliceStable(j.result.Matched, func(i, k int) bool {
+		return idLess(j.result.Matched[i].Left.ID, j.result.Matched[k].Left.ID)
 	})
-	sort.Slice(j.result.UnmatchedLeft, func(i, k int) bool {
-		return j.result.UnmatchedLeft[i].ID < j.result.UnmatchedLeft[k].ID
+	sort.SliceStable(j.result.UnmatchedLeft, func(i, k int) bool {
+		return idLess(j.result.UnmatchedLeft[i].ID, j.result.UnmatchedLeft[k].ID)
 	})
-	sort.Slice(j.result.UnmatchedRight, func(i, k int) bool {
-		return j.result.UnmatchedRight[i].ID < j.result.UnmatchedRight[k].ID
+	sort.SliceStable(j.result.UnmatchedRight, func(i, k int) bool {
+		return idLess(j.result.UnmatchedRight[i].ID, j.result.UnmatchedRight[k].ID)
 	})
-	sort.Slice(j.result.AmountDiff, func(i, k int) bool {
-		return j.result.AmountDiff[i].Left.ID < j.result.AmountDiff[k].Left.ID
+	sort.SliceStable(j.result.AmountDiff, func(i, k int) bool {
+		return idLess(j.result.AmountDiff[i].Left.ID, j.result.AmountDiff[k].Left.ID)
 	})
-	sort.Slice(j.result.TimingDiff, func(i, k int) bool {
-		return j.result.TimingDiff[i].Left.ID < j.result.TimingDiff[k].Left.ID
+	sort.SliceStable(j.result.TimingDiff, func(i, k int) bool {
+		return idLess(j.result.TimingDiff[i].Left.ID, j.result.TimingDiff[k].Left.ID)
 	})
-	sort.Slice(j.result.Duplicates, func(i, k int) bool {
+	sort.SliceStable(j.result.Duplicates, func(i, k int) bool {
 		if j.result.Duplicates[i].Reference != j.result.Duplicates[k].Reference {
 			return j.result.Duplicates[i].Reference < j.result.Duplicates[k].Reference
 		}
 		return j.result.Duplicates[i].Source < j.result.Duplicates[k].Source
 	})
-	sort.Slice(j.result.GroupedMatched, func(i, k int) bool {
-		return j.result.GroupedMatched[i].Left.ID < j.result.GroupedMatched[k].Left.ID
+	sort.SliceStable(j.result.GroupedMatched, func(i, k int) bool {
+		return idLess(j.result.GroupedMatched[i].Left.ID, j.result.GroupedMatched[k].Left.ID)
 	})
-	sort.Slice(j.result.GroupedAmountDiff, func(i, k int) bool {
-		return j.result.GroupedAmountDiff[i].Left.ID < j.result.GroupedAmountDiff[k].Left.ID
+	sort.SliceStable(j.result.GroupedAmountDiff, func(i, k int) bool {
+		return idLess(j.result.GroupedAmountDiff[i].Left.ID, j.result.GroupedAmountDiff[k].Left.ID)
 	})
-	sort.Slice(j.result.GroupedTimingDiff, func(i, k int) bool {
-		return j.result.GroupedTimingDiff[i].Left.ID < j.result.GroupedTimingDiff[k].Left.ID
+	sort.SliceStable(j.result.GroupedTimingDiff, func(i, k int) bool {
+		return idLess(j.result.GroupedTimingDiff[i].Left.ID, j.result.GroupedTimingDiff[k].Left.ID)
 	})
-	sort.Slice(j.result.AmbiguousGroups, func(i, k int) bool {
+	sort.SliceStable(j.result.AmbiguousGroups, func(i, k int) bool {
 		return j.result.AmbiguousGroups[i].Reference < j.result.AmbiguousGroups[k].Reference
 	})
-	sort.Slice(j.result.ManyToManyMatched, func(i, k int) bool {
-		return firstTransactionID(j.result.ManyToManyMatched[i].Lefts) < firstTransactionID(j.result.ManyToManyMatched[k].Lefts)
+	sort.SliceStable(j.result.ManyToManyMatched, func(i, k int) bool {
+		return idLess(firstTransactionID(j.result.ManyToManyMatched[i].Lefts), firstTransactionID(j.result.ManyToManyMatched[k].Lefts))
 	})
-	sort.Slice(j.result.ManyToManyAmountDiff, func(i, k int) bool {
-		return firstTransactionID(j.result.ManyToManyAmountDiff[i].Lefts) < firstTransactionID(j.result.ManyToManyAmountDiff[k].Lefts)
+	sort.SliceStable(j.result.ManyToManyAmountDiff, func(i, k int) bool {
+		return idLess(firstTransactionID(j.result.ManyToManyAmountDiff[i].Lefts), firstTransactionID(j.result.ManyToManyAmountDiff[k].Lefts))
 	})
-	sort.Slice(j.result.ManyToManyTimingDiff, func(i, k int) bool {
-		return firstTransactionID(j.result.ManyToManyTimingDiff[i].Lefts) < firstTransactionID(j.result.ManyToManyTimingDiff[k].Lefts)
+	sort.SliceStable(j.result.ManyToManyTimingDiff, func(i, k int) bool {
+		return idLess(firstTransactionID(j.result.ManyToManyTimingDiff[i].Lefts), firstTransactionID(j.result.ManyToManyTimingDiff[k].Lefts))
 	})
-	sort.Slice(j.result.SubsetSumMatched, func(i, k int) bool {
-		return j.result.SubsetSumMatched[i].Left.ID < j.result.SubsetSumMatched[k].Left.ID
+	sort.SliceStable(j.result.SubsetSumMatched, func(i, k int) bool {
+		return idLess(j.result.SubsetSumMatched[i].Left.ID, j.result.SubsetSumMatched[k].Left.ID)
 	})
-	sort.Slice(j.result.SubsetSumAmbiguous, func(i, k int) bool {
-		return j.result.SubsetSumAmbiguous[i].Left.ID < j.result.SubsetSumAmbiguous[k].Left.ID
+	sort.SliceStable(j.result.SubsetSumAmbiguous, func(i, k int) bool {
+		return idLess(j.result.SubsetSumAmbiguous[i].Left.ID, j.result.SubsetSumAmbiguous[k].Left.ID)
 	})
-	sort.Slice(j.result.SubsetSumSkipped, func(i, k int) bool {
-		return j.result.SubsetSumSkipped[i].Left.ID < j.result.SubsetSumSkipped[k].Left.ID
+	sort.SliceStable(j.result.SubsetSumSkipped, func(i, k int) bool {
+		return idLess(j.result.SubsetSumSkipped[i].Left.ID, j.result.SubsetSumSkipped[k].Left.ID)
 	})
 }
 
@@ -230,3 +232,31 @@ func (j *jsonWriter) Flush() error {
 
 // GetResult returns the accumulated Result. Used by the batch Reconcile() wrapper.
 func (j *jsonWriter) GetResult() *Result { return &j.result }
+
+// idLess orders transaction IDs of the form "{source}-{row}" by source name and
+// then by numeric row, so "left-2" sorts before "left-10" and deterministic output
+// follows input row order. IDs that do not end in a numeric row fall back to plain
+// string comparison.
+func idLess(a, b string) bool {
+	aPrefix, aRow, aOK := splitRowID(a)
+	bPrefix, bRow, bOK := splitRowID(b)
+	if !aOK || !bOK {
+		return a < b
+	}
+	if aPrefix != bPrefix {
+		return aPrefix < bPrefix
+	}
+	return aRow < bRow
+}
+
+func splitRowID(id string) (prefix string, row int, ok bool) {
+	cut := strings.LastIndexByte(id, '-')
+	if cut < 0 {
+		return "", 0, false
+	}
+	row, err := strconv.Atoi(id[cut+1:])
+	if err != nil {
+		return "", 0, false
+	}
+	return id[:cut], row, true
+}

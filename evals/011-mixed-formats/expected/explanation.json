@@ -1,0 +1,144 @@
+{
+  "schema": "reconify.engine.explanation.v1",
+  "summary": {
+    "currency": "USD",
+    "total_left": 6,
+    "total_right": 6,
+    "matched": 4,
+    "unmatched_left": 1,
+    "unmatched_right": 1,
+    "amount_diff_count": 1,
+    "timing_diff_count": 0,
+    "duplicate_count": 0,
+    "match_rate_pct": 66.67,
+    "reconciled_rate_pct": 83.33,
+    "matched_amount_left": 274990,
+    "matched_amount_right": 274990,
+    "unmatched_amount_left": 7525,
+    "unmatched_amount_right": 51240,
+    "amount_diff_total": 4500,
+    "total_discrepancy": 63265
+  },
+  "findings": [
+    {
+      "category": "matched",
+      "count": 4
+    },
+    {
+      "category": "unmatched_left",
+      "count": 1
+    },
+    {
+      "category": "unmatched_right",
+      "count": 1
+    },
+    {
+      "category": "amount_diff",
+      "count": 1
+    },
+    {
+      "category": "timing_diff",
+      "count": 0
+    },
+    {
+      "category": "duplicates",
+      "count": 0
+    },
+    {
+      "category": "grouped_matched",
+      "count": 0
+    },
+    {
+      "category": "grouped_amount_diff",
+      "count": 0
+    },
+    {
+      "category": "grouped_timing_diff",
+      "count": 0
+    },
+    {
+      "category": "many_to_many_matched",
+      "count": 0
+    },
+    {
+      "category": "many_to_many_amount_diff",
+      "count": 0
+    },
+    {
+      "category": "many_to_many_timing_diff",
+      "count": 0
+    },
+    {
+      "category": "ambiguous_group",
+      "count": 0
+    }
+  ],
+  "top_exceptions": [
+    {
+      "type": "unmatched_left",
+      "data": {
+        "amount": 7525,
+        "currency": "USD",
+        "date": "2024-01-10T00:00:00Z",
+        "group_key": "INV-2005",
+        "id": "left-5",
+        "name": "Courier fees",
+        "raw": {
+          "Amount": "75.25",
+          "Currency": "USD",
+          "Invoice": "INV-2005",
+          "Memo": "Courier fees",
+          "Posting Date": "10-Jan-2024"
+        },
+        "reference": "INV-2005",
+        "source": "left"
+      }
+    },
+    {
+      "type": "unmatched_right",
+      "data": {
+        "amount": 51240,
+        "currency": "USD",
+        "date": "2024-01-12T08:30:00Z",
+        "id": "right-5",
+        "name": "UNREFERENCED CREDIT",
+        "reference": "BANK-7731",
+        "source": "right"
+      }
+    },
+    {
+      "type": "amount_diff",
+      "data": {
+        "diff_minor": 4500,
+        "left": {
+          "amount": 215000,
+          "currency": "USD",
+          "date": "2024-01-09T00:00:00Z",
+          "group_key": "INV-2004",
+          "id": "left-4",
+          "name": "Platform subscription",
+          "raw": {
+            "Amount": "2150.00",
+            "Currency": "USD",
+            "Invoice": "INV-2004",
+            "Memo": "Platform subscription",
+            "Posting Date": "09-Jan-2024"
+          },
+          "reference": "INV-2004",
+          "source": "left"
+        },
+        "right": {
+          "amount": 210500,
+          "currency": "USD",
+          "date": "2024-01-09T11:12:59Z",
+          "id": "right-4",
+          "name": "INITECH PAYMENT",
+          "reference": "INV-2004",
+          "source": "right"
+        }
+      }
+    }
+  ],
+  "exceptions_total": 3,
+  "truncated": false
+}

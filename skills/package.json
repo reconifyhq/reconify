@@ -9,7 +9,8 @@
     "scripts/install-skills.js",
     ".agents/",
     ".claude/",
-    ".codex/"
+    ".codex/",
+    ".hooks/"
   ],
   "keywords": ["reconify", "agent-skills", "claude", "codex", "ai-agent", "llm"],
   "license": "MIT",

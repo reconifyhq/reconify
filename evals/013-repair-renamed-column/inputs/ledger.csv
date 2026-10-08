@@ -1,0 +1,7 @@
+date,amount,currency,reference,description
+2024-03-01,500.00,GBP,PAY-3001,Card sale
+2024-03-04,200.00,GBP,PAY-3002,Card sale
+2024-03-05,100.00,GBP,PAY-3003,Card sale
+2024-03-06,750.00,GBP,PAY-3004,Card sale
+2024-03-07,320.00,GBP,PAY-3005,Card sale
+2024-03-11,60.00,GBP,PAY-3006,Card sale

@@ -1,0 +1,34 @@
+version: 1
+timezone: "UTC"
+
+sources:
+  ledger:
+    file_pattern: "inputs/ledger.csv"
+    parser:
+      type: csv
+      date_col: "date"
+      date_layout: "2006-01-02"
+      amount_col: "amount"
+      currency_col: "currency"
+      ref_col: "reference"
+      name_col: "description"
+      multiplier: 100
+
+  bank:
+    file_pattern: "inputs/bank_export_*.csv"
+    parser:
+      type: csv
+      date_col: "date"
+      date_layout: "2006-01-02"
+      amount_col: "amount"
+      currency_col: "currency"
+      ref_col: "reference"
+      name_col: "description"
+      multiplier: 100
+
+pairs:
+  ledger_vs_bank:
+    left: ledger
+    right: bank
+    date_window: "1d"
+    amount_tolerance_minor: 0

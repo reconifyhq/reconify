@@ -23,5 +23,8 @@
   },
   "counter_examples": [
     "counter_examples/one-to-one-only.yaml"
+  ],
+  "tags": [
+    "core"
   ]
 }

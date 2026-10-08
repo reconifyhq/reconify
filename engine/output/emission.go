@@ -1,7 +1,12 @@
 //nolint:staticcheck // Domain aliases keep package-internal signatures readable.
 package output
 
-import . "github.com/reconifyhq/reconify/engine/domain"
+import (
+	"sort"
+	"strings"
+
+	. "github.com/reconifyhq/reconify/engine/domain"
+)
 
 // WriteResultEvents writes all match events from res to w without calling
 // WriteSummary or Flush.
@@ -132,8 +137,8 @@ func WriteResultEvents(w ResultWriter, res *Result, suppressWarnings bool) error
 		observeWarning(w, Warning{Code: WarningEmptyCurrency, Message: warning})
 	}
 	if sbw, ok := w.(SourceBreakdownWriter); ok {
-		for name, summary := range res.BySource {
-			if err := sbw.WriteSourceSummary(name, summary); err != nil {
+		for _, name := range sourceSummaryOrder(res) {
+			if err := sbw.WriteSourceSummary(name, res.BySource[name]); err != nil {
 				return err
 			}
 		}
@@ -156,4 +161,27 @@ func observeWarning(target any, warning Warning) {
 	if observer, ok := target.(WarningObserver); ok {
 		observer.ObserveWarning(warning)
 	}
+}
+
+// sourceSummaryOrder returns the BySource keys in a stable order: counterpart
+// order as recorded in RightSource (the comma-joined configured order), then any
+// remaining keys alphabetically. Ranging over the map directly would reorder
+// source_summary events on every run.
+func sourceSummaryOrder(res *Result) []string {
+	names := make([]string, 0, len(res.BySource))
+	listed := make(map[string]bool, len(res.BySource))
+	for _, name := range strings.Split(res.RightSource, ",") {
+		if _, ok := res.BySource[name]; ok && !listed[name] {
+			listed[name] = true
+			names = append(names, name)
+		}
+	}
+	rest := make([]string, 0, len(res.BySource)-len(names))
+	for name := range res.BySource {
+		if !listed[name] {
+			rest = append(rest, name)
+		}
+	}
+	sort.Strings(rest)
+	return append(names, rest...)
 }

@@ -1,0 +1,6 @@
+date,amount,currency,reference,description
+2024-01-11,120.00,USD,REF-4001,Outgoing payment
+2024-01-15,80.00,USD,REF-4002,Outgoing payment
+2024-01-24,300.00,USD,REF-4004,Outgoing payment
+2024-01-29,90.00,USD,REF-4006,Outgoing payment
+2024-01-30,12.00,USD,REF-4099,Unidentified debit

@@ -1,4 +1,4 @@
-.PHONY: help build build-all test lint fmt-check mod-check dep-check security check preflight clean install eval-release bench-smoke bench-deterministic bench-realistic bench-adversarial-smoke bench-adversarial bench-adversarial-cold bench-full
+.PHONY: help build build-all test lint fmt-check mod-check dep-check security check preflight clean install eval-release eval-smoke eval-summary eval-compare check-fast bench-smoke bench-deterministic bench-realistic bench-adversarial-smoke bench-adversarial bench-adversarial-cold bench-full
 
 VERSION ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo dev)
 BUILD_TIME := $(shell date -u '+%Y-%m-%d_%H:%M:%S')
@@ -20,6 +20,7 @@ help: ## Show this help message
 	@echo '  make lint       - Run linters'
 	@echo '  make security   - Run govulncheck and gosec'
 	@echo '  make check      - Run the local equivalent of GitHub Actions checks'
+	@echo '  make check-fast - Inner-loop check: gofmt, go vet, go test (NOT a replacement for make check)'
 	@echo '  make preflight  - Alias for make check'
 	@echo '  make bench-smoke                - Run small correctness benchmarks (includes adversarial)'
 	@echo '  make bench-deterministic        - Run deterministic 1-N benchmarks'
@@ -29,6 +30,9 @@ help: ## Show this help message
 	@echo '  make bench-adversarial-cold     - Run adversarial cold-cache measurement (local/manual)'
 	@echo '  make bench-full                 - Run larger benchmark suite (includes adversarial)'
 	@echo '  make eval-release BASELINE_VERSION=x.y.z - Run the local skill release gate'
+	@echo '  make eval-smoke                 - Run one agent, one trial, core+messy scenarios (EVAL_AGENT, EVAL_MODEL)'
+	@echo '  make eval-summary               - Summarize the last eval-smoke report as markdown'
+	@echo '  make eval-compare BASE=a.json HEAD=b.json - Compare two eval reports (exit 3 on regression)'
 	@echo ''
 	@echo 'Clean:'
 	@echo '  make clean      - Clean build artifacts'
@@ -94,6 +98,28 @@ check: mod-check fmt-check dep-check lint security test build bench-smoke ## Run
 eval-release: ## Run the opt-in candidate/released/no-skill evaluation matrix
 	@test -n "$(BASELINE_VERSION)" || (echo 'BASELINE_VERSION is required'; exit 2)
 	go run ./cmd/reconify-eval release --baseline-version "$(BASELINE_VERSION)" --model claude=$${CLAUDE_MODEL:?set CLAUDE_MODEL} --model codex=$${CODEX_MODEL:?set CODEX_MODEL} --model gemini=$${GEMINI_MODEL:?set GEMINI_MODEL} --model opencode=$${OPENCODE_MODEL:?set OPENCODE_MODEL}
+
+check-fast: fmt-check ## Inner-loop check (gofmt, go vet, go test); run make check before opening a PR
+	go vet ./...
+	go test ./...
+
+EVAL_SMOKE_DIR := .context/evals/smoke
+
+eval-smoke: ## Run one agent, one trial, core+messy scenarios (EVAL_AGENT=claude, optional EVAL_MODEL)
+	rm -rf $(EVAL_SMOKE_DIR)
+	@mkdir -p $(EVAL_SMOKE_DIR) .context/evals/bin
+	go build -o .context/evals/bin/reconify ./cmd/reconify
+	agent=$${EVAL_AGENT:-claude}; \
+	go run ./cmd/reconify-eval run --reconify .context/evals/bin/reconify --agent "$$agent" --trials 1 --tag core --tag messy \
+		--artifacts $(EVAL_SMOKE_DIR)/artifacts --out $(EVAL_SMOKE_DIR)/report.json \
+		$${EVAL_MODEL:+--model "$$agent=$$EVAL_MODEL"}
+
+eval-summary: ## Summarize the last eval-smoke report as markdown
+	go run ./cmd/reconify-eval summarize $(EVAL_SMOKE_DIR)/report.json --markdown
+
+eval-compare: ## Compare two eval reports: make eval-compare BASE=base.json HEAD=head.json (exit 3 on regression)
+	@test -n "$(BASE)" -a -n "$(HEAD)" || (echo 'BASE and HEAD are required'; exit 2)
+	go run ./cmd/reconify-eval compare "$(BASE)" "$(HEAD)" --markdown
 
 preflight: check ## Alias for make check
 

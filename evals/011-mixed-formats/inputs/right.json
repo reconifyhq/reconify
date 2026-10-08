@@ -1,0 +1,44 @@
+[
+  {
+    "booked_at": "2024-01-03T14:22:05Z",
+    "value": 1250.00,
+    "ccy": "USD",
+    "end_to_end_id": "INV-2001",
+    "narrative": "ACME LTD PAYMENT"
+  },
+  {
+    "booked_at": "2024-01-05T09:03:41Z",
+    "value": 89.90,
+    "ccy": "USD",
+    "end_to_end_id": "INV-2002",
+    "narrative": "WIDGETS INC INV 2002"
+  },
+  {
+    "booked_at": "2024-01-08T16:45:10Z",
+    "value": 430.00,
+    "ccy": "USD",
+    "end_to_end_id": "INV-2003",
+    "narrative": "GLOBEX PAYMENT"
+  },
+  {
+    "booked_at": "2024-01-09T11:12:59Z",
+    "value": 2105.00,
+    "ccy": "USD",
+    "end_to_end_id": "INV-2004",
+    "narrative": "INITECH PAYMENT"
+  },
+  {
+    "booked_at": "2024-01-12T08:30:00Z",
+    "value": 512.40,
+    "ccy": "USD",
+    "end_to_end_id": "BANK-7731",
+    "narrative": "UNREFERENCED CREDIT"
+  },
+  {
+    "booked_at": "2024-01-16T13:05:27Z",
+    "value": 980.00,
+    "ccy": "USD",
+    "end_to_end_id": "INV-2006",
+    "narrative": "HOOLI PAYMENT"
+  }
+]

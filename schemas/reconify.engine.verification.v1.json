@@ -1,0 +1,104 @@
+{
+  "$id": "urn:reconify:engine:verification:v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Reconify Engine verification v1",
+  "description": "Versioned checklist emitted by reconify verify for the agent workflow deliverables.",
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "schema": {
+          "type": "string",
+          "const": "reconify.engine.verification.v1"
+        },
+        "ok": {
+          "type": "boolean"
+        },
+        "config": {
+          "type": "string"
+        },
+        "pair": {
+          "type": "string"
+        },
+        "checks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "pass",
+                  "fail",
+                  "skip"
+                ]
+              },
+              "file": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              },
+              "diagnostic": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "category": {
+                    "type": "string",
+                    "enum": [
+                      "config",
+                      "input",
+                      "inference",
+                      "execution",
+                      "internal",
+                      "usage",
+                      "verification"
+                    ]
+                  },
+                  "message": {
+                    "type": "string"
+                  },
+                  "details": {
+                    "type": "object",
+                    "additionalProperties": true
+                  },
+                  "suggestions": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "code",
+                  "category",
+                  "message",
+                  "details",
+                  "suggestions"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "name",
+              "status"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "schema",
+        "ok",
+        "config",
+        "checks"
+      ],
+      "additionalProperties": false
+    }
+  ]
+}

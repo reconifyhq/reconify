@@ -62,9 +62,10 @@ mapping and tolerance has evidence or a named assumption.
 ## 4. Use inference as evidence when useful
 
 ```bash
-reconify config infer --left INPUT_LEFT --right INPUT_RIGHT
+reconify config infer LEFT RIGHT
 ```
 
+The positional form is equivalent to `--left INPUT_LEFT --right INPUT_RIGHT`; do not mix the two.
 Read the proposal status, reasons, alternatives, and validation counts. Confirm every proposed
 mapping against the profiles before copying it. A `needs_input` proposal routes the uncertain
 mappings back to inspection and user policy; it is not a terminal state.
@@ -76,6 +77,8 @@ reconify config validate --config reconify.yaml
 reconify config check-source --config reconify.yaml --source SOURCE --file INPUT
 ```
 
-Run `check-source` once per configured source and rerun both checks after every correction. Config
+Run `check-source` once per configured source and rerun both checks after every correction. A config
+with exactly one pair lets later `reconcile` and `verify` runs omit `--pair`. When validation fails,
+fix each entry in `details.errors[]` (its `path` names the field) and rerun. Config
 work is complete only when validation and all real-file source checks pass. Report the validated
 config path and every assumption that affects matching.

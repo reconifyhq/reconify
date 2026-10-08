@@ -1,0 +1,34 @@
+{
+  "schema": "reconify.engine.eval-scenario.v2",
+  "id": "013-repair-renamed-column",
+  "prompt": "Every week we reconcile our ledger (`ledger.csv`) against the bank statement (`bank.csv`) with the `reconify.yaml` that is already in this workspace. It stopped working this week: the bank changed its export and now calls its payment identifier column `end_to_end_id` instead of `reference`. Our reconciliation rules have not changed and must stay as they are: the bank can settle up to three days after the ledger date, and it deducts a processing fee of at most 1.50 from a payment, which we still accept as a match. Everything else is unchanged: the other columns are date, amount, currency and description, and dates look like 2024-03-31. Repair the existing configuration so the two files reconcile again, and report anything that is not ordinary settlement lag or fee.",
+  "inputs": [
+    "inputs/bank.csv",
+    "inputs/ledger.csv"
+  ],
+  "initial_files": [
+    "reconify.yaml"
+  ],
+  "reference_config": "reference/reconify.yaml",
+  "expected_result": "expected/result.json",
+  "expected_explanation": "expected/explanation.json",
+  "pair": "ledger_vs_bank",
+  "assertions": {
+    "matched": 3,
+    "unmatched_left": 1,
+    "unmatched_right": 1,
+    "amount_diff_count": 1,
+    "timing_diff_count": 1,
+    "duplicate_count": 0,
+    "grouped_matched_count": 0,
+    "many_to_many_matched_count": 0,
+    "ambiguous_group_count": 0
+  },
+  "counter_examples": [
+    "counter_examples/rules-dropped.yaml",
+    "counter_examples/unrepaired.yaml"
+  ],
+  "tags": [
+    "repair"
+  ]
+}

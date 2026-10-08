@@ -1,0 +1,175 @@
+{
+  "schema": "reconify.engine.result.v1",
+  "index_selection": {
+    "requested_backend": "memory",
+    "backend": "memory",
+    "reason": "memory estimate fits configured policy",
+    "estimated_memory_bytes": 201326656
+  },
+  "pair": "left_vs_right",
+  "left_source": "left",
+  "right_source": "right",
+  "summary": {
+    "currency": "USD",
+    "total_left": 3,
+    "total_right": 4,
+    "matched": 2,
+    "unmatched_left": 0,
+    "unmatched_right": 1,
+    "amount_diff_count": 1,
+    "timing_diff_count": 0,
+    "duplicate_count": 2,
+    "match_rate_pct": 50,
+    "reconciled_rate_pct": 75,
+    "matched_amount_left": 25000,
+    "matched_amount_right": 25000,
+    "unmatched_amount_left": 0,
+    "unmatched_amount_right": 4000,
+    "amount_diff_total": 4000,
+    "total_discrepancy": 8000
+  },
+  "matched": [
+    {
+      "left": {
+        "id": "left-2",
+        "date": "2024-04-03T00:00:00Z",
+        "amount": 3000,
+        "currency": "USD",
+        "reference": "INV-5002",
+        "name": "Invoice",
+        "source": "left",
+        "raw": {
+          "amount": "30.00",
+          "currency": "USD",
+          "date": "2024-04-03",
+          "description": "Invoice",
+          "reference": "INV-5002"
+        },
+        "group_key": "INV-5002"
+      },
+      "right": {
+        "id": "right-3",
+        "date": "2024-04-03T00:00:00Z",
+        "amount": 3000,
+        "currency": "USD",
+        "reference": "INV-5002",
+        "name": "Customer payment",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-3",
+        "date": "2024-04-04T00:00:00Z",
+        "amount": 22000,
+        "currency": "USD",
+        "reference": "INV-5003",
+        "name": "Invoice",
+        "source": "left",
+        "raw": {
+          "amount": "220.00",
+          "currency": "USD",
+          "date": "2024-04-04",
+          "description": "Invoice",
+          "reference": "INV-5003"
+        },
+        "group_key": "INV-5003"
+      },
+      "right": {
+        "id": "right-4",
+        "date": "2024-04-04T00:00:00Z",
+        "amount": 22000,
+        "currency": "USD",
+        "reference": "INV-5003",
+        "name": "Customer payment",
+        "source": "right"
+      }
+    }
+  ],
+  "unmatched_left": null,
+  "unmatched_right": [
+    {
+      "id": "right-2",
+      "date": "2024-04-03T00:00:00Z",
+      "amount": 4000,
+      "currency": "USD",
+      "reference": "INV-5001",
+      "name": "Customer payment",
+      "source": "right"
+    }
+  ],
+  "amount_diff": [
+    {
+      "left": {
+        "id": "left-1",
+        "date": "2024-04-02T00:00:00Z",
+        "amount": 10000,
+        "currency": "USD",
+        "reference": "INV-5001",
+        "name": "Invoice",
+        "source": "left",
+        "raw": {
+          "amount": "100.00",
+          "currency": "USD",
+          "date": "2024-04-02",
+          "description": "Invoice",
+          "reference": "INV-5001"
+        },
+        "group_key": "INV-5001"
+      },
+      "right": {
+        "id": "right-1",
+        "date": "2024-04-02T00:00:00Z",
+        "amount": 6000,
+        "currency": "USD",
+        "reference": "INV-5001",
+        "name": "Customer payment",
+        "source": "right"
+      },
+      "diff_minor": 4000
+    }
+  ],
+  "timing_diff": null,
+  "duplicates": [
+    {
+      "source": "right",
+      "reference": "INV-5001",
+      "transactions": [
+        {
+          "id": "right-1",
+          "date": "2024-04-02T00:00:00Z",
+          "amount": 6000,
+          "currency": "USD",
+          "reference": "INV-5001",
+          "name": "Customer payment",
+          "source": "right",
+          "raw": {
+            "amount": "60.00",
+            "currency": "USD",
+            "date": "2024-04-02",
+            "description": "Customer payment",
+            "reference": "INV-5001"
+          },
+          "group_key": "INV-5001"
+        },
+        {
+          "id": "right-2",
+          "date": "2024-04-03T00:00:00Z",
+          "amount": 4000,
+          "currency": "USD",
+          "reference": "INV-5001",
+          "name": "Customer payment",
+          "source": "right",
+          "raw": {
+            "amount": "40.00",
+            "currency": "USD",
+            "date": "2024-04-03",
+            "description": "Customer payment",
+            "reference": "INV-5001"
+          },
+          "group_key": "INV-5001"
+        }
+      ]
+    }
+  ]
+}

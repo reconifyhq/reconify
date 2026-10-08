@@ -6,6 +6,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+
+- **`reconify verify`** — checks the agent workflow deliverables and prints a `reconify.engine.verification.v1` checklist: `config_valid`, `source_check:<name>` (each `file_pattern` resolved relative to the config file, then the same checks as `config check-source`), `result_present`, `result_reproducible` (a fresh run must reproduce the recorded summary counters, for any result format or mode), `explanation_present`, and `explanation_consistent` (equals `reconify explain`). Exits `0` when every check passes or is skipped and `2` when any check fails: `CONFIG_INVALID` for an invalid config, `VERIFICATION_FAILED` otherwise. It reuses the Agent Protocol exit codes rather than adding one. Published as `reconify schema verification`.
+- **`RECONIFY_TRACE_FILE`** — when set, every `reconify` process appends one JSON line (`argv`, `exit_code`, `duration_ms`, `diagnostic_code`) to that file on exit. Write failures never change output or exit codes.
+- **Structured validation errors** — `CONFIG_INVALID` diagnostics from config validation carry `details.errors`, an array of `{path, message}`. Under `--agent` or `--error-format json` the human `is invalid` listing is no longer written to stderr; the JSON envelope is the only stderr output.
+- **`reconify config infer LEFT RIGHT`** accepts the two files positionally. Mixing positional files with `--left`/`--right` is a usage error.
+- **Default `--pair`** — `reconcile` and `verify` use the only pair when the config defines exactly one. With several pairs, the `CONFIG_INVALID` diagnostic lists them in `details.pairs`.
+- **`reconify mcp`** — a stdio MCP server (`reconify-engine`) exposing `capabilities`, `inspect_file`, `infer_config`, `validate_config`, `check_source`, `reconcile`, `reconcile_auto`, `get_summary`, `list_exceptions`, `explain_result`, and `verify_workspace`. Results stay in files; `get_summary` and `list_exceptions` stream them with pagination. No new module dependencies.
+- **Agent hooks** — `npx @reconifyhq/skills --hooks` installs Claude Code hooks that validate `reconify.yaml` after each edit and block completion until `reconify verify` passes. They merge into existing settings, are idempotent, and can be disabled with `RECONIFY_HOOKS=off`.
+- **Agent eval harness** — `reconify-eval` records an Engine trace, agent usage (turns, tokens, cost), efficiency, ten graders, and a root-cause failure label per trial; adds `compare` and `summarize`, `--tag`, `--hooks`, `--artifacts`, and a `candidate+hooks` release arm. The corpus gains messy, scale, repair, and ask-user scenarios (009–015) with a deterministic fixture generator. `make check-fast`, `make eval-smoke`, and a label-gated `agent-evals` workflow are new.
+- **Skill drift lint** — `make check` fails when a skill documents a `reconify` command or flag that does not exist.
+- The published diagnostic schema allows the `usage` and `verification` categories, and `capabilities` lists `verify`, `schema verification`, and the `USAGE_ERROR` and `VERIFICATION_FAILED` codes.
+
+### Changed
+
+- **Usage errors now exit `2` with `USAGE_ERROR`** instead of exiting `1` as `INTERNAL_ERROR`. This covers unknown commands and flags, wrong argument counts, and invalid flag values (`--top abc`). The diagnostic has category `usage`, legacy code `config_error`, `details.usage`, `details.did_you_mean` when a close command or flag exists, and a suggestion naming `reconify <command> --help`. Scripts that matched exit code `1` for these cases must now match `2`. Bare group commands (`reconify config`) still print help; an unknown subcommand under them is now a usage error rather than silently printing help.
+- Commands that accept no positional arguments now reject them as usage errors instead of ignoring them.
+
+### Fixed
+
+- **Stable event order** — `duplicate` groups, `unmatched_right` rows, ambiguous groups, `source_summary` events, and rows replayed under `duplicate_policy: latest` were emitted in map-iteration order, so repeated runs over the same files produced different bytes. They now follow input row order (duplicate groups by first occurrence) in every format and execution path, including the disk and partitioned backends.
+- **`--deterministic` with `--format json`** — the flag was silently ignored because the result-mode wrapper hid the writer's setter. It now takes effect, and deterministic ordering sorts by source and numeric row (`left-2` before `left-10`). Formats that cannot honor the flag still warn on stderr.
+
 ## [0.7.0] - 2026-08-30
 
 ### Added

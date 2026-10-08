@@ -4,6 +4,7 @@
 package index
 
 import (
+	"sort"
 	"time"
 
 	. "github.com/reconifyhq/reconify/engine/domain"
@@ -22,7 +23,7 @@ import (
 // Pointer fields retained: id, currency, name, source (4 strings).
 // Pointer fields eliminated vs. previous design: tx.Date.loc, tx.Reference (2 pointers).
 type bucket struct {
-	rowID    int64 // backend-specific stable identifier (0 for memoryIndex)
+	rowID    int64 // insertion sequence: 1-based, assigned by Add in both backends
 	id       string
 	dateUnix int64 // tx.Date.UnixNano() — no *Location pointer
 	amount   int64
@@ -76,8 +77,8 @@ type RightIndex interface {
 	// MarkUsed marks a bucket as consumed so future lookups cannot re-match it.
 	MarkUsed(b any) error
 
-	// IterateUnused calls fn for every transaction not marked as used.
-	// Iteration order is unspecified.
+	// IterateUnused calls fn for every transaction not marked as used, in the
+	// order the transactions were added to the index (input row order).
 	IterateUnused(fn func(tx Transaction) error) error
 
 	// Close releases any resources held by the index (file handles, temp files, etc.).
@@ -95,6 +96,7 @@ type RightIndex interface {
 // backed by SQLite, mmap, or another disk store and pass it to ReconcileStreaming.
 type memoryIndex struct {
 	data map[string][]*bucket
+	seq  int64 // last insertion sequence handed out; stored in bucket.rowID
 }
 
 // MemoryIndex names the in-memory implementation for callers that need to
@@ -110,7 +112,9 @@ func NewMemoryIndex() RightIndex {
 
 func (m *memoryIndex) Add(tx Transaction) error {
 	// Store compact bucket — no Raw, no time.Time, no duplicate Reference.
+	m.seq++
 	b := &bucket{
+		rowID:    m.seq,
 		id:       tx.ID,
 		dateUnix: tx.Date.UnixNano(),
 		amount:   tx.Amount,
@@ -134,14 +138,27 @@ func (m *memoryIndex) MarkUsed(candidate any) error {
 	return nil
 }
 
+// IterateUnused visits unused buckets in insertion order. The reference-keyed
+// map has no order of its own, so the unused entries are collected and sorted by
+// their insertion sequence. The temporary slice holds one small entry per unused
+// row, which is bounded by the index that is already resident in memory.
 func (m *memoryIndex) IterateUnused(fn func(tx Transaction) error) error {
+	type unusedEntry struct {
+		ref string
+		b   *bucket
+	}
+	var unused []unusedEntry
 	for ref, buckets := range m.data {
 		for _, b := range buckets {
 			if !b.used {
-				if err := fn(b.toTransaction(ref)); err != nil {
-					return err
-				}
+				unused = append(unused, unusedEntry{ref: ref, b: b})
 			}
+		}
+	}
+	sort.Slice(unused, func(i, j int) bool { return unused[i].b.rowID < unused[j].b.rowID })
+	for _, e := range unused {
+		if err := fn(e.b.toTransaction(e.ref)); err != nil {
+			return err
 		}
 	}
 	return nil

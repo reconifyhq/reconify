@@ -41,6 +41,8 @@ This writes skill files into `.agents/skills/`, `.claude/skills/`, and `.codex/s
 - Machine-readable schema: `go run ./cmd/reconify config schema`
 - Engine capability discovery: `go run ./cmd/reconify capabilities`
 - Published capabilities schema: `go run ./cmd/reconify schema capabilities`
+- Verify `reconify.yaml`, `result.json`, `explanation.json`: `go run ./cmd/reconify --agent verify` (schema: `schema verification`)
+- Infer a config from two files: `go run ./cmd/reconify config infer LEFT RIGHT`
 
 ## CLI Exit Codes
 
@@ -48,12 +50,17 @@ This writes skill files into `.agents/skills/`, `.claude/skills/`, and `.codex/s
 |---|---|
 | 0 | Success |
 | 1 | Unexpected or internal error |
-| 2 | Config or validation error (bad YAML, missing pair/source, wrong column) |
+| 2 | Config, validation, usage, or verification error (bad YAML, missing pair/source, wrong column, unknown command or flag, wrong argument count, failing `reconify verify` check; usage errors were exit 1 before this change). The diagnostic code distinguishes them. |
 | 3 | Reconcile completed with unmatched rows (only when `--fail-if-unmatched` is set) |
 | 4 | Reconcile completed with exception events: `amount_diff`, `timing_diff`, or unmatched (only when `--fail-if-exceptions` is set; takes precedence over code 3 when both flags are set) |
 
 Use `--error-format json` to get `reconify.engine.diagnostic.v1` errors on stderr. The envelope keeps
 the legacy `error` and `code` fields and adds `ok`, `schema`, and nested diagnostic details.
+
+- `CONFIG_INVALID` from validation carries `details.errors`: `[{"path": "sources.left.parser.date_col", "message": "required field is missing"}]`. With several pairs and no `--pair`, `details.pairs` lists them; a config with exactly one pair defaults `--pair` for `reconcile` and `verify`.
+- `USAGE_ERROR` (category `usage`, exit 2, legacy code `config_error`) covers unknown commands and flags, wrong argument counts, and invalid flag values. `details.usage` is the usage line and `details.did_you_mean` names the closest command or flag.
+- `VERIFICATION_FAILED` (category `verification`, exit 2, legacy code `config_error`) comes from `reconify verify` when a deliverable check fails.
+- `RECONIFY_TRACE_FILE=<path>` appends one JSON line per process: `{"argv":[...],"exit_code":2,"duration_ms":14,"diagnostic_code":"CONFIG_INVALID"}`.
 
 ## Output Formats
 

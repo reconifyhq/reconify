@@ -114,6 +114,7 @@ reconify capabilities
 reconify config schema
 reconify schema result
 reconify schema diagnostic
+reconify schema verification
 ~~~
 
 </details>
@@ -310,11 +311,31 @@ Exit codes are stable for scripts and CI:
 |---:|---|
 | `0` | Command succeeded |
 | `1` | Unexpected or internal error |
-| `2` | Configuration or validation error |
+| `2` | Configuration, validation, usage, or verification error (unknown command or flag, wrong argument count, invalid flag value, failing `reconify verify` check); the diagnostic code distinguishes them |
 | `3` | Reconciliation completed with unmatched rows when `--fail-if-unmatched` is set |
 | `4` | Reconciliation completed with exception events when `--fail-if-exceptions` is set; takes precedence over `3` |
 
-The versioned schemas are available through `reconify schema capabilities`, `reconify schema result`, `reconify schema diagnostic`, `reconify schema profile`, `reconify schema explanation`, and `reconify config schema`.
+Usage errors previously exited `1` as `INTERNAL_ERROR`. They now exit `2` with diagnostic code `USAGE_ERROR`, `details.usage`, and, when a close match exists, `details.did_you_mean`.
+
+Config validation failures carry every problem as `details.errors`, an array of `{"path", "message"}` objects. Under `--agent` or `--error-format json` the JSON envelope is the only stderr output.
+
+When the config defines exactly one pair, `reconcile` and `verify` default `--pair` to it. With several pairs, pass `--pair`; without it the `CONFIG_INVALID` diagnostic lists the names in `details.pairs`.
+
+`reconify config infer LEFT RIGHT` accepts the two input files positionally, equivalent to `--left` and `--right`.
+
+### Verify the deliverables
+
+`reconify verify` checks the three files an agent workflow produces and prints a `reconify.engine.verification.v1` checklist:
+
+~~~bash
+reconify --agent verify --config reconify.yaml --result result.json --explanation explanation.json
+~~~
+
+It confirms that the config validates, that each source's `file_pattern` still resolves and matches its file, that a fresh run reproduces the summary counters in `result.json` (whatever `--format` or `--result-mode` wrote it), and that `explanation.json` equals `reconify explain result.json`. A missing `result.json` or `explanation.json` is skipped unless `--result` or `--explanation` names it. The checklist is JSON under `--agent` or when stdout is not a terminal, and a text checklist on a terminal (`--format json|text` overrides).
+
+To record every invocation, set `RECONIFY_TRACE_FILE=/path/trace.jsonl`; each `reconify` process then appends one JSON line with `argv`, `exit_code`, `duration_ms`, and `diagnostic_code`.
+
+The versioned schemas are available through `reconify schema capabilities`, `reconify schema result`, `reconify schema diagnostic`, `reconify schema profile`, `reconify schema explanation`, `reconify schema verification`, and `reconify config schema`.
 
 ## Go library
 

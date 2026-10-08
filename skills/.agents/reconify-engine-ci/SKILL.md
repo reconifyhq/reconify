@@ -47,6 +47,13 @@ esac
 
 Verify these codes against `capabilities` when adopting a different Engine protocol version.
 
+To gate the agent deliverables themselves, run `reconify --agent verify` after the artifacts exist.
+Exit `0` is clean (skipped checks are not failures). Exit `2` with `CONFIG_INVALID` is a config
+failure handled like the reconcile case above; exit `2` with `VERIFICATION_FAILED` means a
+deliverable is stale or inconsistent: treat it as a job failure and retain the verification output
+with the artifacts. Name `--result` and `--explanation`
+explicitly in CI so a missing artifact fails instead of being skipped.
+
 When financial checks are configured, retain `financial_effect_diff` and `settlement_diff` events in
 the failure artifact. `financial_unchecked` is informational and does not fail the job by itself;
 `--fail-if-exceptions` fails for financial and settlement differences as well as ordinary exceptions.

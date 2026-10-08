@@ -1,0 +1,40 @@
+{
+  "schema": "reconify.engine.eval-scenario.v2",
+  "id": "015-ask-user-repeated-references",
+  "prompt": "The bank statement (`right.csv`) sometimes shows the same invoice number on more than one row, while our ledger (`left.csv`) has one row per invoice. Finance has not decided what a repeated invoice number means: it may be a duplicate or mistaken posting, or it may be a customer paying one invoice in several parts, a split settlement. Until finance decides, we want the conservative reconciliation: do not assume either reading, and make sure every repeated invoice is flagged for review rather than silently absorbed, along with anything else that does not line up. The columns are date, amount, currency, reference and description, and dates look like 2024-04-30. Write a `reconify.yaml` that does this, and state in your explanation what decision finance needs to make.",
+  "inputs": [
+    "inputs/left.csv",
+    "inputs/right.csv"
+  ],
+  "reference_config": "reference/reconify.yaml",
+  "expected_result": "expected/result.json",
+  "expected_explanation": "expected/explanation.json",
+  "pair": "left_vs_right",
+  "assertions": {
+    "matched": 2,
+    "unmatched_left": 0,
+    "unmatched_right": 1,
+    "amount_diff_count": 1,
+    "timing_diff_count": 0,
+    "duplicate_count": 2,
+    "grouped_matched_count": 0,
+    "many_to_many_matched_count": 0,
+    "ambiguous_group_count": 0
+  },
+  "counter_examples": [
+    "counter_examples/assume-duplicates-merged.yaml",
+    "counter_examples/assume-split-payments.yaml",
+    "counter_examples/treat-repeats-as-distinct-payments.yaml"
+  ],
+  "tags": [
+    "ask-user"
+  ],
+  "decision_keywords": [
+    "decision",
+    "decide",
+    "split",
+    "partial payment",
+    "one-to-many",
+    "confirm"
+  ]
+}

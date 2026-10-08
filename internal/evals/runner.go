@@ -13,6 +13,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"slices"
 	"sort"
 	"strings"
 	"sync"
@@ -33,6 +34,11 @@ type Options struct {
 	ArtifactDir                        string
 	MaxParallel                        int
 	ModelArguments                     map[string]string
+	// Tags restricts the run to scenarios carrying at least one tag.
+	Tags []string
+	// Hooks installs the packaged agent hooks (<skills>/.hooks) into each
+	// trial workspace, so a hooks arm can be measured against a skills arm.
+	Hooks bool
 }
 
 // Report is the aggregate machine-readable evaluator output.
@@ -127,13 +133,63 @@ type TrialReport struct {
 	AgentOutput     string   `json:"agent_output,omitempty"`
 	Error           string   `json:"error,omitempty"`
 	ArtifactPath    string   `json:"artifact_path,omitempty"`
+	// Additive harness evidence. Absent values mean the evidence was not
+	// observable for this agent or run, never zero.
+	Trace      []TraceEntry   `json:"trace,omitempty"`
+	Usage      *Usage         `json:"usage,omitempty"`
+	Efficiency *Efficiency    `json:"efficiency,omitempty"`
+	Grades     []Grade        `json:"grades,omitempty"`
+	Failure    *FailureReport `json:"failure,omitempty"`
+}
+
+// TraceEntry is one Engine invocation recorded by the workspace wrapper.
+type TraceEntry struct {
+	Argv           []string `json:"argv"`
+	ExitCode       int      `json:"exit_code"`
+	DurationMS     int64    `json:"duration_ms"`
+	DiagnosticCode string   `json:"diagnostic_code,omitempty"`
+}
+
+// Usage is agent-reported resource consumption. Each pointer is nil when the
+// agent CLI does not expose that value.
+type Usage struct {
+	Turns        *int     `json:"turns,omitempty"`
+	InputTokens  *int     `json:"input_tokens,omitempty"`
+	OutputTokens *int     `json:"output_tokens,omitempty"`
+	CostUSD      *float64 `json:"cost_usd,omitempty"`
+	WallMS       int64    `json:"wall_ms"`
+}
+
+// Efficiency summarizes the trace into workflow-cost signals.
+type Efficiency struct {
+	EngineCalls            int  `json:"engine_calls"`
+	FailedCalls            int  `json:"failed_calls"`
+	UsageErrors            int  `json:"usage_errors"`
+	CallsToFirstValidation *int `json:"calls_to_first_valid_config,omitempty"`
+	Recovered              bool `json:"recovered"`
+}
+
+// Grade is one grader's verdict with the evidence that produced it.
+type Grade struct {
+	Name     string `json:"name"`
+	Pass     bool   `json:"pass"`
+	Gating   bool   `json:"gating"`
+	Evidence string `json:"evidence,omitempty"`
+}
+
+// FailureReport is the deterministic root-cause label for a failed trial.
+type FailureReport struct {
+	Label    string `json:"label"`
+	Evidence string `json:"evidence"`
 }
 
 type scenario struct {
 	ID, Prompt, ExpectedResult, ExpectedExplanation, Pair, Dir string
+	ReferenceConfig                                            string
 	Inputs                                                     []string
 	InitialFiles                                               []string
 	Assertions                                                 schemas.EvalAssertions
+	Tags, DecisionKeywords                                     []string
 }
 
 // Run evaluates selected local agents without making ordinary CI tests invoke them.
@@ -163,6 +219,9 @@ func Run(ctx context.Context, options Options) (Report, error) {
 	scenarios, err := loadScenarios(options.CorpusDir, options.ScenarioIDs)
 	if err != nil {
 		return Report{}, err
+	}
+	if scenarios = filterByTags(scenarios, options.Tags); len(scenarios) == 0 {
+		return Report{}, fmt.Errorf("no scenarios carry any of the tags %q", options.Tags)
 	}
 	report := Report{Schema: reportSchemaV1, Skipped: skipped}
 	for _, agent := range agents {
@@ -282,6 +341,23 @@ func containsAgent(agents []Agent, target Agent) bool {
 	return false
 }
 
+// filterByTags keeps scenarios carrying at least one requested tag; no tags keeps all.
+func filterByTags(scenarios []scenario, tags []string) []scenario {
+	if len(tags) == 0 {
+		return scenarios
+	}
+	var kept []scenario
+	for _, item := range scenarios {
+		for _, tag := range tags {
+			if slices.Contains(item.Tags, tag) {
+				kept = append(kept, item)
+				break
+			}
+		}
+	}
+	return kept
+}
+
 func loadScenarios(corpusDir string, only []string) ([]scenario, error) {
 	if corpusDir == "" {
 		corpusDir = "evals"
@@ -315,7 +391,7 @@ func loadScenarios(corpusDir string, only []string) ([]scenario, error) {
 			if err := json.Unmarshal(data, &document); err != nil {
 				return nil, fmt.Errorf("parse %s: %w", path, err)
 			}
-			found = append(found, scenario{ID: document.ID, Prompt: document.Prompt, Inputs: document.Inputs, ExpectedResult: document.ExpectedResult, Pair: document.Pair, Assertions: document.Assertions, Dir: filepath.Join(corpusDir, entry.Name())})
+			found = append(found, scenario{ID: document.ID, Prompt: document.Prompt, Inputs: document.Inputs, ExpectedResult: document.ExpectedResult, ReferenceConfig: document.ReferenceConfig, Pair: document.Pair, Assertions: document.Assertions, Dir: filepath.Join(corpusDir, entry.Name())})
 			continue
 		}
 		if header.Schema != schemas.EvalScenarioSchemaV2 {
@@ -325,7 +401,7 @@ func loadScenarios(corpusDir string, only []string) ([]scenario, error) {
 		if err := json.Unmarshal(data, &document); err != nil {
 			return nil, fmt.Errorf("parse %s: %w", path, err)
 		}
-		found = append(found, scenario{ID: document.ID, Prompt: document.Prompt, Inputs: document.Inputs, InitialFiles: document.InitialFiles, ExpectedResult: document.ExpectedResult, ExpectedExplanation: document.ExpectedExplanation, Pair: document.Pair, Assertions: document.Assertions, Dir: filepath.Join(corpusDir, entry.Name())})
+		found = append(found, scenario{ID: document.ID, Prompt: document.Prompt, Inputs: document.Inputs, InitialFiles: document.InitialFiles, ExpectedResult: document.ExpectedResult, ExpectedExplanation: document.ExpectedExplanation, ReferenceConfig: document.ReferenceConfig, Pair: document.Pair, Assertions: document.Assertions, Tags: document.Tags, DecisionKeywords: document.DecisionKeywords, Dir: filepath.Join(corpusDir, entry.Name())})
 	}
 	if len(found) == 0 {
 		return nil, errors.New("no requested scenarios found")
@@ -334,8 +410,8 @@ func loadScenarios(corpusDir string, only []string) ([]scenario, error) {
 	return found, nil
 }
 
-func runTrial(ctx context.Context, options Options, agent Agent, item scenario, trial int) TrialReport {
-	report := TrialReport{Trial: trial}
+func runTrial(ctx context.Context, options Options, agent Agent, item scenario, trial int) (report TrialReport) {
+	report.Trial = trial
 	workspace, cleanup, err := materialize(options, item)
 	if err != nil {
 		report.Error = err.Error()
@@ -346,17 +422,21 @@ func runTrial(ctx context.Context, options Options, agent Agent, item scenario, 
 			cleanup()
 			return
 		}
-		if err := os.MkdirAll(options.ArtifactDir, 0o750); err == nil {
-			destination := filepath.Join(options.ArtifactDir, fmt.Sprintf("%s-%s-%d", agent, item.ID, trial))
-			if os.Rename(workspace, destination) == nil {
-				report.ArtifactPath = destination
-				return
+		destination := filepath.Join(options.ArtifactDir, fmt.Sprintf("%s-%s-%d", agent, item.ID, trial))
+		if err := retainWorkspace(workspace, destination); err != nil {
+			if report.Error == "" {
+				report.Error = fmt.Sprintf("retain artifacts: %v", err)
 			}
+			cleanup()
+			return
 		}
-		cleanup()
+		report.ArtifactPath = destination
 	}()
+	started := time.Now()
 	output, agentErr := runAgent(ctx, agent, workspace, taskPrompt(item), options.ReconifyPath, options.ModelArguments[string(agent)])
+	wall := time.Since(started)
 	report.AgentOutput = boundAgentOutput(output)
+	report.Usage = parseUsage(agent, output, wall.Milliseconds())
 	if agentErr != nil {
 		report.Error = agentErr.Error()
 	}
@@ -365,43 +445,78 @@ func runTrial(ctx context.Context, options Options, agent Agent, item scenario, 
 		report.Error = readErr.Error()
 	}
 	report.Commands = commands
-	report.Discovery = containsCommand(commands, "capabilities")
+	report.Trace = readTrace(filepath.Join(workspace, traceFileName))
+	report.Efficiency = computeEfficiency(report.Trace)
+
+	evidence := trialEvidence{commands: commands, trace: report.Trace, messages: agentMessages(agent, output), decisionKeywords: item.DecisionKeywords, hasExplanationKey: item.ExpectedExplanation != "", assertions: item.Assertions}
+	input := classifyInput{agentErr: agentErr, item: item, workspace: workspace}
 	config := filepath.Join(workspace, "reconify.yaml")
-	if !fileExists(config) {
+	evidence.configPresent = fileExists(config)
+	input.configPresent = evidence.configPresent
+	if !evidence.configPresent {
 		if report.Error == "" {
 			report.Error = "agent did not create reconify.yaml"
 		}
-		return report
+	} else {
+		verifyEngine(ctx, options.ReconifyPath, workspace, item, &evidence, &input, &report)
 	}
-	report.Configuration = containsCommand(commands, "config validate") && runReconify(ctx, options.ReconifyPath, workspace, "config", "validate", "--config", config) == nil
+	report.Grades = gradeTrial(evidence)
+	report.Discovery = gradePass(report.Grades, gradeDiscovery)
+	report.Configuration = gradePass(report.Grades, gradeConfiguration)
+	report.Execution = gradePass(report.Grades, gradeExecution)
+	report.Classification = gradePass(report.Grades, gradeClassification)
+	report.ExactResult = gradePass(report.Grades, gradeExactResult)
+	report.AssertionsMatch = gradePass(report.Grades, gradeAssertionsMatch)
+	report.Explanation = gradePass(report.Grades, gradeExplanation)
+	if !report.Classification {
+		input.ctxErr = ctx.Err()
+		report.Failure = classifyFailure(input)
+	}
+	return report
+}
+
+// verifyEngine re-runs the agent's config through the evaluator's own Engine
+// calls, which never carry the trace variable, and records what graders and the
+// failure classifier need.
+func verifyEngine(ctx context.Context, binary, workspace string, item scenario, evidence *trialEvidence, input *classifyInput, report *TrialReport) {
+	config := filepath.Join(workspace, "reconify.yaml")
+	stderr, err := runEngine(ctx, binary, workspace, "--error-format", "json", "config", "validate", "--config", config)
+	evidence.configValidated, input.configValid = err == nil, err == nil
+	if err != nil {
+		diag := parseDiagnostic(stderr)
+		evidence.configDetail = diag.detail(err.Error())
+		input.configDetail = evidence.configDetail
+	}
 	verified := filepath.Join(workspace, "verified-result.json")
-	if err := runReconify(ctx, options.ReconifyPath, workspace, "reconcile", "--config", config, "--pair", item.Pair, "--format", "json", "--deterministic", "--out", verified); err != nil {
+	stderr, err = runEngine(ctx, binary, workspace, "--error-format", "json", "reconcile", "--config", config, "--pair", item.Pair, "--format", "json", "--deterministic", "--out", verified)
+	if err != nil {
+		input.verifyDiag = parseDiagnostic(stderr)
+		evidence.verifyDetail = input.verifyDiag.detail(err.Error())
+		input.verifyDetail = evidence.verifyDetail
 		if report.Error == "" {
 			report.Error = fmt.Sprintf("verify reconciliation: %v", err)
 		}
-		return report
+		return
 	}
-	report.Execution = containsCommand(commands, "reconcile") && resolveArtifact(workspace, resultArtifactNames) != ""
-	actual, _ := os.ReadFile(verified)                                       // #nosec G304 -- evaluator workspace.
-	expected, _ := os.ReadFile(filepath.Join(item.Dir, item.ExpectedResult)) // #nosec G304 -- checked-in fixture.
-	report.ExactResult = bytes.Equal(bytes.TrimSpace(actual), bytes.TrimSpace(expected))
-	// Assertions remain a diagnostic legacy gate; task success requires the
-	// normalized event set to agree with the independently verified answer key.
-	report.Classification = semanticResultEqual(actual, expected)
-	report.AssertionsMatch = assertionsMatch(actual, item.Assertions)
+	evidence.verified, input.verified = true, true
+	evidence.artifact = resolveArtifact(workspace, resultArtifactNames) != ""
+	input.artifact = evidence.artifact
+	evidence.actual, _ = os.ReadFile(verified)                                       // #nosec G304 -- evaluator workspace.
+	evidence.expected, _ = os.ReadFile(filepath.Join(item.Dir, item.ExpectedResult)) // #nosec G304 -- checked-in fixture.
 	if item.ExpectedExplanation == "" {
-		return report
+		return
 	}
 	explanationPath := resolveArtifact(workspace, explanationArtifactNames)
 	if explanationPath == "" {
-		return report
+		return
 	}
 	agentExplanation, err := os.ReadFile(explanationPath) // #nosec G304 -- evaluator workspace.
-	if err == nil {
-		expectedExplanation, readErr := os.ReadFile(filepath.Join(item.Dir, item.ExpectedExplanation)) // #nosec G304 -- checked-in fixture.
-		report.Explanation = readErr == nil && containsCommand(commands, "explain") && bytes.Equal(bytes.TrimSpace(agentExplanation), bytes.TrimSpace(expectedExplanation))
+	if err != nil {
+		return
 	}
-	return report
+	evidence.explanationFound = true
+	expectedExplanation, readErr := os.ReadFile(filepath.Join(item.Dir, item.ExpectedExplanation)) // #nosec G304 -- checked-in fixture.
+	evidence.explanationEqual = readErr == nil && semanticExplanationEqual(agentExplanation, expectedExplanation)
 }
 
 const maxAgentOutputBytes = 40000
@@ -430,15 +545,71 @@ func semanticResultEqual(actual, expected []byte) bool {
 	return canonicalSemantic(left) == canonicalSemantic(right)
 }
 
+// semanticExplanationEqual compares explanations with the same rules as
+// results: agent-chosen source names and descriptive fields are ignored, and
+// lists compare as multisets.
+func semanticExplanationEqual(actual, expected []byte) bool {
+	var left, right any
+	if json.Unmarshal(actual, &left) != nil || json.Unmarshal(expected, &right) != nil {
+		return false
+	}
+	a, _ := json.Marshal(normalizeSemantic(left))
+	b, _ := json.Marshal(normalizeSemantic(right))
+	return bytes.Equal(a, b)
+}
+
+// resultMetadataKeys describe how a run was produced rather than what it
+// found, so semantic grading ignores them. Every other top-level key is an
+// outcome section and is compared, which keeps new event kinds graded.
+var resultMetadataKeys = map[string]bool{
+	"schema": true, "summary": true, "index_selection": true, "run_info": true,
+	"pair": true, "left_source": true, "right_source": true,
+}
+
+// descriptiveKeys never change which rows reconcile: generated ids,
+// agent-chosen source names, raw input echoes, and optional descriptive
+// mappings such as name.
+var descriptiveKeys = map[string]bool{
+	"id": true, "source": true, "raw": true, "index_selection": true, "run_id": true,
+	"name": true, "group_key": true,
+}
+
 func canonicalSemantic(document map[string]any) string {
 	selected := map[string]any{}
-	for _, key := range []string{"matched", "unmatched_left", "unmatched_right", "amount_diff", "timing_diff", "duplicates"} {
-		if value, ok := document[key]; ok {
-			selected[key] = normalizeSemantic(value)
+	for key, value := range document {
+		if resultMetadataKeys[key] || isEmptySection(value) {
+			continue
 		}
+		if key == "by_source" {
+			// Per-counterpart counters are keyed by agent-chosen source names;
+			// compare them as an unordered set of counter objects.
+			if sources, ok := value.(map[string]any); ok {
+				values := make([]any, 0, len(sources))
+				for _, counters := range sources {
+					values = append(values, counters)
+				}
+				value = values
+			}
+		}
+		selected[key] = normalizeSemantic(value)
 	}
 	data, _ := json.Marshal(selected)
 	return string(data)
+}
+
+// isEmptySection treats null, empty arrays, and empty objects as an absent
+// section, so formats that omit empty sections compare equal.
+func isEmptySection(value any) bool {
+	switch typed := value.(type) {
+	case nil:
+		return true
+	case []any:
+		return len(typed) == 0
+	case map[string]any:
+		return len(typed) == 0
+	default:
+		return false
+	}
 }
 
 func normalizeSemantic(value any) any {
@@ -460,7 +631,7 @@ func normalizeSemantic(value any) any {
 	case map[string]any:
 		result := map[string]any{}
 		for key, item := range typed {
-			if key == "id" || key == "source" || key == "raw" || key == "index_selection" || key == "run_id" {
+			if descriptiveKeys[key] {
 				continue
 			}
 			result[key] = normalizeSemantic(item)
@@ -496,6 +667,16 @@ func materialize(options Options, item scenario) (string, func(), error) {
 	for _, dir := range []string{".agents", ".claude", ".codex"} {
 		if err := copyTree(filepath.Join(options.SkillsDir, dir), filepath.Join(workspace, dir, "skills")); err != nil && !errors.Is(err, os.ErrNotExist) {
 			cleanup()
+			return "", nil, err
+		}
+	}
+	if options.Hooks {
+		hooks := filepath.Join(options.SkillsDir, ".hooks", "claude")
+		if err := copyTreeMode(hooks, filepath.Join(workspace, ".claude")); err != nil {
+			cleanup()
+			if errors.Is(err, os.ErrNotExist) {
+				return "", nil, errors.New("hooks arm requested but package has no .hooks/claude")
+			}
 			return "", nil, err
 		}
 	}
@@ -541,6 +722,63 @@ func copyTree(src, dst string) error {
 	return nil
 }
 
+// retainWorkspace moves a trial workspace into the artifact directory. A plain
+// rename fails across filesystems (for example /tmp versus the repository), so
+// it falls back to a mode-preserving copy followed by removing the source.
+func retainWorkspace(workspace, destination string) error {
+	if err := os.MkdirAll(filepath.Dir(destination), 0o750); err != nil {
+		return err
+	}
+	_ = os.RemoveAll(destination) // a stale trial from an earlier run
+	if os.Rename(workspace, destination) == nil {
+		return nil
+	}
+	if err := copyTreeMode(workspace, destination); err != nil {
+		_ = os.RemoveAll(destination)
+		return err
+	}
+	return os.RemoveAll(workspace)
+}
+
+// copyTreeMode copies a tree like copyTree but keeps each file's permission
+// bits, so hook scripts stay executable.
+func copyTreeMode(src, dst string) error {
+	entries, err := os.ReadDir(src)
+	if err != nil {
+		return err
+	}
+	for _, entry := range entries {
+		from, to := filepath.Join(src, entry.Name()), filepath.Join(dst, entry.Name())
+		if entry.IsDir() {
+			if err := os.MkdirAll(to, 0o750); err != nil {
+				return err
+			}
+			if err := copyTreeMode(from, to); err != nil {
+				return err
+			}
+			continue
+		}
+		info, err := entry.Info()
+		if err != nil {
+			return err
+		}
+		if !info.Mode().IsRegular() {
+			continue
+		}
+		data, err := os.ReadFile(from) // #nosec G304 -- packaged hook or retained workspace path.
+		if err != nil {
+			return err
+		}
+		if err := os.MkdirAll(filepath.Dir(to), 0o750); err != nil {
+			return err
+		}
+		if err := os.WriteFile(to, data, info.Mode().Perm()|0o600); err != nil { // #nosec G306,G703 -- hook scripts must keep exec bits in the evaluator workspace.
+			return err
+		}
+	}
+	return nil
+}
+
 func writeWrapper(workspace string) error {
 	bin := filepath.Join(workspace, ".bin")
 	if err := os.MkdirAll(bin, 0o750); err != nil {
@@ -554,10 +792,16 @@ func taskPrompt(item scenario) string {
 	return fmt.Sprintf("%s\n\nWork only in this temporary workspace. Solve the business reconciliation problem described above for pair %q. Leave a valid configuration, the resulting reconciliation artifact, and a concise explanation of that result at the workspace root. You may inspect the available files and installed documentation or tools as needed. Verify the configuration and result before finishing; recover from errors and do not stop at a partial artifact.", item.Prompt, item.Pair)
 }
 
-func runReconify(ctx context.Context, binary, dir string, args ...string) error {
+// runEngine runs the Engine for the evaluator's own verification and returns
+// stderr. The trace variable is stripped so these calls never enter the agent trace.
+func runEngine(ctx context.Context, binary, dir string, args ...string) ([]byte, error) {
 	cmd := exec.CommandContext(ctx, binary, args...) // #nosec G204 -- binary is explicit CLI input.
 	cmd.Dir = dir
-	return cmd.Run()
+	cmd.Env = envWithout(os.Environ(), traceEnv)
+	var stderr bytes.Buffer
+	cmd.Stderr = &stderr
+	err := cmd.Run()
+	return stderr.Bytes(), err
 }
 
 func readCommands(path string) ([]string, error) {

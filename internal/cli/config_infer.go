@@ -14,14 +14,30 @@ import (
 func newConfigInferCmd() *cobra.Command {
 	var left, right, out string
 	cmd := &cobra.Command{
-		Use:   "infer --left FILE --right FILE [--out FILE]",
+		Use:   "infer [LEFT RIGHT | --left FILE --right FILE] [--out FILE]",
 		Short: "Infer a deterministic reconify.yaml proposal from two input files",
 		Long: `Infer date, amount, and reference mappings from two input files without prompts.
 The command prints reconify.engine.config-proposal.v1 JSON. It returns needs_input
-instead of guessing whenever confidence or sample-row gates are not satisfied.`,
-		Args: cobra.NoArgs,
+instead of guessing whenever confidence or sample-row gates are not satisfied.
+
+The input files may be given positionally (infer LEFT RIGHT) or with --left and
+--right. Mixing the two forms is a usage error.`,
+		Args: func(cmd *cobra.Command, args []string) error {
+			if len(args) == 0 {
+				return nil
+			}
+			if len(args) != 2 {
+				return usageErr(cmd, fmt.Sprintf("config infer takes exactly two positional files, LEFT and RIGHT (got %d)", len(args)), "")
+			}
+			if cmd.Flags().Changed("left") || cmd.Flags().Changed("right") {
+				return usageErr(cmd, "config infer: pass the input files either positionally (LEFT RIGHT) or with --left/--right, not both", "")
+			}
+			return nil
+		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			_ = args
+			if len(args) == 2 {
+				left, right = args[0], args[1]
+			}
 			if left == "" {
 				return configErr("--left is required")
 			}

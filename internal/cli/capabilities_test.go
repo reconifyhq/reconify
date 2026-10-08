@@ -75,3 +75,28 @@ func TestCapabilitiesCommandDescribesEngineSurface(t *testing.T) {
 		t.Fatal("capabilities omitted exit code 4")
 	}
 }
+
+func TestCapabilitiesDescribeVerifyAndUsageErrors(t *testing.T) {
+	got := buildCapabilities()
+	if _, ok := got.Commands["verify"]; !ok || got.Commands["verify"].Interactive {
+		t.Fatalf("verify command missing or interactive: %+v", got.Commands["verify"])
+	}
+	if _, ok := got.Commands["schema verification"]; !ok {
+		t.Fatal("schema verification command missing")
+	}
+	if got.Formats["verify"].Default != "json" {
+		t.Fatalf("verify formats = %+v", got.Formats["verify"])
+	}
+	if got.Schemas["verification"] != schemas.VerificationSchemaV1 {
+		t.Fatalf("verification schema ID = %q", got.Schemas["verification"])
+	}
+	if code := got.ErrorCodes[diagnosticCodeVerificationFailed]; code.ExitCode != ErrCodeVerification || code.Category != "verification" || code.LegacyCode != "config_error" {
+		t.Fatalf("VERIFICATION_FAILED = %+v", code)
+	}
+	if code := got.ErrorCodes[diagnosticCodeUsageError]; code.ExitCode != 2 || code.Category != "usage" || code.LegacyCode != "config_error" {
+		t.Fatalf("USAGE_ERROR = %+v", code)
+	}
+	if _, ok := got.ExitCodes["5"]; ok {
+		t.Fatal("capabilities must not invent exit code 5; the Agent Protocol reuses codes 0-4")
+	}
+}

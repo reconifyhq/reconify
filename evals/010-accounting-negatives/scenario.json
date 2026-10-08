@@ -1,0 +1,31 @@
+{
+  "schema": "reconify.engine.eval-scenario.v2",
+  "id": "010-accounting-negatives",
+  "prompt": "Both exports come from our finance system's report writer: `left.csv` is the ledger and `right.csv` is the bank. The columns are date, amount, currency, reference and description, and dates look like 2024-02-29. Amounts of a thousand or more carry a comma to group the thousands, like 15,000.00, and money going out, such as refunds on credit notes, is shown in brackets instead of with a minus sign, like (320.00). The bank books a payment on the same day or the next, and amounts must agree to the cent. Write a `reconify.yaml` that reconciles the files and reports every payment missing on either side and every amount that does not agree.",
+  "inputs": [
+    "inputs/left.csv",
+    "inputs/right.csv"
+  ],
+  "reference_config": "reference/reconify.yaml",
+  "expected_result": "expected/result.json",
+  "expected_explanation": "expected/explanation.json",
+  "pair": "left_vs_right",
+  "assertions": {
+    "matched": 4,
+    "unmatched_left": 1,
+    "unmatched_right": 1,
+    "amount_diff_count": 1,
+    "timing_diff_count": 0,
+    "duplicate_count": 0,
+    "grouped_matched_count": 0,
+    "many_to_many_matched_count": 0,
+    "ambiguous_group_count": 0
+  },
+  "counter_examples": [
+    "counter_examples/no-thousands-separator.yaml",
+    "counter_examples/tolerance-too-wide.yaml"
+  ],
+  "tags": [
+    "messy"
+  ]
+}

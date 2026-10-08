@@ -68,6 +68,8 @@ Formats:
   ndjson       One tagged JSON line per event; O(1) memory; crash-safe.
   csv          Fixed-schema CSV; O(1) memory.
   table        Aligned ASCII table; buffers all rows in memory.`,
+		// Positional files are only meaningful with --auto; --auto validates the count.
+		Args: cobra.ArbitraryArgs,
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			defer func() {
 				if err == nil {
@@ -90,8 +92,6 @@ Formats:
 				if format == "csv" || format == "table" {
 					return configErr("--auto requires a structured output format: json, json-stream, or ndjson")
 				}
-			} else if pairName == "" {
-				return configErr("--pair is required")
 			}
 			if progressEvery <= 0 {
 				return configErr("--progress-every must be greater than zero")
@@ -139,7 +139,11 @@ Formats:
 					return configErrf("failed to load config: %v", err)
 				}
 				if errs := cfg.Validate(); len(errs) > 0 {
-					return configErrf("config validation failed: %v", errs[0])
+					return validationErr(fmt.Sprintf("config validation failed: %v", errs[0]), errs)
+				}
+				pairName, err = resolvePairName(cfg, pairName)
+				if err != nil {
+					return err
 				}
 				cfgAbs, err = filepath.Abs(cfgPath)
 				if err != nil {
@@ -623,7 +627,7 @@ Formats:
 		},
 	}
 
-	cmd.Flags().StringVar(&pairName, "pair", "", "Pair name to reconcile (required)")
+	cmd.Flags().StringVar(&pairName, "pair", "", "Pair name to reconcile (required when the config defines more than one pair)")
 	cmd.Flags().StringVarP(&outputPath, "out", "o", "-", "Output file path (use '-' for stdout)")
 	cmd.Flags().StringVar(&leftFile, "left-file", "", "Explicit path to left source input file")
 	cmd.Flags().StringVar(&rightFile, "right-file", "", "Explicit path to right source input file")

@@ -19,6 +19,7 @@
     "guides/large-files",
     "guides/audit-and-deterministic-runs",
     "performance",
+    "mcp",
     "---Reference---",
     "reference/cli",
     "reference/config",

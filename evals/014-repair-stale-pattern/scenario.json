@@ -1,0 +1,35 @@
+{
+  "schema": "reconify.engine.eval-scenario.v2",
+  "id": "014-repair-stale-pattern",
+  "prompt": "Each month we reconcile our supplier-payment ledger (`ledger.csv`) against the bank's outgoing-payment export with the `reconify.yaml` that is already in this workspace. It stopped working when the bank started delivering its statement under a new file name: January's is `bank_export_jan.csv`, where it used to be `bank_2024-01.csv`. The `inputs` folder also still holds last month's statement, `bank_2023-12.csv`, which was reconciled last month and must not be part of this run. Every file has the columns date, amount, currency, reference and description, and dates look like 2024-01-31. Our rules have not changed: the bank may book a payment one day after the ledger date, and amounts must agree exactly. Repair the existing configuration so January reconciles again.",
+  "inputs": [
+    "inputs/bank_2023-12.csv",
+    "inputs/bank_export_jan.csv",
+    "inputs/ledger.csv"
+  ],
+  "initial_files": [
+    "reconify.yaml"
+  ],
+  "reference_config": "reference/reconify.yaml",
+  "expected_result": "expected/result.json",
+  "expected_explanation": "expected/explanation.json",
+  "pair": "ledger_vs_bank",
+  "assertions": {
+    "matched": 3,
+    "unmatched_left": 1,
+    "unmatched_right": 1,
+    "amount_diff_count": 1,
+    "timing_diff_count": 0,
+    "duplicate_count": 0,
+    "grouped_matched_count": 0,
+    "many_to_many_matched_count": 0,
+    "ambiguous_group_count": 0
+  },
+  "counter_examples": [
+    "counter_examples/previous-statement.yaml",
+    "counter_examples/stale-pattern.yaml"
+  ],
+  "tags": [
+    "repair"
+  ]
+}

@@ -149,6 +149,34 @@ func (f *filteredWriter) SetRunInfo(info RunInfo) error {
 	return nil
 }
 
+// --- MetaSetter / DeterministicSetter (optional) ---
+
+// SetMeta forwards pair and source names to inner writers that record them.
+func (f *filteredWriter) SetMeta(pairName, leftSource, rightSource string) {
+	if setter, ok := f.inner.(interface {
+		SetMeta(pairName, leftSource, rightSource string)
+	}); ok {
+		setter.SetMeta(pairName, leftSource, rightSource)
+	}
+}
+
+// SetDeterministic forwards stable-ordering mode to inner writers that support
+// it. The wrapper always satisfies the setter interface, so when the inner format
+// cannot honor the request it reports that through the warning observer only; the
+// warning is never written into the result stream.
+func (f *filteredWriter) SetDeterministic(on bool) {
+	if setter, ok := f.inner.(interface{ SetDeterministic(bool) }); ok {
+		setter.SetDeterministic(on)
+		return
+	}
+	if on && f.warnings != nil {
+		f.warnings.ObserveWarning(Warning{
+			Code:    WarningDeterministicUnsupported,
+			Message: "--deterministic has no effect for this output format; use --format=json",
+		})
+	}
+}
+
 // --- IndexSelectionSetter (optional) ---
 
 func (f *filteredWriter) SetIndexSelection(selection IndexSelection) error {

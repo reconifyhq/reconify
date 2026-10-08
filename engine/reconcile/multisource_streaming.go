@@ -289,9 +289,9 @@ func runStreamingPass(
 	rightSeen := make(map[string]uint8)
 	rightDupKeys := make(map[string]bool)
 	rightMergeSeen := make(map[string]bool)
-	var rightLatestBuf map[string]Transaction
+	var rightLatestBuf *latestBuffer
 	if rightPolicy == config.DuplicatePolicyLatest {
-		rightLatestBuf = make(map[string]Transaction)
+		rightLatestBuf = newLatestBuffer()
 	}
 	var totalRight int
 	reporter.Start("right_index", rightSource, rightSource, nil)
@@ -325,7 +325,7 @@ func runStreamingPass(
 			return idx.Add(tx)
 		case config.DuplicatePolicyLatest:
 			if tx.GroupKey != "" {
-				rightLatestBuf[tx.GroupKey] = tx
+				rightLatestBuf.put(tx.GroupKey, tx)
 				return nil
 			}
 			return idx.Add(tx)
@@ -335,10 +335,8 @@ func runStreamingPass(
 		return nil, Summary{}, nil, fmt.Errorf("parse right source %q: %w", rightSource, perr)
 	}
 	if rightPolicy == config.DuplicatePolicyLatest {
-		for _, tx := range rightLatestBuf {
-			if aerr := idx.Add(tx); aerr != nil {
-				return nil, Summary{}, nil, aerr
-			}
+		if aerr := rightLatestBuf.each(idx.Add); aerr != nil {
+			return nil, Summary{}, nil, aerr
 		}
 	}
 	reporter.Complete(totalRight)
@@ -364,9 +362,9 @@ func runStreamingPass(
 	leftSeen := make(map[string]uint8)
 	leftDupKeys := make(map[string]bool)
 	leftMergeSeen := make(map[string]bool)
-	var leftLatestBuf map[string]Transaction
+	var leftLatestBuf *latestBuffer
 	if fromFile && leftPolicy == config.DuplicatePolicyLatest {
-		leftLatestBuf = make(map[string]Transaction)
+		leftLatestBuf = newLatestBuffer()
 	}
 
 	var (
@@ -449,7 +447,7 @@ func runStreamingPass(
 			}
 			// Dedup for latest: buffer and defer processing until after scan.
 			if leftPolicy == config.DuplicatePolicyLatest && ltx.GroupKey != "" {
-				leftLatestBuf[ltx.GroupKey] = ltx
+				leftLatestBuf.put(ltx.GroupKey, ltx)
 				return nil
 			}
 		}
@@ -478,13 +476,13 @@ func runStreamingPass(
 	if fromFile && leftPolicy == config.DuplicatePolicyLatest {
 		// These rows were already counted and currency-validated during the file
 		// scan; replay only the final representative for each non-empty group key.
-		for _, ltx := range leftLatestBuf {
+		if perr := leftLatestBuf.each(func(ltx Transaction) error {
 			if ctx.Err() != nil {
-				return nil, Summary{}, nil, ctx.Err()
+				return ctx.Err()
 			}
-			if perr := matchLeft(ltx); perr != nil {
-				return nil, Summary{}, nil, perr
-			}
+			return matchLeft(ltx)
+		}); perr != nil {
+			return nil, Summary{}, nil, perr
 		}
 	}
 	reporter.Complete(totalLeft)

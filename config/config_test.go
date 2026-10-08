@@ -791,3 +791,41 @@ func TestResolvedCandidateFilters(t *testing.T) {
 		}
 	})
 }
+
+func TestValidateReturnsStructuredErrors(t *testing.T) {
+	cfg := &Config{
+		Version: 2,
+		Sources: map[string]Source{
+			"left": {FilePattern: "left.csv", Parser: ParserCfg{AmountCol: "amount", DateLayout: "2006-01-02", Multiplier: 100}},
+		},
+		Pairs: map[string]Pair{"p": {Left: "left", Right: "ghost"}},
+	}
+	errs := cfg.Validate()
+	structured := ValidationErrors(errs)
+	if len(structured) != len(errs) || len(errs) == 0 {
+		t.Fatalf("got %d structured errors for %d errors", len(structured), len(errs))
+	}
+	byPath := map[string]string{}
+	for i, entry := range structured {
+		if entry.Error() != errs[i].Error() {
+			t.Errorf("text changed: %q vs %q", entry.Error(), errs[i].Error())
+		}
+		byPath[entry.Path] = entry.Message
+	}
+	if byPath["version"] != "version must be 1 (got 2)" {
+		t.Errorf("version entry = %q", byPath["version"])
+	}
+	if byPath["sources.left.parser.date_col"] != "required field is missing" {
+		t.Errorf("date_col entry = %q (all: %v)", byPath["sources.left.parser.date_col"], byPath)
+	}
+	if _, ok := byPath["pairs.p.right"]; !ok && byPath["pairs.p"] == "" {
+		t.Errorf("no entry for the pair: %v", byPath)
+	}
+}
+
+func TestValidationErrorsKeepsForeignErrorsPathless(t *testing.T) {
+	got := ValidationErrors([]error{errors.New("something else")})
+	if len(got) != 1 || got[0].Path != "" || got[0].Message != "something else" {
+		t.Fatalf("got %+v", got)
+	}
+}

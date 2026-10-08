@@ -1,0 +1,9 @@
+date,amount,currency,reference,description
+2024-01-03,1250.00,EUR,INV-9001,Consulting retainer
+2024-01-04,89.90,EUR,INV-9002,Office supplies
+2024-01-05,12400.50,EUR,INV-9003,Equipment lease
+2024-01-08,310.00,EUR,INV-9004,Software subscription
+2024-01-09,560.00,EUR,INV-9005,Training workshop
+2024-01-10,75.25,EUR,INV-9006,Courier fees
+2024-01-15,200.00,EUR,INV-9007,Maintenance contract
+2024-01-25,3499.99,EUR,INV-9008,Hardware order

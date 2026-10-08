@@ -1,0 +1,176 @@
+{
+  "schema": "reconify.engine.explanation.v1",
+  "summary": {
+    "currency": "GBP",
+    "total_left": 6,
+    "total_right": 6,
+    "matched": 3,
+    "unmatched_left": 1,
+    "unmatched_right": 1,
+    "amount_diff_count": 1,
+    "timing_diff_count": 1,
+    "duplicate_count": 0,
+    "match_rate_pct": 50,
+    "reconciled_rate_pct": 83.33,
+    "matched_amount_left": 80000,
+    "matched_amount_right": 79850,
+    "unmatched_amount_left": 6000,
+    "unmatched_amount_right": 3500,
+    "amount_diff_total": 1000,
+    "total_discrepancy": 10500
+  },
+  "findings": [
+    {
+      "category": "matched",
+      "count": 3
+    },
+    {
+      "category": "unmatched_left",
+      "count": 1
+    },
+    {
+      "category": "unmatched_right",
+      "count": 1
+    },
+    {
+      "category": "amount_diff",
+      "count": 1
+    },
+    {
+      "category": "timing_diff",
+      "count": 1
+    },
+    {
+      "category": "duplicates",
+      "count": 0
+    },
+    {
+      "category": "grouped_matched",
+      "count": 0
+    },
+    {
+      "category": "grouped_amount_diff",
+      "count": 0
+    },
+    {
+      "category": "grouped_timing_diff",
+      "count": 0
+    },
+    {
+      "category": "many_to_many_matched",
+      "count": 0
+    },
+    {
+      "category": "many_to_many_amount_diff",
+      "count": 0
+    },
+    {
+      "category": "many_to_many_timing_diff",
+      "count": 0
+    },
+    {
+      "category": "ambiguous_group",
+      "count": 0
+    }
+  ],
+  "top_exceptions": [
+    {
+      "type": "unmatched_left",
+      "data": {
+        "amount": 6000,
+        "currency": "GBP",
+        "date": "2024-03-11T00:00:00Z",
+        "group_key": "PAY-3006",
+        "id": "ledger-6",
+        "name": "Card sale",
+        "raw": {
+          "amount": "60.00",
+          "currency": "GBP",
+          "date": "2024-03-11",
+          "description": "Card sale",
+          "reference": "PAY-3006"
+        },
+        "reference": "PAY-3006",
+        "source": "ledger"
+      }
+    },
+    {
+      "type": "unmatched_right",
+      "data": {
+        "amount": 3500,
+        "currency": "GBP",
+        "date": "2024-03-12T00:00:00Z",
+        "id": "bank-6",
+        "name": "Unidentified credit",
+        "reference": "PAY-9999",
+        "source": "bank"
+      }
+    },
+    {
+      "type": "amount_diff",
+      "data": {
+        "diff_minor": 1000,
+        "left": {
+          "amount": 75000,
+          "currency": "GBP",
+          "date": "2024-03-06T00:00:00Z",
+          "group_key": "PAY-3004",
+          "id": "ledger-4",
+          "name": "Card sale",
+          "raw": {
+            "amount": "750.00",
+            "currency": "GBP",
+            "date": "2024-03-06",
+            "description": "Card sale",
+            "reference": "PAY-3004"
+          },
+          "reference": "PAY-3004",
+          "source": "ledger"
+        },
+        "right": {
+          "amount": 74000,
+          "currency": "GBP",
+          "date": "2024-03-06T00:00:00Z",
+          "id": "bank-4",
+          "name": "Card settlement less fee",
+          "reference": "PAY-3004",
+          "source": "bank"
+        }
+      }
+    },
+    {
+      "type": "timing_diff",
+      "data": {
+        "days_diff": 7,
+        "left": {
+          "amount": 32000,
+          "currency": "GBP",
+          "date": "2024-03-07T00:00:00Z",
+          "group_key": "PAY-3005",
+          "id": "ledger-5",
+          "name": "Card sale",
+          "raw": {
+            "amount": "320.00",
+            "currency": "GBP",
+            "date": "2024-03-07",
+            "description": "Card sale",
+            "reference": "PAY-3005"
+          },
+          "reference": "PAY-3005",
+          "source": "ledger"
+        },
+        "right": {
+          "amount": 32000,
+          "currency": "GBP",
+          "date": "2024-03-14T00:00:00Z",
+          "id": "bank-5",
+          "name": "Card settlement",
+          "reference": "PAY-3005",
+          "source": "bank"
+        }
+      }
+    }
+  ],
+  "exceptions_total": 4,
+  "truncated": false
+}

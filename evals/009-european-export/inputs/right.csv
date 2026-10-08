@@ -1,0 +1,9 @@
+Booking date,Amount,Currency,Reference,Details
+03.01.2024,"1.250,00",EUR,INV-9001,SEPA credit transfer
+05.01.2024,"89,90",EUR,INV-9002,SEPA credit transfer
+05.01.2024,"12.400,50",EUR,INV-9003,SEPA credit transfer
+09.01.2024,"310,00",EUR,INV-9004,SEPA credit transfer
+09.01.2024,"506,00",EUR,INV-9005,SEPA credit transfer
+11.01.2024,"1.999,99",EUR,REF-7731,Unidentified credit
+21.01.2024,"200,00",EUR,INV-9007,SEPA credit transfer
+26.01.2024,"3.499,99",EUR,INV-9008,SEPA credit transfer

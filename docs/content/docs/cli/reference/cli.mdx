@@ -265,6 +265,29 @@ JSON-stream, and NDJSON are supported so this metadata remains alongside the res
 When the gate fails, the command returns `INFERENCE_AMBIGUOUS` with exit code `2`
 and does not write result data.
 
+## `reconify verify`
+
+Check the agent workflow deliverables: `reconify.yaml`, the retained result, and its explanation.
+
+~~~bash
+reconify verify [--config reconify.yaml] [--pair PAIR] [--result result.json] [--explanation explanation.json] [--format json|text]
+~~~
+
+Prints a `reconify.engine.verification.v1` checklist (`reconify schema verification`):
+`config_valid`, `source_check:<name>` for each source of the pair (its `file_pattern` resolved relative
+to the config file), `result_present`, `result_reproducible` (a fresh run must reproduce the recorded
+summary counters, whatever format or result mode the result used), `explanation_present`, and
+`explanation_consistent` (equals `reconify explain`). A missing artifact is skipped unless `--result`
+or `--explanation` names it. Output is JSON under `--agent` or when stdout is not a terminal.
+
+Exit code `0` means every check passed or was skipped. Any failing check exits `2`, with diagnostic
+code `CONFIG_INVALID` for an invalid config and `VERIFICATION_FAILED` otherwise.
+
+## `reconify mcp`
+
+Serve the Reconify Engine over the Model Context Protocol on stdio, as server `reconify-engine`. See
+[MCP server](/docs/cli/mcp) for the tool list and client registration.
+
 ## Not implemented yet
 
 The changelog mentions standalone `reconify validate` and validation flags such as `--skip-validation` and `--fail-on-warning`. Those are planned/unreleased until present in the CLI code.

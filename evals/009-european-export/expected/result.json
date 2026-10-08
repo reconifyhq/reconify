@@ -1,0 +1,266 @@
+{
+  "schema": "reconify.engine.result.v1",
+  "index_selection": {
+    "requested_backend": "memory",
+    "backend": "memory",
+    "reason": "memory estimate fits configured policy",
+    "estimated_memory_bytes": 201326784
+  },
+  "pair": "left_vs_right",
+  "left_source": "left",
+  "right_source": "right",
+  "summary": {
+    "currency": "EUR",
+    "total_left": 8,
+    "total_right": 8,
+    "matched": 5,
+    "unmatched_left": 1,
+    "unmatched_right": 1,
+    "amount_diff_count": 1,
+    "timing_diff_count": 1,
+    "duplicate_count": 0,
+    "match_rate_pct": 62.5,
+    "reconciled_rate_pct": 87.5,
+    "matched_amount_left": 1755039,
+    "matched_amount_right": 1755039,
+    "unmatched_amount_left": 7525,
+    "unmatched_amount_right": 199999,
+    "amount_diff_total": 5400,
+    "total_discrepancy": 212924
+  },
+  "matched": [
+    {
+      "left": {
+        "id": "left-1",
+        "date": "2024-01-03T00:00:00Z",
+        "amount": 125000,
+        "currency": "EUR",
+        "reference": "INV-9001",
+        "name": "Consulting retainer",
+        "source": "left",
+        "raw": {
+          "amount": "1250.00",
+          "currency": "EUR",
+          "date": "2024-01-03",
+          "description": "Consulting retainer",
+          "reference": "INV-9001"
+        },
+        "group_key": "INV-9001"
+      },
+      "right": {
+        "id": "right-1",
+        "date": "2024-01-03T00:00:00Z",
+        "amount": 125000,
+        "currency": "EUR",
+        "reference": "INV-9001",
+        "name": "SEPA credit transfer",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-2",
+        "date": "2024-01-04T00:00:00Z",
+        "amount": 8990,
+        "currency": "EUR",
+        "reference": "INV-9002",
+        "name": "Office supplies",
+        "source": "left",
+        "raw": {
+          "amount": "89.90",
+          "currency": "EUR",
+          "date": "2024-01-04",
+          "description": "Office supplies",
+          "reference": "INV-9002"
+        },
+        "group_key": "INV-9002"
+      },
+      "right": {
+        "id": "right-2",
+        "date": "2024-01-05T00:00:00Z",
+        "amount": 8990,
+        "currency": "EUR",
+        "reference": "INV-9002",
+        "name": "SEPA credit transfer",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-3",
+        "date": "2024-01-05T00:00:00Z",
+        "amount": 1240050,
+        "currency": "EUR",
+        "reference": "INV-9003",
+        "name": "Equipment lease",
+        "source": "left",
+        "raw": {
+          "amount": "12400.50",
+          "currency": "EUR",
+          "date": "2024-01-05",
+          "description": "Equipment lease",
+          "reference": "INV-9003"
+        },
+        "group_key": "INV-9003"
+      },
+      "right": {
+        "id": "right-3",
+        "date": "2024-01-05T00:00:00Z",
+        "amount": 1240050,
+        "currency": "EUR",
+        "reference": "INV-9003",
+        "name": "SEPA credit transfer",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-4",
+        "date": "2024-01-08T00:00:00Z",
+        "amount": 31000,
+        "currency": "EUR",
+        "reference": "INV-9004",
+        "name": "Software subscription",
+        "source": "left",
+        "raw": {
+          "amount": "310.00",
+          "currency": "EUR",
+          "date": "2024-01-08",
+          "description": "Software subscription",
+          "reference": "INV-9004"
+        },
+        "group_key": "INV-9004"
+      },
+      "right": {
+        "id": "right-4",
+        "date": "2024-01-09T00:00:00Z",
+        "amount": 31000,
+        "currency": "EUR",
+        "reference": "INV-9004",
+        "name": "SEPA credit transfer",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-8",
+        "date": "2024-01-25T00:00:00Z",
+        "amount": 349999,
+        "currency": "EUR",
+        "reference": "INV-9008",
+        "name": "Hardware order",
+        "source": "left",
+        "raw": {
+          "amount": "3499.99",
+          "currency": "EUR",
+          "date": "2024-01-25",
+          "description": "Hardware order",
+          "reference": "INV-9008"
+        },
+        "group_key": "INV-9008"
+      },
+      "right": {
+        "id": "right-8",
+        "date": "2024-01-26T00:00:00Z",
+        "amount": 349999,
+        "currency": "EUR",
+        "reference": "INV-9008",
+        "name": "SEPA credit transfer",
+        "source": "right"
+      }
+    }
+  ],
+  "unmatched_left": [
+    {
+      "id": "left-6",
+      "date": "2024-01-10T00:00:00Z",
+      "amount": 7525,
+      "currency": "EUR",
+      "reference": "INV-9006",
+      "name": "Courier fees",
+      "source": "left",
+      "raw": {
+        "amount": "75.25",
+        "currency": "EUR",
+        "date": "2024-01-10",
+        "description": "Courier fees",
+        "reference": "INV-9006"
+      },
+      "group_key": "INV-9006"
+    }
+  ],
+  "unmatched_right": [
+    {
+      "id": "right-6",
+      "date": "2024-01-11T00:00:00Z",
+      "amount": 199999,
+      "currency": "EUR",
+      "reference": "REF-7731",
+      "name": "Unidentified credit",
+      "source": "right"
+    }
+  ],
+  "amount_diff": [
+    {
+      "left": {
+        "id": "left-5",
+        "date": "2024-01-09T00:00:00Z",
+        "amount": 56000,
+        "currency": "EUR",
+        "reference": "INV-9005",
+        "name": "Training workshop",
+        "source": "left",
+        "raw": {
+          "amount": "560.00",
+          "currency": "EUR",
+          "date": "2024-01-09",
+          "description": "Training workshop",
+          "reference": "INV-9005"
+        },
+        "group_key": "INV-9005"
+      },
+      "right": {
+        "id": "right-5",
+        "date": "2024-01-09T00:00:00Z",
+        "amount": 50600,
+        "currency": "EUR",
+        "reference": "INV-9005",
+        "name": "SEPA credit transfer",
+        "source": "right"
+      },
+      "diff_minor": 5400
+    }
+  ],
+  "timing_diff": [
+    {
+      "left": {
+        "id": "left-7",
+        "date": "2024-01-15T00:00:00Z",
+        "amount": 20000,
+        "currency": "EUR",
+        "reference": "INV-9007",
+        "name": "Maintenance contract",
+        "source": "left",
+        "raw": {
+          "amount": "200.00",
+          "currency": "EUR",
+          "date": "2024-01-15",
+          "description": "Maintenance contract",
+          "reference": "INV-9007"
+        },
+        "group_key": "INV-9007"
+      },
+      "right": {
+        "id": "right-7",
+        "date": "2024-01-21T00:00:00Z",
+        "amount": 20000,
+        "currency": "EUR",
+        "reference": "INV-9007",
+        "name": "SEPA credit transfer",
+        "source": "right"
+      },
+      "days_diff": 6
+    }
+  ],
+  "duplicates": null
+}

@@ -1,0 +1,208 @@
+{
+  "schema": "reconify.engine.result.v1",
+  "index_selection": {
+    "requested_backend": "memory",
+    "backend": "memory",
+    "reason": "memory estimate fits configured policy",
+    "estimated_memory_bytes": 201326880
+  },
+  "pair": "left_vs_right",
+  "left_source": "left",
+  "right_source": "right",
+  "summary": {
+    "currency": "USD",
+    "total_left": 6,
+    "total_right": 6,
+    "matched": 4,
+    "unmatched_left": 1,
+    "unmatched_right": 1,
+    "amount_diff_count": 1,
+    "timing_diff_count": 0,
+    "duplicate_count": 0,
+    "match_rate_pct": 66.67,
+    "reconciled_rate_pct": 83.33,
+    "matched_amount_left": 274990,
+    "matched_amount_right": 274990,
+    "unmatched_amount_left": 7525,
+    "unmatched_amount_right": 51240,
+    "amount_diff_total": 4500,
+    "total_discrepancy": 63265
+  },
+  "matched": [
+    {
+      "left": {
+        "id": "left-1",
+        "date": "2024-01-03T00:00:00Z",
+        "amount": 125000,
+        "currency": "USD",
+        "reference": "INV-2001",
+        "name": "Annual support",
+        "source": "left",
+        "raw": {
+          "Amount": "1250.00",
+          "Currency": "USD",
+          "Invoice": "INV-2001",
+          "Memo": "Annual support",
+          "Posting Date": "03-Jan-2024"
+        },
+        "group_key": "INV-2001"
+      },
+      "right": {
+        "id": "right-1",
+        "date": "2024-01-03T14:22:05Z",
+        "amount": 125000,
+        "currency": "USD",
+        "reference": "INV-2001",
+        "name": "ACME LTD PAYMENT",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-2",
+        "date": "2024-01-04T00:00:00Z",
+        "amount": 8990,
+        "currency": "USD",
+        "reference": "INV-2002",
+        "name": "Hardware accessories",
+        "source": "left",
+        "raw": {
+          "Amount": "89.90",
+          "Currency": "USD",
+          "Invoice": "INV-2002",
+          "Memo": "Hardware accessories",
+          "Posting Date": "04-Jan-2024"
+        },
+        "group_key": "INV-2002"
+      },
+      "right": {
+        "id": "right-2",
+        "date": "2024-01-05T09:03:41Z",
+        "amount": 8990,
+        "currency": "USD",
+        "reference": "INV-2002",
+        "name": "WIDGETS INC INV 2002",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-3",
+        "date": "2024-01-08T00:00:00Z",
+        "amount": 43000,
+        "currency": "USD",
+        "reference": "INV-2003",
+        "name": "Implementation fee",
+        "source": "left",
+        "raw": {
+          "Amount": "430.00",
+          "Currency": "USD",
+          "Invoice": "INV-2003",
+          "Memo": "Implementation fee",
+          "Posting Date": "08-Jan-2024"
+        },
+        "group_key": "INV-2003"
+      },
+      "right": {
+        "id": "right-3",
+        "date": "2024-01-08T16:45:10Z",
+        "amount": 43000,
+        "currency": "USD",
+        "reference": "INV-2003",
+        "name": "GLOBEX PAYMENT",
+        "source": "right"
+      }
+    },
+    {
+      "left": {
+        "id": "left-6",
+        "date": "2024-01-15T00:00:00Z",
+        "amount": 98000,
+        "currency": "USD",
+        "reference": "INV-2006",
+        "name": "Quarterly retainer",
+        "source": "left",
+        "raw": {
+          "Amount": "980.00",
+          "Currency": "USD",
+          "Invoice": "INV-2006",
+          "Memo": "Quarterly retainer",
+          "Posting Date": "15-Jan-2024"
+        },
+        "group_key": "INV-2006"
+      },
+      "right": {
+        "id": "right-6",
+        "date": "2024-01-16T13:05:27Z",
+        "amount": 98000,
+        "currency": "USD",
+        "reference": "INV-2006",
+        "name": "HOOLI PAYMENT",
+        "source": "right"
+      }
+    }
+  ],
+  "unmatched_left": [
+    {
+      "id": "left-5",
+      "date": "2024-01-10T00:00:00Z",
+      "amount": 7525,
+      "currency": "USD",
+      "reference": "INV-2005",
+      "name": "Courier fees",
+      "source": "left",
+      "raw": {
+        "Amount": "75.25",
+        "Currency": "USD",
+        "Invoice": "INV-2005",
+        "Memo": "Courier fees",
+        "Posting Date": "10-Jan-2024"
+      },
+      "group_key": "INV-2005"
+    }
+  ],
+  "unmatched_right": [
+    {
+      "id": "right-5",
+      "date": "2024-01-12T08:30:00Z",
+      "amount": 51240,
+      "currency": "USD",
+      "reference": "BANK-7731",
+      "name": "UNREFERENCED CREDIT",
+      "source": "right"
+    }
+  ],
+  "amount_diff": [
+    {
+      "left": {
+        "id": "left-4",
+        "date": "2024-01-09T00:00:00Z",
+        "amount": 215000,
+        "currency": "USD",
+        "reference": "INV-2004",
+        "name": "Platform subscription",
+        "source": "left",
+        "raw": {
+          "Amount": "2150.00",
+          "Currency": "USD",
+          "Invoice": "INV-2004",
+          "Memo": "Platform subscription",
+          "Posting Date": "09-Jan-2024"
+        },
+        "group_key": "INV-2004"
+      },
+      "right": {
+        "id": "right-4",
+        "date": "2024-01-09T11:12:59Z",
+        "amount": 210500,
+        "currency": "USD",
+        "reference": "INV-2004",
+        "name": "INITECH PAYMENT",
+        "source": "right"
+      },
+      "diff_minor": 4500
+    }
+  ],
+  "timing_diff": null,
+  "duplicates": null
+}
