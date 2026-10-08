@@ -135,7 +135,7 @@ Graders:
 | `discovery` | no | trace contains `capabilities` |
 | `configuration` | no | agent ran `config validate`, and the final config validates |
 | `execution` | no | agent ran `reconcile`, and a result artifact exists |
-| `classification` | **yes** | verified run's event multiset equals the answer key |
+| `classification` | **yes** | verified run's outcome sections equal the answer key as multisets (see below) |
 | `exact_result` | no | byte-equal deterministic result |
 | `assertions_match` | no | summary equals the scenario assertions |
 | `explanation` | no | agent ran `explain`, and the explanation equals the answer key |
@@ -143,12 +143,27 @@ Graders:
 | `claims_consistent` | no | counters claimed in the final agent output equal the verified summary |
 | `decision_surfaced` | no | ask-user scenarios only: the output mentions a decision keyword |
 
+`classification` compares every top-level outcome section of the result (`matched`, `amount_diff`,
+`grouped_matched`, `by_source`, …), so new event kinds are graded automatically. Metadata sections
+(`schema`, `summary`, `pair`, `index_selection`, source names) are ignored, empty sections equal absent
+ones, `by_source` is compared without its agent-chosen source names, and descriptive transaction
+fields (`id`, `source`, `raw`, `name`, `group_key`) are ignored because they never change which rows
+reconcile. `internal/evals/corpus_grading_test.go` proves that every reference config grades as a pass
+and every counter-example as a fail.
+
 Failure labels are assigned only when `classification` fails. They are checked in order, and the
 first match wins: `timeout`, `agent_error`, `missing_config`, `config_invalid`,
 `file_pattern_unresolved`, `wrong_amount_mapping`, `wrong_date_layout`, `wrong_tolerance`,
 `wrong_date_window`, `wrong_matching_strategy`, `missing_result_artifact`, `wrong_classification`.
 Config-specific labels compare the agent's config with the reference config only to explain a failure
 that behavior grading already established; grading itself never diffs YAML.
+
+### MCP server (`reconify mcp`)
+
+A stdio JSON-RPC server, identity `reconify-engine`, with no extra module dependencies. Every tool
+re-executes the current binary with `--agent`, so MCP responses follow the same diagnostics and exit
+codes as the CLI. Results stay in files; `get_summary` and `list_exceptions` stream them. See
+`docs/content/docs/cli/mcp/index.md`.
 
 ## Gates
 
