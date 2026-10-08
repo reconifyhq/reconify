@@ -13,6 +13,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - **Structured validation errors** — `CONFIG_INVALID` diagnostics from config validation carry `details.errors`, an array of `{path, message}`. Under `--agent` or `--error-format json` the human `is invalid` listing is no longer written to stderr; the JSON envelope is the only stderr output.
 - **`reconify config infer LEFT RIGHT`** accepts the two files positionally. Mixing positional files with `--left`/`--right` is a usage error.
 - **Default `--pair`** — `reconcile` and `verify` use the only pair when the config defines exactly one. With several pairs, the `CONFIG_INVALID` diagnostic lists them in `details.pairs`.
+- **`reconify mcp`** — a stdio MCP server (`reconify-engine`) exposing `capabilities`, `inspect_file`, `infer_config`, `validate_config`, `check_source`, `reconcile`, `reconcile_auto`, `get_summary`, `list_exceptions`, `explain_result`, and `verify_workspace`. Results stay in files; `get_summary` and `list_exceptions` stream them with pagination. No new module dependencies.
+- **Agent hooks** — `npx @reconifyhq/skills --hooks` installs Claude Code hooks that validate `reconify.yaml` after each edit and block completion until `reconify verify` passes. They merge into existing settings, are idempotent, and can be disabled with `RECONIFY_HOOKS=off`.
+- **Agent eval harness** — `reconify-eval` records an Engine trace, agent usage (turns, tokens, cost), efficiency, ten graders, and a root-cause failure label per trial; adds `compare` and `summarize`, `--tag`, `--hooks`, `--artifacts`, and a `candidate+hooks` release arm. The corpus gains messy, scale, repair, and ask-user scenarios (009–015) with a deterministic fixture generator. `make check-fast`, `make eval-smoke`, and a label-gated `agent-evals` workflow are new.
+- **Skill drift lint** — `make check` fails when a skill documents a `reconify` command or flag that does not exist.
 - The published diagnostic schema allows the `usage` and `verification` categories, and `capabilities` lists `verify`, `schema verification`, and the `USAGE_ERROR` and `VERIFICATION_FAILED` codes.
 
 ### Changed
