@@ -545,15 +545,58 @@ func semanticResultEqual(actual, expected []byte) bool {
 	return canonicalSemantic(left) == canonicalSemantic(right)
 }
 
+// resultMetadataKeys describe how a run was produced rather than what it
+// found, so semantic grading ignores them. Every other top-level key is an
+// outcome section and is compared, which keeps new event kinds graded.
+var resultMetadataKeys = map[string]bool{
+	"schema": true, "summary": true, "index_selection": true, "run_info": true,
+	"pair": true, "left_source": true, "right_source": true,
+}
+
+// descriptiveKeys never change which rows reconcile: generated ids,
+// agent-chosen source names, raw input echoes, and optional descriptive
+// mappings such as name.
+var descriptiveKeys = map[string]bool{
+	"id": true, "source": true, "raw": true, "index_selection": true, "run_id": true,
+	"name": true, "group_key": true,
+}
+
 func canonicalSemantic(document map[string]any) string {
 	selected := map[string]any{}
-	for _, key := range []string{"matched", "unmatched_left", "unmatched_right", "amount_diff", "timing_diff", "duplicates"} {
-		if value, ok := document[key]; ok {
-			selected[key] = normalizeSemantic(value)
+	for key, value := range document {
+		if resultMetadataKeys[key] || isEmptySection(value) {
+			continue
 		}
+		if key == "by_source" {
+			// Per-counterpart counters are keyed by agent-chosen source names;
+			// compare them as an unordered set of counter objects.
+			if sources, ok := value.(map[string]any); ok {
+				values := make([]any, 0, len(sources))
+				for _, counters := range sources {
+					values = append(values, counters)
+				}
+				value = values
+			}
+		}
+		selected[key] = normalizeSemantic(value)
 	}
 	data, _ := json.Marshal(selected)
 	return string(data)
+}
+
+// isEmptySection treats null, empty arrays, and empty objects as an absent
+// section, so formats that omit empty sections compare equal.
+func isEmptySection(value any) bool {
+	switch typed := value.(type) {
+	case nil:
+		return true
+	case []any:
+		return len(typed) == 0
+	case map[string]any:
+		return len(typed) == 0
+	default:
+		return false
+	}
 }
 
 func normalizeSemantic(value any) any {
@@ -575,7 +618,7 @@ func normalizeSemantic(value any) any {
 	case map[string]any:
 		result := map[string]any{}
 		for key, item := range typed {
-			if key == "id" || key == "source" || key == "raw" || key == "index_selection" || key == "run_id" {
+			if descriptiveKeys[key] {
 				continue
 			}
 			result[key] = normalizeSemantic(item)
