@@ -221,3 +221,25 @@ func TestClaimsGradeEvidence(t *testing.T) {
 		t.Fatal("earlier message affected claims")
 	}
 }
+
+func TestClaimsGradeAcceptsNarrativeAboutOtherValues(t *testing.T) {
+	evidence := goodEvidence()
+	// Baseline 006/007: the final counters are right, but the narrative quotes
+	// an earlier attempt and a per-counterpart breakdown.
+	evidence.messages = []string{"Matched: 3\nUnmatched left: 1\nAn earlier attempt reported 2 unmatched left rows; the stripe breakdown lists 0 unmatched left."}
+	if g := grade(t, gradeTrial(evidence), gradeClaimsConsistent); !g.Pass {
+		t.Fatalf("grade = %+v", g)
+	}
+}
+
+func TestSemanticExplanationEqualIgnoresSourceNamesAndDescriptions(t *testing.T) {
+	expected := []byte(`{"summary":{"matched":1},"top_exceptions":[{"type":"unmatched_left","transaction":{"id":"left-2","source":"left","amount":7500,"name":"Refund"}}]}`)
+	actual := []byte(`{"summary":{"matched":1},"top_exceptions":[{"type":"unmatched_left","transaction":{"id":"ledger-2","source":"ledger","amount":7500,"name":""}}]}`)
+	if !semanticExplanationEqual(actual, expected) {
+		t.Fatal("source names and descriptions must not change the explanation grade")
+	}
+	wrong := []byte(`{"summary":{"matched":2},"top_exceptions":[]}`)
+	if semanticExplanationEqual(wrong, expected) {
+		t.Fatal("different explanations compared equal")
+	}
+}

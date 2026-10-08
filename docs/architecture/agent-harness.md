@@ -138,9 +138,9 @@ Graders:
 | `classification` | **yes** | verified run's outcome sections equal the answer key as multisets (see below) |
 | `exact_result` | no | byte-equal deterministic result |
 | `assertions_match` | no | summary equals the scenario assertions |
-| `explanation` | no | agent ran `explain`, and the explanation equals the answer key |
+| `explanation` | no | agent ran `explain`, and the explanation equals the answer key under the same semantic rules |
 | `protocol` | no | `config validate` precedes the first `reconcile` in the trace |
-| `claims_consistent` | no | counters claimed in the final agent output equal the verified summary |
+| `claims_consistent` | no | every counter claimed in the final agent output has at least one claim equal to the verified summary |
 | `decision_surfaced` | no | ask-user scenarios only: the output mentions a decision keyword |
 
 `classification` compares every top-level outcome section of the result (`matched`, `amount_diff`,

@@ -3,6 +3,7 @@ package evals
 import (
 	"bytes"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/reconifyhq/reconify/schemas"
@@ -197,10 +198,29 @@ func gradeClaimsOf(e trialEvidence) Grade {
 	if !e.verified || !ok {
 		return Grade{Name: gradeClaimsConsistent, Evidence: fmt.Sprintf("%d claim(s) found but no verified summary to check them against", len(claims))}
 	}
-	var wrong []string
+	// Agents legitimately quote other values for a counter (an earlier
+	// attempt, a per-counterpart breakdown), so a counter is consistent when
+	// any of its claims equals the verified value.
+	consistent := map[string]bool{}
+	claimed := map[string][]int{}
+	var order []string
 	for _, claim := range claims {
-		if actual := summary[claim.counter]; actual != claim.value {
-			wrong = append(wrong, fmt.Sprintf("claimed %s=%d, verified %d", claim.counter, claim.value, summary[claim.counter]))
+		if _, seen := claimed[claim.counter]; !seen {
+			order = append(order, claim.counter)
+		}
+		claimed[claim.counter] = append(claimed[claim.counter], claim.value)
+		if summary[claim.counter] == claim.value {
+			consistent[claim.counter] = true
+		}
+	}
+	var wrong []string
+	for _, counter := range order {
+		if !consistent[counter] {
+			values := make([]string, 0, len(claimed[counter]))
+			for _, value := range claimed[counter] {
+				values = append(values, strconv.Itoa(value))
+			}
+			wrong = append(wrong, fmt.Sprintf("claimed %s=%s, verified %d", counter, strings.Join(values, "/"), summary[counter]))
 		}
 	}
 	if len(wrong) > 0 {

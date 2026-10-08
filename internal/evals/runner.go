@@ -516,7 +516,7 @@ func verifyEngine(ctx context.Context, binary, workspace string, item scenario, 
 	}
 	evidence.explanationFound = true
 	expectedExplanation, readErr := os.ReadFile(filepath.Join(item.Dir, item.ExpectedExplanation)) // #nosec G304 -- checked-in fixture.
-	evidence.explanationEqual = readErr == nil && bytes.Equal(bytes.TrimSpace(agentExplanation), bytes.TrimSpace(expectedExplanation))
+	evidence.explanationEqual = readErr == nil && semanticExplanationEqual(agentExplanation, expectedExplanation)
 }
 
 const maxAgentOutputBytes = 40000
@@ -543,6 +543,19 @@ func semanticResultEqual(actual, expected []byte) bool {
 		return false
 	}
 	return canonicalSemantic(left) == canonicalSemantic(right)
+}
+
+// semanticExplanationEqual compares explanations with the same rules as
+// results: agent-chosen source names and descriptive fields are ignored, and
+// lists compare as multisets.
+func semanticExplanationEqual(actual, expected []byte) bool {
+	var left, right any
+	if json.Unmarshal(actual, &left) != nil || json.Unmarshal(expected, &right) != nil {
+		return false
+	}
+	a, _ := json.Marshal(normalizeSemantic(left))
+	b, _ := json.Marshal(normalizeSemantic(right))
+	return bytes.Equal(a, b)
 }
 
 // resultMetadataKeys describe how a run was produced rather than what it
